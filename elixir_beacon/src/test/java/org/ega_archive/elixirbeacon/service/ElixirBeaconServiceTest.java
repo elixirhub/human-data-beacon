@@ -2,17 +2,23 @@ package org.ega_archive.elixirbeacon.service;
 
 import static org.hamcrest.CoreMatchers.startsWith;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.Matchers.containsInAnyOrder;
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
+import static org.springframework.integration.test.matcher.MapContentMatchers.hasAllEntries;
 
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
+import lombok.extern.slf4j.Slf4j;
 import org.ega_archive.elixirbeacon.Application;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
+import org.ega_archive.elixirbeacon.dto.AccessLevelResponse;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
@@ -30,6 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.test.context.web.WebAppConfiguration;
 
+@Slf4j
 @RunWith(SpringJUnit4ClassRunner.class)
 @ContextConfiguration(classes = Application.class)
 @WebAppConfiguration
@@ -61,7 +68,11 @@ public class ElixirBeaconServiceTest {
         "/db/consent_code_category_table.sql",
         "/db/consent_code_table.sql",
         // Beacon->CC
-        "/db/beacon_dataset_consent_code_table.sql");
+        "/db/beacon_dataset_consent_code_table.sql",
+        // Access level
+        "/db/dataset_access_level_table.sql"
+    )
+    ;
   }
 
   @After
@@ -899,6 +910,502 @@ public class ElixirBeaconServiceTest {
     
     assertThat(response.getError(), notNullValue());
     assertThat(response.getError().getErrorCode(), equalTo(ErrorCode.UNAUTHORIZED));
+  }
+
+  @Test
+  public void getAllAccessLevels() {
+    Map<String, Object> expectedMap = fillExpectedMapWithAllFields();
+
+    AccessLevelResponse accessLevels = elixirBeaconService.listAccessLevels(null, null, null,
+        false, false);
+
+    printMapInConsole(expectedMap);
+    System.out.println("******************************************");
+    System.out.println("******************************************");
+    printMapInConsole(accessLevels.getFields());
+
+    assertThat(accessLevels.getFields().size(), equalTo(9));
+    assertThat(accessLevels.getFields(), hasAllEntries(expectedMap));
+    assertThat(expectedMap, hasAllEntries(accessLevels.getFields()));
+  }
+
+  private Map<String, Object> fillExpectedMapWithAllFields() {
+    Map<String, Object> expectedMap = new HashMap<>();
+    HashMap<String, String> innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("name", "PUBLIC");
+    innerMap.put("apiVersion", "PUBLIC");
+    innerMap.put("organization", "PUBLIC");
+    innerMap.put("description", "PUBLIC");
+    innerMap.put("version", "PUBLIC");
+    innerMap.put("welcomeUrl", "PUBLIC");
+    innerMap.put("alternativeUrl", "PUBLIC");
+    innerMap.put("createDateTime", "PUBLIC");
+    innerMap.put("updateDateTime", "PUBLIC");
+    innerMap.put("description", "PUBLIC");
+    innerMap.put("datasets", "PUBLIC");
+    innerMap.put("sampleAlleleRequests", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    expectedMap.put("beacon", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("name", "PUBLIC");
+    innerMap.put("description", "PUBLIC");
+    innerMap.put("address", "PUBLIC");
+    innerMap.put("welcomeUrl", "PUBLIC");
+    innerMap.put("contactUrl", "PUBLIC");
+    innerMap.put("logoUrl", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    expectedMap.put("beaconOrganization", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("name", "PUBLIC");
+    innerMap.put("description", "PUBLIC");
+    innerMap.put("assemblyId", "PUBLIC");
+    innerMap.put("createDateTime", "PUBLIC");
+    innerMap.put("updateDateTime", "PUBLIC");
+    innerMap.put("version", "PUBLIC");
+    innerMap.put("variantCount", "PUBLIC");
+    innerMap.put("callCount", "PUBLIC");
+    innerMap.put("sampleCount", "PUBLIC");
+    innerMap.put("externalUrl", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("dataUseConditions", "PUBLIC");
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    expectedMap.put("beaconDataset", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("referenceName", "PUBLIC");
+    innerMap.put("start", "PUBLIC");
+    innerMap.put("end", "PUBLIC");
+    innerMap.put("startMin", "PUBLIC");
+    innerMap.put("startMax", "PUBLIC");
+    innerMap.put("endMin", "PUBLIC");
+    innerMap.put("endMax", "PUBLIC");
+    innerMap.put("referenceBases", "PUBLIC");
+    innerMap.put("alternateBases", "PUBLIC");
+    innerMap.put("variantType", "PUBLIC");
+    innerMap.put("assemblyId", "PUBLIC");
+    innerMap.put("datasetIds", "PUBLIC");
+    innerMap.put("includeDatasetResponses", "PUBLIC");
+    expectedMap.put("beaconAlleleRequest", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("beaconId", "PUBLIC");
+    innerMap.put("apiVersion", "PUBLIC");
+    innerMap.put("exists", "PUBLIC");
+    innerMap.put("error", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("datasetAlleleResponses", "PUBLIC");
+    innerMap.put("alleleRequest", "PUBLIC");
+    expectedMap.put("beaconAlleleResponse", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("datasetId", "PUBLIC");
+    innerMap.put("exists", "PUBLIC");
+    innerMap.put("error", "PUBLIC");
+    innerMap.put("frequency", "PUBLIC");
+    innerMap.put("variantCount", "PUBLIC");
+    innerMap.put("callCount", "PUBLIC");
+    innerMap.put("sampleCount", "PUBLIC");
+    innerMap.put("note", "PUBLIC");
+    innerMap.put("externalUrl", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_non_sensitive_data", "PUBLIC");
+    expectedMap.put("datasetAlleleResponses", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("errorCode", "PUBLIC");
+    innerMap.put("errorMessage", "PUBLIC");
+    expectedMap.put("beaconError", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("consentCodeDataUse", "PUBLIC");
+    innerMap.put("adamDataUse", "PUBLIC");
+    expectedMap.put("dataUseConditions", innerMap);
+
+    // Datasets
+    HashMap<String, Object> innerMap2 = new HashMap<>();
+    HashMap<String, Object> innerMap3 = new HashMap<>();
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "PUBLIC");
+    innerMap3.put("datasetAlleleResponses", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_field", "NOT_SUPPORTED");
+    innerMap3.put("beaconDataset", innerMap);
+    innerMap2.put("EGAD00000000001", innerMap3);
+
+    innerMap3 = new HashMap<>();
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "CONTROLLED");
+    innerMap3.put("datasetAlleleResponses", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_field", "NOT_SUPPORTED");
+    innerMap3.put("beaconDataset", innerMap);
+    innerMap2.put("EGAD00000000002", innerMap3);
+    expectedMap.put("datasets", innerMap2);
+
+    return expectedMap;
+  }
+
+  @Test
+  public void getSomeAccessLevels() {
+    Map<String, Object> expectedMap = fillExpectedMapWithSomeFields();
+
+    AccessLevelResponse accessLevels = elixirBeaconService
+        .listAccessLevels(Arrays.asList("error", "datasetAlleleResponses", "id"), null, null,
+            false, false);
+
+    assertThat(accessLevels.getError(), nullValue());
+    assertThat(accessLevels.getFields().size(), equalTo(6));
+    assertThat(accessLevels.getFields(), hasAllEntries(expectedMap));
+    Map<String, Object> expectedInnerMap = (Map<String, Object>) expectedMap.get("datasets");
+    Map<String, Object> datasetsMap = ( Map<String, Object>) accessLevels.getFields().get("datasets");
+    assertThat(datasetsMap, hasAllEntries(expectedInnerMap));
+    assertThat(expectedMap, hasAllEntries(accessLevels.getFields()));
+  }
+
+  private Map<String, Object> fillExpectedMapWithSomeFields() {
+    Map<String, Object> expectedMap = new HashMap<>();
+    HashMap<String, String> innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    expectedMap.put("beacon", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    expectedMap.put("beaconOrganization", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("error", "PUBLIC");
+    innerMap.put("datasetAlleleResponses", "PUBLIC");
+    expectedMap.put("beaconAlleleResponse", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    expectedMap.put("beaconDataset", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("datasetId", "PUBLIC");
+    innerMap.put("exists", "PUBLIC");
+    innerMap.put("error", "PUBLIC");
+    innerMap.put("frequency", "PUBLIC");
+    innerMap.put("variantCount", "PUBLIC");
+    innerMap.put("callCount", "PUBLIC");
+    innerMap.put("sampleCount", "PUBLIC");
+    innerMap.put("note", "PUBLIC");
+    innerMap.put("externalUrl", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_non_sensitive_data", "PUBLIC");
+    expectedMap.put("datasetAlleleResponses", innerMap);
+
+    return expectedMap;
+  }
+
+  @Test
+  public void getAccessLevelsReturnError() {
+    AccessLevelResponse accessLevels = elixirBeaconService
+        .listAccessLevels(Arrays.asList("this field does not exist"), null, null, false,
+            false);
+
+    assertThat(accessLevels.getError(), notNullValue());
+    assertThat(accessLevels.getError().getErrorCode(), equalTo(ErrorCode.NOT_FOUND));
+    assertThat(accessLevels.getFields().size(), equalTo(0));
+  }
+
+  @SuppressWarnings("unchecked")
+  private void printMapInConsole(Map<String, Object> map) {
+    map.entrySet()
+//        .stream()
+        .forEach(e -> {
+          System.out.println(e.getKey() + " :");
+          ((Map<String, Object>) e.getValue())
+              .forEach((key, value) -> {
+                if (value instanceof String) {
+                  System.out.println(" - " + key + " : " + value);
+                } else if (value instanceof Map) {
+                  System.out.println(" - " + key + " :");
+                  ((Map<String, Object>) value)
+                      .entrySet()
+                      .forEach( entry -> {
+                        if(entry.getValue() instanceof String) {
+                          System.out.println("  - " + entry.getKey() + " : " + entry.getValue());
+                        } else if (entry.getValue() instanceof Map) {
+                          System.out.println("   - " + entry.getKey() + " :");
+                          ((Map<String, String>) entry.getValue())
+                              .forEach( (key2, value2) -> {
+                            System.out.println("     - " + key2 + " : " + value2);
+                          });
+                        }
+                      });
+                }
+              });
+        });
+  }
+
+  @Test
+  public void getDatasetsAccessLevels() {
+    Map<String, Object> expectedMap = fillExpectedMapForDatasets();
+
+    AccessLevelResponse accessLevels = elixirBeaconService.listAccessLevels(null, Arrays.asList("EGAD00000000001","EGAD00000000002"), null,
+        false, false);
+
+    System.out.println("************************");
+    printMapInConsole(accessLevels.getFields());
+
+    assertThat(accessLevels.getError(), nullValue());
+    assertThat(accessLevels.getFields().size(), equalTo(9));
+    assertThat(accessLevels.getFields(), hasAllEntries(expectedMap));
+    assertThat(expectedMap, hasAllEntries(accessLevels.getFields()));
+  }
+
+  private Map<String, Object> fillExpectedMapForDatasets() {
+    Map<String, Object> expectedMap = new HashMap<>();
+    HashMap<String, String> innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("name", "PUBLIC");
+    innerMap.put("apiVersion", "PUBLIC");
+    innerMap.put("organization", "PUBLIC");
+    innerMap.put("description", "PUBLIC");
+    innerMap.put("version", "PUBLIC");
+    innerMap.put("welcomeUrl", "PUBLIC");
+    innerMap.put("alternativeUrl", "PUBLIC");
+    innerMap.put("createDateTime", "PUBLIC");
+    innerMap.put("updateDateTime", "PUBLIC");
+    innerMap.put("description", "PUBLIC");
+    innerMap.put("datasets", "PUBLIC");
+    innerMap.put("sampleAlleleRequests", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    expectedMap.put("beacon", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("name", "PUBLIC");
+    innerMap.put("description", "PUBLIC");
+    innerMap.put("address", "PUBLIC");
+    innerMap.put("welcomeUrl", "PUBLIC");
+    innerMap.put("contactUrl", "PUBLIC");
+    innerMap.put("logoUrl", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    expectedMap.put("beaconOrganization", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("name", "PUBLIC");
+    innerMap.put("description", "PUBLIC");
+    innerMap.put("assemblyId", "PUBLIC");
+    innerMap.put("createDateTime", "PUBLIC");
+    innerMap.put("updateDateTime", "PUBLIC");
+    innerMap.put("version", "PUBLIC");
+    innerMap.put("variantCount", "PUBLIC");
+    innerMap.put("callCount", "PUBLIC");
+    innerMap.put("sampleCount", "PUBLIC");
+    innerMap.put("externalUrl", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("dataUseConditions", "PUBLIC");
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    expectedMap.put("beaconDataset", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("referenceName", "PUBLIC");
+    innerMap.put("start", "PUBLIC");
+    innerMap.put("end", "PUBLIC");
+    innerMap.put("startMin", "PUBLIC");
+    innerMap.put("startMax", "PUBLIC");
+    innerMap.put("endMin", "PUBLIC");
+    innerMap.put("endMax", "PUBLIC");
+    innerMap.put("referenceBases", "PUBLIC");
+    innerMap.put("alternateBases", "PUBLIC");
+    innerMap.put("variantType", "PUBLIC");
+    innerMap.put("assemblyId", "PUBLIC");
+    innerMap.put("datasetIds", "PUBLIC");
+    innerMap.put("includeDatasetResponses", "PUBLIC");
+    expectedMap.put("beaconAlleleRequest", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("beaconId", "PUBLIC");
+    innerMap.put("apiVersion", "PUBLIC");
+    innerMap.put("exists", "PUBLIC");
+    innerMap.put("error", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("datasetAlleleResponses", "PUBLIC");
+    innerMap.put("alleleRequest", "PUBLIC");
+    expectedMap.put("beaconAlleleResponse", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("datasetId", "PUBLIC");
+    innerMap.put("exists", "PUBLIC");
+    innerMap.put("error", "PUBLIC");
+    innerMap.put("frequency", "PUBLIC");
+    innerMap.put("variantCount", "PUBLIC");
+    innerMap.put("callCount", "PUBLIC");
+    innerMap.put("sampleCount", "PUBLIC");
+    innerMap.put("note", "PUBLIC");
+    innerMap.put("externalUrl", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_non_sensitive_data", "PUBLIC");
+    expectedMap.put("datasetAlleleResponses", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("errorCode", "PUBLIC");
+    innerMap.put("errorMessage", "PUBLIC");
+    expectedMap.put("beaconError", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("consentCodeDataUse", "PUBLIC");
+    innerMap.put("adamDataUse", "PUBLIC");
+    expectedMap.put("dataUseConditions", innerMap);
+
+    // Datasets
+    HashMap<String, Object> innerMap2 = new HashMap<>();
+    HashMap<String, Object> innerMap3 = new HashMap<>();
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "PUBLIC");
+    innerMap3.put("datasetAlleleResponses", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_field", "NOT_SUPPORTED");
+    innerMap3.put("beaconDataset", innerMap);
+    innerMap2.put("EGAD00000000001", innerMap3);
+
+    innerMap3 = new HashMap<>();
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "CONTROLLED");
+    innerMap3.put("datasetAlleleResponses", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_field", "NOT_SUPPORTED");
+    innerMap3.put("beaconDataset", innerMap);
+    innerMap2.put("EGAD00000000002", innerMap3);
+    expectedMap.put("datasets", innerMap2);
+
+    printMapInConsole(expectedMap);
+
+    return expectedMap;
+  }
+
+  @Test
+  public void getSomeDatasetsAccessLevels() {
+    Map<String, Object> expectedMap = fillExpectedMapForDatasetsWithSomeFields();
+
+    AccessLevelResponse accessLevels = elixirBeaconService.listAccessLevels(Arrays.asList("new_sensitive_field", "id", "info", "datasetAlleleResponses"), Arrays.asList("EGAD00000000002"), null,
+        false, false);
+
+    printMapInConsole(accessLevels.getFields());
+    System.out.println("************************");
+
+    assertThat(accessLevels.getError(), nullValue());
+    assertThat(accessLevels.getFields().size(), equalTo(6));
+    assertThat(accessLevels.getFields(), hasAllEntries(expectedMap));
+    assertThat(expectedMap, hasAllEntries(accessLevels.getFields()));
+  }
+
+  private Map<String, Object> fillExpectedMapForDatasetsWithSomeFields() {
+    Map<String, Object> expectedMap = new HashMap<>();
+    HashMap<String, String> innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    expectedMap.put("beacon", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    expectedMap.put("beaconOrganization", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    expectedMap.put("beaconDataset", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("datasetAlleleResponses", "PUBLIC");
+    expectedMap.put("beaconAlleleResponse", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("datasetId", "PUBLIC");
+    innerMap.put("exists", "PUBLIC");
+    innerMap.put("error", "PUBLIC");
+    innerMap.put("frequency", "PUBLIC");
+    innerMap.put("variantCount", "PUBLIC");
+    innerMap.put("callCount", "PUBLIC");
+    innerMap.put("sampleCount", "PUBLIC");
+    innerMap.put("note", "PUBLIC");
+    innerMap.put("externalUrl", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_non_sensitive_data", "PUBLIC");
+    expectedMap.put("datasetAlleleResponses", innerMap);
+
+    // Datasets
+    HashMap<String, Object> innerMap2 = new HashMap<>();
+    HashMap<String, Object> innerMap3 = new HashMap<>();
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "PUBLIC");
+    innerMap3.put("datasetAlleleResponses", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_field", "NOT_SUPPORTED");
+    innerMap3.put("beaconDataset", innerMap);
+    innerMap2.put("EGAD00000000001", innerMap3);
+
+    innerMap3 = new HashMap<>();
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "CONTROLLED");
+    innerMap3.put("datasetAlleleResponses", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_field", "NOT_SUPPORTED");
+    innerMap3.put("beaconDataset", innerMap);
+    innerMap2.put("EGAD00000000002", innerMap3);
+    expectedMap.put("datasets", innerMap2);
+
+    printMapInConsole(expectedMap);
+
+    return expectedMap;
+  }
+
+  @Test
+  public void getNoDatasetsAccessLevels() {
+    Map<String, Object> expectedMap = fillExpectedMapWithEmptyDatasets();
+
+    AccessLevelResponse accessLevels = elixirBeaconService.listAccessLevels(Arrays.asList("id", "info", "datasetAlleleResponses"), Arrays.asList("EGAD00000000001"), null,
+        false, false);
+
+    System.out.println("************************");
+    printMapInConsole(accessLevels.getFields());
+
+    assertThat(accessLevels.getError(), nullValue());
+    assertThat(accessLevels.getFields().size(), equalTo(6));
+    assertThat(accessLevels.getFields(), hasAllEntries(expectedMap));
+    assertThat(expectedMap, hasAllEntries(accessLevels.getFields()));
+  }
+
+  private Map<String, Object> fillExpectedMapWithEmptyDatasets() {
+    Map<String, Object> expectedMap = new HashMap<>();
+    HashMap<String, String> innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    expectedMap.put("beacon", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    expectedMap.put("beaconOrganization", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("id", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    expectedMap.put("beaconDataset", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("datasetAlleleResponses", "PUBLIC");
+    expectedMap.put("beaconAlleleResponse", innerMap);
+    innerMap = new HashMap<>();
+    innerMap.put("datasetId", "PUBLIC");
+    innerMap.put("exists", "PUBLIC");
+    innerMap.put("error", "PUBLIC");
+    innerMap.put("frequency", "PUBLIC");
+    innerMap.put("variantCount", "PUBLIC");
+    innerMap.put("callCount", "PUBLIC");
+    innerMap.put("sampleCount", "PUBLIC");
+    innerMap.put("note", "PUBLIC");
+    innerMap.put("externalUrl", "PUBLIC");
+    innerMap.put("info", "PUBLIC");
+    innerMap.put("new_sensitive_field", "REGISTERED");
+    innerMap.put("new_non_sensitive_data", "PUBLIC");
+    expectedMap.put("datasetAlleleResponses", innerMap);
+
+    // Datasets
+    HashMap<String, Object> innerMap2 = new HashMap<>();
+    expectedMap.put("datasets", innerMap2);
+
+    printMapInConsole(expectedMap);
+
+    return expectedMap;
   }
 
 }

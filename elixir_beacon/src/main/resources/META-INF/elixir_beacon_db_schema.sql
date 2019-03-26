@@ -25,6 +25,15 @@ CREATE TABLE public.beacon_dataset_table
     CONSTRAINT beacon_dataset_table_access_type_check CHECK (access_type = ANY (ARRAY['PUBLIC', 'REGISTERED', 'CONTROLLED']))
 );
 
+create table dataset_access_level_table (
+	dataset_id integer NOT NULL REFERENCES beacon_dataset_table(id),
+	parent_field text NOT NULL,
+	field text NOT NULL,
+	access_level text NOT NULL,
+	CONSTRAINT dataset_access_level_table_pkey PRIMARY KEY (dataset_id, parent_field, field),
+  CONSTRAINT dataset_access_level_table_access_level_check CHECK (access_level = ANY (ARRAY['NOT_SUPPORTED', 'PUBLIC', 'REGISTERED', 'CONTROLLED']))
+);
+
 CREATE TABLE public.beacon_data_table (
     id SERIAL NOT NULL PRIMARY KEY,
     dataset_id integer NOT NULL REFERENCES public.beacon_dataset_table (id),
@@ -180,3 +189,11 @@ INNER JOIN consent_code_table code ON code.id=dc.consent_code_id
 INNER JOIN consent_code_category_table cat ON cat.id=code.category_id
 ORDER BY dc.dataset_id, cat.id, code.id
 ;
+
+CREATE OR REPLACE VIEW public.beacon_dataset_access_level AS
+	SELECT dat.stable_id as dataset_stable_id,
+		parent_field,
+		field,
+		access_level
+	FROM dataset_access_level_table dal
+	INNER JOIN beacon_dataset_table dat ON dat.id=dal.dataset_id;

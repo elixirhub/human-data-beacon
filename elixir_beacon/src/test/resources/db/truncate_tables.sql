@@ -1,4 +1,5 @@
-TRUNCATE TABLE beacon_dataset_consent_code_table CASCADE; 
+TRUNCATE TABLE dataset_access_level_table CASCADE;
+TRUNCATE TABLE beacon_dataset_consent_code_table CASCADE;
 TRUNCATE TABLE consent_code_category_table CASCADE; 
 TRUNCATE TABLE consent_code_table CASCADE;
 TRUNCATE TABLE beacon_data_sample_table CASCADE;
