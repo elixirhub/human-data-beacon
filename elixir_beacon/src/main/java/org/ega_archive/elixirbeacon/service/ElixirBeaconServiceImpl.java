@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import javassist.NotFoundException;
@@ -15,6 +16,7 @@ import org.ega_archive.elixirbeacon.convert.Operations;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleRequest;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
+import org.ega_archive.elixirbeacon.dto.BeaconOntology;
 import org.ega_archive.elixirbeacon.dto.BeaconRequest;
 import org.ega_archive.elixirbeacon.dto.Dataset;
 import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
@@ -26,10 +28,14 @@ import org.ega_archive.elixirbeacon.enums.VariantType;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDataSummary;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDataset;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDatasetConsentCode;
+import org.ega_archive.elixirbeacon.model.elixirbeacon.OntologyTerm;
+import org.ega_archive.elixirbeacon.model.elixirbeacon.OntologyTermColumnCorrespondance;
 import org.ega_archive.elixirbeacon.properties.SampleRequests;
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconDatasetConsentCodeRepository;
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconDatasetRepository;
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconSummaryDataRepository;
+import org.ega_archive.elixirbeacon.repository.elixirbeacon.OntologyTermColumnCorrespondanceRepository;
+import org.ega_archive.elixirbeacon.repository.elixirbeacon.OntologyTermRepository;
 import org.ega_archive.elixircore.enums.DatasetAccessType;
 import org.ega_archive.elixircore.helper.CommonQuery;
 import org.ega_archive.elixircore.util.StoredProcedureUtils;
@@ -55,7 +61,10 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
   
   @Autowired
   private BeaconDatasetConsentCodeRepository beaconDatasetConsentCodeRepository;
-  
+
+  @Autowired
+  private OntologyTermColumnCorrespondanceRepository ontologyTermColumnCorrespondanceRepository;
+
   @Override
   public Beacon listDatasets(CommonQuery commonQuery, String referenceGenome)
       throws NotFoundException {
@@ -146,7 +155,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
   public BeaconAlleleResponse queryBeacon(List<String> datasetStableIds, String variantType,
       String alternateBases, String referenceBases, String chromosome, Integer start,
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
-      String referenceGenome, String includeDatasetResponses) {
+      String referenceGenome, String includeDatasetResponses, List<String> filters) {
 
     BeaconAlleleResponse result = new BeaconAlleleResponse();
     
@@ -167,19 +176,22 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
         .variantType(variantType)
         .assemblyId(referenceGenome)
         .includeDatasetResponses(FilterDatasetResponse.parse(includeDatasetResponses))
+        .filters(filters)
         .build();
     result.setAlleleRequest(request);
     
     VariantType type = VariantType.parse(variantType);
 
+    List<String> translatedFilters = new ArrayList<>();
     List<Integer> datasetIds =
         checkParams(result, datasetStableIds, type, alternateBases, referenceBases, chromosome,
-            start, startMin, startMax, end, endMin, endMax, referenceGenome);
+            start, startMin, startMax, end, endMin, endMax, referenceGenome, filters,
+            translatedFilters);
 
     boolean globalExists = false;
     if (result.getError() == null) {
       globalExists = queryDatabase(datasetIds, type, referenceBases, alternateBases, chromosome,
-          start, startMin, startMax, end, endMin, endMax, referenceGenome, result);
+          start, startMin, startMax, end, endMin, endMax, referenceGenome, translatedFilters, result);
     }
     result.setExists(globalExists);
     return result;
@@ -189,7 +201,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
   public List<Integer> checkParams(BeaconAlleleResponse result, List<String> datasetStableIds,
       VariantType type, String alternateBases, String referenceBases, String chromosome,
       Integer start, Integer startMin, Integer startMax, Integer end, Integer endMin,
-      Integer endMax, String referenceGenome) {
+      Integer endMax, String referenceGenome, List<String> filters, List<String> translatedFilters) {
 
     List<Integer> datasetIds = new ArrayList<>();
 
@@ -357,13 +369,72 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
 //      result.setError(error);
 //      return datasetIds;
 //    }
-    
+
+    if (filters != null) {
+      if (translateFilters(result, filters, translatedFilters)) {
+        return datasetIds;
+      }
+      log.debug("Filters: {}", translatedFilters);
+    }
+
     return datasetIds;
+  }
+
+  private boolean translateFilters(BeaconAlleleResponse result, List<String> filters,
+      List<String> translatedFilters) {
+
+    // PATO:0000383,HP:0011007=>49,EFO:0009656
+
+    for (String filter : filters) {
+      // Remove spaces before, between or after words
+      filter = filter.replaceAll("\\s+", "");
+      String[] tokens = filter.split(":");
+      String ontology = tokens[0];
+      String term = tokens[1];
+      String value = null;
+
+      String filterOperators = "\\d(<=|>=|=|<|>)\\d";
+      Pattern p = Pattern.compile(filterOperators);   // the pattern to search for
+      Matcher m = p.matcher(term);
+      String operator = "="; // Default operator
+      if (m.find()) {
+        operator = m.group(1);
+        String[] operationTokens = term.split("(<=|>=|=|<|>)");
+        term = operationTokens[0];
+        value = operationTokens[1];
+      }
+      // Search this ontology and term in the DB
+      OntologyTermColumnCorrespondance ontologyTerm = ontologyTermColumnCorrespondanceRepository
+          .findByOntologyAndTerm(ontology, term);
+      if (ontologyTerm == null) {
+        Error error = Error.builder()
+            .errorCode(ErrorCode.GENERIC_ERROR)
+            .message("Ontology (" + ontology + ") and/or term (" + term
+                + ") not known in this Beacon. Remember that only the following operators are accepted in some terms (e.g. age_of_onset): "
+                + "<=, >=, =, <, >")
+            .build();
+        result.setError(error);
+        return true;
+      }
+      if (StringUtils.isNotEmpty(ontologyTerm.getSampleTableColumnValue())) {
+        value = ontologyTerm.getSampleTableColumnValue();
+      }
+      try {
+        Integer.parseInt(value);
+      } catch(NumberFormatException e) {
+        // It's not an Integer -> surround with '
+        value = "'" + value + "'";
+      }
+      value = operator + value;
+//      log.debug("Value: {}", value);
+      translatedFilters.add(ontologyTerm.getSampleTableColumnName() + value);
+    }
+    return false;
   }
 
   private boolean queryDatabase(List<Integer> datasetIds, VariantType type, String referenceBases,
       String alternateBases, String chromosome, Integer start, Integer startMin, Integer startMax,
-      Integer end, Integer endMin, Integer endMax, String referenceGenome,
+      Integer end, Integer endMin, Integer endMax, String referenceGenome, List<String> translatedFilters,
       BeaconAlleleResponse result) {
 
     if (datasetIds == null || datasetIds.isEmpty()) {
@@ -377,13 +448,17 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
     log.debug(
         "Calling query with params: variantType={}, start={}, startMin={}, startMax={}, end={}, "
             + "endMin={}, endMax={}, chrom={}, reference={}, alternate={}, assemlbyId={}, "
-            + "datasetIds={}", variantType, start, startMin, startMax, end, endMin, endMax,
-        chromosome, referenceBases, alternateBases, referenceGenome, datasetIds);
+            + "datasetIds={}, filters={}", variantType, start, startMin, startMax, end, endMin, endMax,
+        chromosome, referenceBases, alternateBases, referenceGenome, datasetIds, translatedFilters);
 
+    String filters = null;
+    if (translatedFilters != null && !translatedFilters.isEmpty()) {
+      filters = StoredProcedureUtils.joinArrayOfString(translatedFilters, " AND ");
+    }
     List<BeaconDataSummary> dataList = beaconDataRepository
         .searchForVariantsQuery(variantType, start,
             startMin, startMax, end, endMin, endMax, chromosome, referenceBases, alternateBases,
-            referenceGenome, StoredProcedureUtils.joinArray(datasetIds));
+            referenceGenome, StoredProcedureUtils.joinArrayOfInteger(datasetIds), filters);
     numResults = dataList.size();
     globalExists = numResults > 0;
 
@@ -439,7 +514,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
         request.getAlternateBases(), request.getReferenceBases(), request.getReferenceName(),
         request.getStart(), request.getStartMin(), request.getStartMax(), request.getEnd(),
         request.getEndMin(), request.getEndMax(), request.getAssemblyId(),
-        request.getIncludeDatasetResponses());
+        request.getIncludeDatasetResponses(), request.getFilters());
   }
 
 }

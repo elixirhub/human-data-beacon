@@ -57,5 +57,6 @@ public class ParamName {
   public static final String VARIANT_TYPE = "varianttype";
   public static final String BEACON_REFERENCE_GENOME = "assemblyid";
   public static final String BEACON_INCLUDE_DATASET_RESPONSES = "includedatasetresponses";
+  public static final String BEACON_FILTERS = "filters";
 
 }

@@ -1,6 +1,8 @@
 DROP VIEW IF EXISTS public.beacon_data_summary;
 DROP VIEW IF EXISTS public.beacon_dataset;
 DROP VIEW IF EXISTS public.beacon_dataset_consent_code;
+DROP VIEW IF EXISTS public.ontology_term;
+DROP VIEW IF EXISTS public.ontology_term_column_correspondance;
 DROP TABLE IF EXISTS public.beacon_dataset_consent_code_table CASCADE;
 DROP TABLE IF EXISTS public.consent_code_table;
 DROP TABLE IF EXISTS public.consent_code_category_table;
@@ -11,6 +13,7 @@ DROP TABLE IF EXISTS public.beacon_dataset_sample_table CASCADE;
 DROP TABLE IF EXISTS public.beacon_data_table;
 DROP TABLE IF EXISTS public.beacon_sample_table;
 DROP TABLE IF EXISTS public.beacon_dataset_table;
+DROP TABLE IF EXISTS public.ontology_term_table;
 
 CREATE TABLE public.beacon_dataset_table
 (
@@ -60,6 +63,15 @@ CREATE TABLE public.beacon_data_sample_table (
 	data_id int NOT NULL REFERENCES beacon_data_table(id),
 	sample_id int NOT NULL REFERENCES beacon_sample_table(id),
 	PRIMARY KEY (data_id, sample_id)
+);
+
+CREATE TABLE ontology_term_table(
+	id serial NOT NULL PRIMARY KEY,
+	ontology TEXT NOT NULL,
+	term TEXT NOT NULL,
+	sample_table_column_name TEXT NOT NULL,
+	sample_table_column_value TEXT,
+	additional_comments TEXT
 );
 
 -- Temporary table for loading data into beacon_data_sample_table
@@ -180,3 +192,11 @@ INNER JOIN consent_code_table code ON code.id=dc.consent_code_id
 INNER JOIN consent_code_category_table cat ON cat.id=code.category_id
 ORDER BY dc.dataset_id, cat.id, code.id
 ;
+
+CREATE OR REPLACE VIEW ontology_term AS
+SELECT id, ontology, term
+FROM ontology_term_table;
+
+CREATE OR REPLACE VIEW ontology_term_column_correspondance AS
+SELECT id, ontology, term, sample_table_column_name, sample_table_column_value, additional_comments
+FROM ontology_term_table;

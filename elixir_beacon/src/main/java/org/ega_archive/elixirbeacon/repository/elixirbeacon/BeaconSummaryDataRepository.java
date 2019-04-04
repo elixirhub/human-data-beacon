@@ -24,7 +24,8 @@ public interface BeaconSummaryDataRepository extends
       + "CAST(:_reference_bases AS text), "
       + "CAST(:_alternate_bases AS text), "
       + "CAST(:_reference_genome AS text), "
-      + "CAST(:_dataset_ids AS text))", nativeQuery = true)
+      + "CAST(:_dataset_ids AS text),"
+      + "CAST(:_filters AS text))", nativeQuery = true)
   @Transactional(transactionManager = "elixirbeaconTransactionManager", readOnly = true)
   List<BeaconDataSummary> searchForVariantsQuery(
       @Param("_variant_type") String variantType,
@@ -38,6 +39,7 @@ public interface BeaconSummaryDataRepository extends
       @Param("_reference_bases") String refBases,
       @Param("_alternate_bases") String altBases,
       @Param("_reference_genome") String refGenome,
-      @Param("_dataset_ids") String datasetIds);
+      @Param("_dataset_ids") String datasetIds,
+      @Param("_filters") String translatedFilters);
 
 }

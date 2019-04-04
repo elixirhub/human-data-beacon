@@ -39,4 +39,6 @@ public class BeaconRequest {
   
   private String includeDatasetResponses;
 
+  private List<String> filters;
+
 }

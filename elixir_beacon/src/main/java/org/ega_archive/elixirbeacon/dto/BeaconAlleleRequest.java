@@ -121,4 +121,6 @@ public class BeaconAlleleRequest {
    */
   private FilterDatasetResponse includeDatasetResponses;
 
+  private List<String> filters;
+
 }
