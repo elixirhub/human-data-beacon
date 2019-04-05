@@ -2,6 +2,8 @@ package org.ega_archive.elixirbeacon.service;
 
 import java.util.List;
 import javassist.NotFoundException;
+
+import org.ega_archive.elixirbeacon.dto.AccessLevelResponse;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.BeaconOntology;
@@ -24,7 +26,7 @@ public interface ElixirBeaconService {
    * @return
    * @throws NotFoundException 
    */
-  public Beacon listDatasets(CommonQuery commonQuery, String referenceGenome) throws NotFoundException;
+  Beacon listDatasets(CommonQuery commonQuery, String referenceGenome) throws NotFoundException;
 
   /**
    * Executes the query against the beacon and basically answers yes or no.
@@ -43,7 +45,7 @@ public interface ElixirBeaconService {
    * @param includeDatasetResponses
    * @return
    */
-  public BeaconAlleleResponse queryBeacon(List<String> datasetStableIds, String variantType,
+  BeaconAlleleResponse queryBeacon(List<String> datasetStableIds, String variantType,
       String alternateBases, String referenceBases, String chromosome, Integer start,
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
       String referenceGenome, String includeDatasetResponses, List<String> filters);
@@ -61,11 +63,15 @@ public interface ElixirBeaconService {
    * @param referenceGenome
    * @return
    */
-  public List<Integer> checkParams(BeaconAlleleResponse result, List<String> datasetStableIds,
+  List<Integer> checkParams(BeaconAlleleResponse result, List<String> datasetStableIds,
       VariantType type, String alternateBases, String referenceBases, String chromosome,
       Integer start, Integer startMin, Integer startMax, Integer end, Integer endMin,
       Integer endMax, String referenceGenome, List<String> filters, List<String> translatedFilters);
 
-  public BeaconAlleleResponse queryBeacon(BeaconRequest request);
+  BeaconAlleleResponse queryBeacon(BeaconRequest request);
+
+  AccessLevelResponse listAccessLevels(List<String> fields,
+      List<String> datasetStableIds, String level, boolean showSummary,
+      boolean includeDatasetDetails);
 
 }

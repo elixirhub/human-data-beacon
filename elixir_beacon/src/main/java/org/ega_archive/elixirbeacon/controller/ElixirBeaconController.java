@@ -3,6 +3,7 @@ package org.ega_archive.elixirbeacon.controller;
 import java.util.List;
 import java.util.Map;
 
+import org.ega_archive.elixirbeacon.dto.AccessLevelResponse;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.BeaconOntology;
@@ -62,6 +63,18 @@ public class ElixirBeaconController {
   public BeaconAlleleResponse queryBeaconPost(@RequestBody BeaconRequest request) {
 
     return elixirBeaconService.queryBeacon(request);
+  }
+
+  @GetMapping(value = "/access_levels")
+  public AccessLevelResponse getAccessLevels(
+      @RequestParam(value = "fields", required = false) List<String> fields,
+      @RequestParam(value = ParamName.BEACON_DATASET_IDS, required = false) List<String> datasetStableIds,
+      @RequestParam(value = "level", required = false) String level,
+      @RequestParam(value = "includefielddetails", required = false, defaultValue = "false") boolean includeFieldDetails,
+      @RequestParam(value = "includedatasetdetails", required = false, defaultValue = "false") boolean includeDatasetDetails
+  ) {
+
+    return elixirBeaconService.listAccessLevels(fields, datasetStableIds, level, includeFieldDetails, includeDatasetDetails);
   }
 
 }

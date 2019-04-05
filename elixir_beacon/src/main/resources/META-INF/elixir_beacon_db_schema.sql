@@ -28,6 +28,15 @@ CREATE TABLE public.beacon_dataset_table
     CONSTRAINT beacon_dataset_table_access_type_check CHECK (access_type = ANY (ARRAY['PUBLIC', 'REGISTERED', 'CONTROLLED']))
 );
 
+create table dataset_access_level_table (
+	dataset_id integer NOT NULL REFERENCES beacon_dataset_table(id),
+	parent_field text NOT NULL,
+	field text NOT NULL,
+	access_level text NOT NULL,
+	CONSTRAINT dataset_access_level_table_pkey PRIMARY KEY (dataset_id, parent_field, field),
+  CONSTRAINT dataset_access_level_table_access_level_check CHECK (access_level = ANY (ARRAY['NOT_SUPPORTED', 'PUBLIC', 'REGISTERED', 'CONTROLLED']))
+);
+
 CREATE TABLE public.beacon_data_table (
     id SERIAL NOT NULL PRIMARY KEY,
     dataset_id integer NOT NULL REFERENCES public.beacon_dataset_table (id),
@@ -161,8 +170,7 @@ SELECT dat.id AS dataset_id,
 FROM beacon_data_table d
 INNER JOIN beacon_dataset_table dat ON dat.id = d.dataset_id
 LEFT JOIN beacon_data_sample_table d_sam ON d_sam.data_id=d.id
-GROUP BY dat.id, d.variant_cnt, d.call_cnt, d.sample_cnt, d.frequency
-;
+GROUP BY dat.id, d.variant_cnt, d.call_cnt, d.sample_cnt, d.frequency;
 
 CREATE OR REPLACE VIEW beacon_dataset AS
 	SELECT
@@ -177,7 +185,6 @@ CREATE OR REPLACE VIEW beacon_dataset AS
 	FROM beacon_dataset_table d
 	WHERE (d.access_type = ANY (ARRAY['PUBLIC', 'REGISTERED', 'CONTROLLED']))
     AND d.variant_cnt > 0 AND d.reference_genome != '';
-;
 
 CREATE OR REPLACE VIEW beacon_dataset_consent_code AS
 SELECT dc.dataset_id,
@@ -190,8 +197,7 @@ SELECT dc.dataset_id,
 FROM beacon_dataset_consent_code_table dc
 INNER JOIN consent_code_table code ON code.id=dc.consent_code_id
 INNER JOIN consent_code_category_table cat ON cat.id=code.category_id
-ORDER BY dc.dataset_id, cat.id, code.id
-;
+ORDER BY dc.dataset_id, cat.id, code.id;
 
 CREATE OR REPLACE VIEW ontology_term AS
 SELECT id, ontology, term
@@ -200,3 +206,11 @@ FROM ontology_term_table;
 CREATE OR REPLACE VIEW ontology_term_column_correspondance AS
 SELECT id, ontology, term, sample_table_column_name, sample_table_column_value, additional_comments
 FROM ontology_term_table;
+
+CREATE OR REPLACE VIEW public.beacon_dataset_access_level AS
+	SELECT dat.stable_id as dataset_stable_id,
+		parent_field,
+		field,
+		access_level
+	FROM dataset_access_level_table dal
+	INNER JOIN beacon_dataset_table dat ON dat.id=dal.dataset_id;
