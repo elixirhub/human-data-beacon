@@ -16,7 +16,6 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/beacon")
 public class BeaconAccessLevelController {
 
-  //  @Autowired
   private BeaconAccessLevelService beaconAccessLevelService;
 
   public BeaconAccessLevelController(BeaconAccessLevelService beaconAccessLevelService) {
