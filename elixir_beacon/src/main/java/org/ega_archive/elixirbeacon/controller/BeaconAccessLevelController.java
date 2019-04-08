@@ -25,11 +25,11 @@ public class BeaconAccessLevelController {
 
   @GetMapping(value = "/access_levels")
   public AccessLevelResponse getAccessLevels(
-      @RequestParam(value = "fields", required = false) List<String> fields,
+      @RequestParam(value = ParamName.BEACON_FIELDS, required = false) List<String> fields,
       @RequestParam(value = ParamName.BEACON_DATASET_IDS, required = false) List<String> datasetStableIds,
-      @RequestParam(value = "level", required = false) String level,
-      @RequestParam(value = "includefielddetails", required = false, defaultValue = "false") boolean includeFieldDetails,
-      @RequestParam(value = "includedatasetdetails", required = false, defaultValue = "false") boolean includeDatasetDetails
+      @RequestParam(value = ParamName.BEACON_LEVEL, required = false) String level,
+      @RequestParam(value = ParamName.BEACON_INCLUDE_FIELD_DETAILS, required = false, defaultValue = "false") boolean includeFieldDetails,
+      @RequestParam(value = ParamName.BEACON_INCLUDE_DATASET_DETAILS, required = false, defaultValue = "false") boolean includeDatasetDetails
   ) {
 
     return beaconAccessLevelService.listAccessLevels(fields, datasetStableIds, level, includeFieldDetails, includeDatasetDetails);
