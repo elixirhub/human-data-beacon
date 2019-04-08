@@ -65,16 +65,4 @@ public class ElixirBeaconController {
     return elixirBeaconService.queryBeacon(request);
   }
 
-  @GetMapping(value = "/access_levels")
-  public AccessLevelResponse getAccessLevels(
-      @RequestParam(value = "fields", required = false) List<String> fields,
-      @RequestParam(value = ParamName.BEACON_DATASET_IDS, required = false) List<String> datasetStableIds,
-      @RequestParam(value = "level", required = false) String level,
-      @RequestParam(value = "includefielddetails", required = false, defaultValue = "false") boolean includeFieldDetails,
-      @RequestParam(value = "includedatasetdetails", required = false, defaultValue = "false") boolean includeDatasetDetails
-  ) {
-
-    return elixirBeaconService.listAccessLevels(fields, datasetStableIds, level, includeFieldDetails, includeDatasetDetails);
-  }
-
 }

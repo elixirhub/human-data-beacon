@@ -70,8 +70,4 @@ public interface ElixirBeaconService {
 
   BeaconAlleleResponse queryBeacon(BeaconRequest request);
 
-  AccessLevelResponse listAccessLevels(List<String> fields,
-      List<String> datasetStableIds, String level, boolean showSummary,
-      boolean includeDatasetDetails);
-
 }
