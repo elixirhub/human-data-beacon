@@ -18,4 +18,6 @@ public class VariantAnnotation {
 
   private List<KeyValuePair> info;
 
+  private List<Handover> variantHandover;
+
 }

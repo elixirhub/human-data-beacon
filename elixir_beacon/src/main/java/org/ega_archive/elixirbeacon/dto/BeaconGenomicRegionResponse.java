@@ -29,7 +29,7 @@ public class BeaconGenomicRegionResponse {
    */
   private Error error;
 
-  // Allele request as interpreted by the beacon.
+  // Region request as interpreted by the beacon.
   private BeaconGenomicRegionRequest request;
 
   // Version of the API provided by the beacon.
@@ -38,5 +38,7 @@ public class BeaconGenomicRegionResponse {
   private List<VariantAnnotation> variantAnnotation;
 
   private List<KeyValuePair> info;
+
+  private List<Handover> beaconHandover;
 
 }

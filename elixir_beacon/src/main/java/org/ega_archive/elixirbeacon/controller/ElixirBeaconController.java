@@ -48,8 +48,7 @@ public class ElixirBeaconController {
       @RequestParam(value = ParamName.VARIANT_TYPE, required = false) String variantType,
       @RequestParam(value = ParamName.BEACON_REFERENCE_GENOME, required = false) String referenceGenome,
       @RequestParam(value = ParamName.BEACON_INCLUDE_DATASET_RESPONSES, required = false) String includeDatasetResponses,
-      @RequestParam(value = ParamName.BEACON_FILTERS, required = false) List<String> filters,
-      @RequestParam(value = "auth", required = false) String auth) {
+      @RequestParam(value = ParamName.BEACON_FILTERS, required = false) List<String> filters) {
 
     return elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases, referenceBases,
         chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
