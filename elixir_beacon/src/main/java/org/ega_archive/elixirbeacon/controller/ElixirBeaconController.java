@@ -57,7 +57,7 @@ public class ElixirBeaconController {
   }
   
   @PostMapping(value = "/query")
-  public BeaconAlleleResponse queryBeaconPost(@RequestBody BeaconRequest request) {
+  public Object queryBeaconPost(@RequestBody BeaconRequest request) {
 
     return elixirBeaconService.queryBeacon(request);
   }
