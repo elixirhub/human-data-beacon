@@ -16,7 +16,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
-@Primary
 @Service
 public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
 
@@ -34,11 +33,11 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
       String alternateBases, String referenceBases, String chromosome, Integer start,
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
       String referenceGenome, String includeDatasetResponses, List<String> filters) {
-
+	  
     if (StringUtils.isNotBlank(alternateBases) && StringUtils.isNotBlank(referenceBases)
         && StringUtils.isNotBlank(chromosome) && start != null && StringUtils.isBlank(variantType)
         && end == null && startMin == null && startMax == null && endMin == null && endMax == null) {
-
+    	
       return genomicQuery
           .queryBeaconGenomicSnp(datasetStableIds, alternateBases, referenceBases, chromosome,
               start, referenceGenome, includeDatasetResponses, filters);

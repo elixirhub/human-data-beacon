@@ -185,13 +185,23 @@
 			<version>2.8.5</version>
 		</dependency>
 
+		<!--  csvs specific client -->
 		<dependency>
 			<groupId>org.babelomics.csvs</groupId>
 			<artifactId>csvs-lib</artifactId>
 			<version>1.1.0</version>
+		</dependency>		
+		<!-- opencga backend -->
+		<dependency>
+			<groupId>org.opencb.opencga</groupId>
+			<artifactId>opencga-client</artifactId>
+			<version>1.3.8</version>
 		</dependency>
-
-
+		<dependency>
+			<groupId>org.opencb.opencga</groupId>
+			<artifactId>opencga-catalog</artifactId>
+			<version>1.3.8</version>
+		</dependency>
 	</dependencies>
 
 	<build>
