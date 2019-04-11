@@ -1,10 +1,9 @@
-
-
-
-
-
-
-
+# Pending to finish v1.1.0
+* Implement handover
+* Change format of `info` field
+* Implement fusions
+* Update README.md
+* Review [milestone v1.1.0](https://github.com/ga4gh-beacon/specification/milestone/7)
 
 # Table of contents    
 
