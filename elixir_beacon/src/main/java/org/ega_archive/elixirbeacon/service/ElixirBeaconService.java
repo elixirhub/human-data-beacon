@@ -68,6 +68,6 @@ public interface ElixirBeaconService {
       Integer start, Integer startMin, Integer startMax, Integer end, Integer endMin,
       Integer endMax, String referenceGenome, List<String> filters, List<String> translatedFilters);
 
-  BeaconAlleleResponse queryBeacon(BeaconRequest request);
+  Object queryBeacon(BeaconRequest request);
 
 }

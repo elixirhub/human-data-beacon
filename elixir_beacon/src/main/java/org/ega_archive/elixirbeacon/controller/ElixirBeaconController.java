@@ -2,9 +2,8 @@ package org.ega_archive.elixirbeacon.controller;
 
 import java.util.List;
 import java.util.Map;
-import javassist.NotFoundException;
+
 import org.ega_archive.elixirbeacon.dto.Beacon;
-import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.BeaconRequest;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixircore.constant.ParamName;
@@ -17,6 +16,8 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+
+import javassist.NotFoundException;
 
 @RestController
 @RequestMapping("/beacon")
@@ -56,7 +57,7 @@ public class ElixirBeaconController {
 	}
 
 	@PostMapping(value = "/query")
-	public BeaconAlleleResponse queryBeaconPost(@RequestBody BeaconRequest request) {
+	public Object queryBeaconPost(@RequestBody BeaconRequest request) {
 
 		return elixirBeaconService.queryBeacon(request);
 	}

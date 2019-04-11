@@ -17,6 +17,7 @@ import org.apache.commons.lang3.StringUtils;
 import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpResponse;
 import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.KeyValuePair;
+import org.ega_archive.elixirbeacon.service.BeaconGenomicRegionResponse;
 import org.ega_archive.elixirbeacon.service.GenomicQuery;
 import org.ega_archive.elixircore.dto.Base;
 import org.ega_archive.elixircore.event.sender.RestEventSender;
@@ -216,6 +217,14 @@ public class OpencgaGenomicQueryImpl implements GenomicQuery {
 //					"Exception deserializing object: " + (String) response.getBody() + "\n" + var14.getMessage());
 //		}		
 
+	}
+
+	@Override
+	public BeaconGenomicRegionResponse queryBeaconGenomicRegion(List<String> datasetStableIds, String referenceBases,
+			String chromosome, Integer start, Integer end, String referenceGenome, String includeDatasetResponses,
+			List<String> filters) {
+		// TODO Auto-generated method stub
+		return null;
 	}
 
 }

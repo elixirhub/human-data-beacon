@@ -1,6 +1,5 @@
 package org.ega_archive.elixirbeacon.dto;
 
-import java.util.ArrayList;
 import java.util.List;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -12,7 +11,7 @@ import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class BeaconGenomicSnpResponse {
+public class BeaconGenomicRegionResponse {
 
   // Identifier of the beacon, as defined in `Beacon`.
   private String beaconId = BeaconConstants.BEACON_ID;
@@ -31,15 +30,12 @@ public class BeaconGenomicSnpResponse {
   private Error error;
 
   // Allele request as interpreted by the beacon.
-  private BeaconGenomicSnpRequest request;
+  private BeaconGenomicRegionRequest request;
 
   // Version of the API provided by the beacon.
   private String apiVersion = BeaconConstants.API;
 
-  // Indicator of whether the beacon has observed the allele.
-  // This should be non-null if `includeDatasetResponses` in the corresponding
-  // `BeaconAlleleRequest` is not `NONE`, and null otherwise.
-  private List<DatasetAlleleResponse> datasetAlleleResponses;
+  private List<VariantAnnotation> variantAnnotation;
 
   private List<KeyValuePair> info;
 

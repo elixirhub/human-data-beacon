@@ -1,54 +1,79 @@
 package org.ega_archive.elixirbeacon.service.csvs;
 
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
-import java.util.StringJoiner;
+import java.util.Optional;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.babelomics.csvs.lib.models.DiseaseCount;
 import org.babelomics.csvs.lib.models.Variant;
 import org.babelomics.csvs.lib.ws.QueryResponse;
+import org.ega_archive.elixirbeacon.dto.BeaconGenomicRegionResponse;
+import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpRequest;
 import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpResponse;
+import org.ega_archive.elixirbeacon.dto.KeyValuePair;
 import org.ega_archive.elixirbeacon.service.GenomicQuery;
-import org.ega_archive.elixircore.dto.Base;
-import org.ega_archive.elixircore.event.sender.RestEventSender;
-import org.ega_archive.elixircore.exception.RestRuntimeException;
-import org.ega_archive.elixircore.exception.ServerDownException;
+import org.ega_archive.elixirbeacon.utils.ParseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Primary;
-import org.springframework.http.HttpEntity;
-import org.springframework.http.HttpMethod;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
-import org.springframework.web.client.ResourceAccessException;
-import org.springframework.web.client.RestTemplate;
 
 @Slf4j
 @Service
 public class GenomicQueryImpl implements GenomicQuery {
 
 	@Autowired
-	private ObjectMapper objectMapper;
-
-	@Autowired
-	private RestTemplate restTemplate;
-
-	@Autowired
-	private RestEventSender restEventSender;
+	private ParseResponse parseResponse;
 
 	@Override
 	public BeaconGenomicSnpResponse queryBeaconGenomicSnp(List<String> datasetStableIds, String alternateBases,
 			String referenceBases, String chromosome, Integer start, String referenceGenome,
 			String includeDatasetResponses, List<String> filters) {
 
-		// TODO: check referenceGenome is GRCh37
+		// TODO: check referenceGenome is GRCh37 -> do it in checkParams
 		// TODO: Add new endpoint to CSVS to return variants by dataset and use it here
+		// TODO: Move all URLs to the properties file
+
+		List<KeyValuePair> info = findRegionVariants(chromosome, start, start + 1, referenceBases, alternateBases,
+				datasetStableIds, filters);
+
+		BeaconGenomicSnpResponse beaconGenomicSnpResponse = new BeaconGenomicSnpResponse();
+		beaconGenomicSnpResponse.setExists(findVariantCount(info));
+		// TODO: fill the request
+		BeaconGenomicSnpRequest request = new BeaconGenomicSnpRequest();
+		beaconGenomicSnpResponse.setRequest(request);
+		beaconGenomicSnpResponse.setInfo(info);
+		return beaconGenomicSnpResponse;
+	}
+
+	@Override
+	public BeaconGenomicRegionResponse queryBeaconGenomicRegion(List<String> datasetStableIds, String referenceBases,
+			String chromosome, Integer start, Integer end, String referenceGenome, String includeDatasetResponses,
+			List<String> filters) {
+
+		List<KeyValuePair> info = findRegionVariants(chromosome, start, end, referenceBases, null, datasetStableIds,
+				filters);
+
+		BeaconGenomicRegionResponse response = new BeaconGenomicRegionResponse();
+		// TODO: fill the request
+		response.setExists(findVariantCount(info));
+		response.setInfo(info);
+		return response;
+	}
+
+	private boolean findVariantCount(List<KeyValuePair> info) {
+		Optional<Integer> variantCount = info.stream()
+				.filter(v -> StringUtils.equalsIgnoreCase(v.getKey(), "variantCount"))
+				.map(v -> Integer.parseInt(v.getValue())).findFirst();
+		return variantCount.isPresent() && variantCount.get() > 0;
+	}
+
+	private List<KeyValuePair> findRegionVariants(String chromosome, Integer start, Integer end, String referenceBases,
+			String alternateBases, List<String> datasetStableIds, List<String> filters) {
 
 		String technologyFilter = null;
 		if (null != filters) {
-
+			// TODO: load this data to the ontology table and check it
 			String technologyFilterValues = filters.stream().filter(filter -> filter.startsWith("myDictionary"))
 					.map(filter -> filter.split(":", 2)[1]).collect(Collectors.joining(","));
 			technologyFilter = StringUtils.isNotBlank(technologyFilterValues)
@@ -57,7 +82,7 @@ public class GenomicQueryImpl implements GenomicQuery {
 		}
 
 		String url = "http://csvs.clinbioinfosspa.es:8080/csvs/rest/variants/fetch?regions=";
-		url = url + chromosome + ":" + start + "-" + (start + 1); // + referenceBases + ":" + alternateBases + "/get";
+		url = url + chromosome + ":" + start + "-" + end;
 
 		if (datasetStableIds != null && !datasetStableIds.isEmpty()) {
 			url += "&diseases=" + String.join(",", datasetStableIds);
@@ -67,45 +92,54 @@ public class GenomicQueryImpl implements GenomicQuery {
 		}
 
 		log.debug("url {}", url);
+		QueryResponse<Variant> variantQueryResponse = parseResponse.parseCsvsResponse(url, Variant.class);
+		log.debug("response: {}", variantQueryResponse);
 
-		ResponseEntity response = null;
+		boolean isRegionQuery = StringUtils.isBlank(alternateBases) && end != null;
 
-		try {
-			response = this.restTemplate.exchange(url, HttpMethod.GET, new HttpEntity(null, null), String.class,
-					new Object[0]);
-		} catch (ResourceAccessException var15) {
-			throw new ServerDownException(var15.getMessage());
-		}
-
-		JavaType type = this.objectMapper.getTypeFactory().constructParametricType(QueryResponse.class,
-				new Class[] { Variant.class });
-		QueryResponse basicDTO = null;
-
-		try {
-			basicDTO = (QueryResponse) this.objectMapper.readValue((String) response.getBody(), type);
-//      return basicDTO;
-		} catch (IOException var14) {
-			throw new RestRuntimeException("500",
-					"Exception deserializing object: " + (String) response.getBody() + "\n" + var14.getMessage());
-		}
-		log.debug("response: {}", basicDTO);
-		BeaconGenomicSnpResponse beaconGenomicSnpResponse = new BeaconGenomicSnpResponse();
-		boolean exists = basicDTO.getNumTotalResults() > 0 && basicDTO.getResult() != null
-				&& basicDTO.getResult().get(0) != null;
-		boolean finalExist = false;
+		boolean exists = variantQueryResponse.getNumTotalResults() > 0 && variantQueryResponse.getResult() != null
+				&& variantQueryResponse.getResult().get(0) != null;
+		List<KeyValuePair> info = new ArrayList<>();
+		int numVariants = 0;
 		if (exists) {
-			List<Variant> result = basicDTO.getResult();
+			List<Variant> result = variantQueryResponse.getResult();
 			for (Variant variant : result) {
-				if (StringUtils.equalsIgnoreCase(variant.getReference(), referenceBases)
-						&& StringUtils.equalsIgnoreCase(variant.getAlternate(), alternateBases)) {
-					finalExist = true;
+				if (checkParameters(referenceBases, variant.getReference(), alternateBases, variant.getAlternate(),
+						isRegionQuery)) {
+					numVariants++;
 
-					break;
+					DiseaseCount stats = variant.getStats();
+					info.add(new KeyValuePair("0/0", String.valueOf(stats.getGt00())));
+					info.add(new KeyValuePair("0/1", String.valueOf(stats.getGt01())));
+					info.add(new KeyValuePair("1/1", String.valueOf(stats.getGt11())));
+					info.add(new KeyValuePair("./.", String.valueOf(stats.getGtmissing())));
+					info.add(new KeyValuePair("0 Freq", String.valueOf(stats.getRefFreq())));
+					info.add(new KeyValuePair("1 Freq", String.valueOf(stats.getAltFreq())));
+					info.add(new KeyValuePair("MAF", String.valueOf(stats.getMaf())));
+					// TODO: consider if we should show this info
+//          info.add(new KeyValuePair("Num sample regions", String.valueOf(stats.getSumSampleRegions())));
+//          info.add(new KeyValuePair("Total GTs", String.valueOf(stats.getTotalGts())));
 				}
 			}
 		}
-		beaconGenomicSnpResponse.setExists(finalExist);
-		return beaconGenomicSnpResponse;
+		if (numVariants > 1) {
+			info = new ArrayList<>();
+		}
+		if (numVariants > 0) {
+			info.add(new KeyValuePair("variantCount", String.valueOf(numVariants)));
+		}
+		return info;
+	}
+
+	private boolean checkParameters(String referenceBases, String reference, String alternateBases, String alternate,
+			boolean isRegionQuery) {
+		if (isRegionQuery) {
+			return StringUtils.isBlank(referenceBases) || StringUtils.equalsIgnoreCase(referenceBases, reference);
+		} else {
+			return StringUtils.equalsIgnoreCase(referenceBases, reference)
+					&& (StringUtils.equalsIgnoreCase(alternateBases, "N")
+							|| StringUtils.equalsIgnoreCase(alternateBases, alternate));
+		}
 	}
 
 }
