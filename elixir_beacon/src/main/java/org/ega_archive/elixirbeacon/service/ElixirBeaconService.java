@@ -45,7 +45,7 @@ public interface ElixirBeaconService {
    * @param includeDatasetResponses
    * @return
    */
-  BeaconAlleleResponse queryBeacon(List<String> datasetStableIds, String variantType,
+  Object queryBeacon(List<String> datasetStableIds, String variantType,
       String alternateBases, String referenceBases, String chromosome, Integer start,
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
       String referenceGenome, String includeDatasetResponses, List<String> filters);

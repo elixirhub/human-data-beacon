@@ -2,11 +2,9 @@ package org.ega_archive.elixirbeacon.controller;
 
 import java.util.List;
 import java.util.Map;
-
-import org.ega_archive.elixirbeacon.dto.AccessLevelResponse;
+import javassist.NotFoundException;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconOntology;
 import org.ega_archive.elixirbeacon.dto.BeaconRequest;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixircore.constant.ParamName;
@@ -20,15 +18,13 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import javassist.NotFoundException;
-
 @RestController
 @RequestMapping("/beacon")
 public class ElixirBeaconController {
 
   @Autowired
   private ElixirBeaconService elixirBeaconService;
-  
+
   @GetMapping(value = "/")
   public Beacon listDatasets(
       Sort sort, 
@@ -38,7 +34,7 @@ public class ElixirBeaconController {
   }
 
   @GetMapping(value = "/query")
-  public BeaconAlleleResponse queryBeacon(
+  public Object queryBeacon(
       @RequestParam(value = ParamName.BEACON_DATASET_IDS, required = false) List<String> datasetStableIds, 
       @RequestParam(value = ParamName.BEACON_ALTERNATE_BASES, required = false) String alternateBases, 
       @RequestParam(value = ParamName.BEACON_REFERENCE_BASES, required = false) String referenceBases,
@@ -52,7 +48,8 @@ public class ElixirBeaconController {
       @RequestParam(value = ParamName.VARIANT_TYPE, required = false) String variantType,
       @RequestParam(value = ParamName.BEACON_REFERENCE_GENOME, required = false) String referenceGenome,
       @RequestParam(value = ParamName.BEACON_INCLUDE_DATASET_RESPONSES, required = false) String includeDatasetResponses,
-      @RequestParam(value = ParamName.BEACON_FILTERS, required = false) List<String> filters) {
+      @RequestParam(value = ParamName.BEACON_FILTERS, required = false) List<String> filters,
+      @RequestParam(value = "auth", required = false) String auth) {
 
     return elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases, referenceBases,
         chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
