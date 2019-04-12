@@ -24,7 +24,7 @@ beaconOrganization:
   logoUrl: PUBLIC
   info: PUBLIC
 beaconDataset:
-  accessLevelSummary: REGISTERED
+  accessLevelSummary: PUBLIC
   id: PUBLIC
   name: PUBLIC
   description: PUBLIC
@@ -38,20 +38,18 @@ beaconDataset:
   externalUrl: PUBLIC
   info: PUBLIC
   dataUseConditions: PUBLIC
-  new_sensitive_field: REGISTERED
-  new_field: NOT_SUPPORTED
 beaconAlleleRequest:
   accessLevelSummary: PUBLIC
   referenceName: PUBLIC
   start: PUBLIC
   end: PUBLIC
-  startMin: PUBLIC
-  startMax: PUBLIC
-  endMin: PUBLIC
-  endMax: PUBLIC
+  startMin: NOT_SUPPORTED
+  startMax: NOT_SUPPORTED
+  endMin: NOT_SUPPORTED
+  endMax: NOT_SUPPORTED
   referenceBases: PUBLIC
   alternateBases: PUBLIC
-  variantType: PUBLIC
+  variantType: NOT_SUPPORTED
   assemblyId: PUBLIC
   datasetIds: PUBLIC
   includeDatasetResponses: PUBLIC
@@ -65,24 +63,59 @@ beaconAlleleResponse:
   datasetAlleleResponses: PUBLIC
   alleleRequest: PUBLIC
 datasetAlleleResponses:
-  accessLevelSummary: REGISTERED
+  accessLevelSummary: PUBLIC
   datasetId: PUBLIC
   exists: PUBLIC
   error: PUBLIC
-  frequency: PUBLIC
-  variantCount: PUBLIC
-  callCount: PUBLIC
-  sampleCount: PUBLIC
+  frequency: NOT_SUPPORTED
+  variantCount: NOT_SUPPORTED
+  callCount: NOT_SUPPORTED
+  sampleCount: NOT_SUPPORTED
   note: PUBLIC
   externalUrl: PUBLIC
   info: PUBLIC
-  new_sensitive_field: REGISTERED
-  new_non_sensitive_data: PUBLIC
 beaconError:
   accessLevelSummary: PUBLIC
   errorCode: PUBLIC
   errorMessage: PUBLIC
 dataUseConditions:
+  accessLevelSummary: NOT_SUPPORTED
+  consentCodeDataUse: NOT_SUPPORTED
+  adamDataUse: NOT_SUPPORTED
+beaconGenomicSnpRequest:
   accessLevelSummary: PUBLIC
-  consentCodeDataUse: PUBLIC
-  adamDataUse: PUBLIC
+  referenceName: PUBLIC
+  start: PUBLIC
+  referenceBases: PUBLIC
+  alternateBases: PUBLIC
+  assemblyId: PUBLIC
+  datasetIds: PUBLIC
+  includeDatasetResponses: PUBLIC
+beaconGenomicSnpResponse:
+  beaconId: PUBLIC
+  exists: PUBLIC
+  error: PUBLIC
+  request: PUBLIC
+  apiVersion: PUBLIC
+  datasetAlleleResponses: PUBLIC
+  info: PUBLIC
+  beaconHandover: PUBLIC
+beaconGenomicRegionRequest:
+  accessLevelSummary: PUBLIC
+  referenceName: PUBLIC
+  start: PUBLIC
+  end: PUBLIC
+  referenceBases: PUBLIC
+  assemblyId: PUBLIC
+  datasetIds: PUBLIC
+  includeDatasetResponses: PUBLIC
+beaconGenomicRegionResponse:
+  beaconId: PUBLIC
+  exists: PUBLIC
+  error: PUBLIC
+  request: PUBLIC
+  apiVersion: PUBLIC
+  variantAnnotation: PUBLIC
+  datasetAlleleResponses: PUBLIC
+  info: PUBLIC
+  beaconHandover: PUBLIC
