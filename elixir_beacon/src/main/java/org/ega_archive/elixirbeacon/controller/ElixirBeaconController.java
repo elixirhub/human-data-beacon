@@ -1,11 +1,11 @@
 package org.ega_archive.elixirbeacon.controller;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import javassist.NotFoundException;
 import org.ega_archive.elixirbeacon.dto.Beacon;
-import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconRequest;
+import org.ega_archive.elixirbeacon.dto.BeaconAlleleRequest;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixircore.constant.ParamName;
 import org.ega_archive.elixircore.helper.CommonQueryHelper;
@@ -56,9 +56,9 @@ public class ElixirBeaconController {
   }
   
   @PostMapping(value = "/query")
-  public Object queryBeaconPost(@RequestBody BeaconRequest request) {
+  public Object queryBeaconPost(@RequestBody String jsonBody) throws IOException {
 
-    return elixirBeaconService.queryBeacon(request);
+    return elixirBeaconService.queryBeacon(jsonBody);
   }
 
 }

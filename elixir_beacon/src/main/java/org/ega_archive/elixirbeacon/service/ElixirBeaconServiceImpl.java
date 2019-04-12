@@ -1,5 +1,7 @@
 package org.ega_archive.elixirbeacon.service;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -16,7 +18,7 @@ import org.ega_archive.elixirbeacon.convert.Operations;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleRequest;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconRequest;
+import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpRequest;
 import org.ega_archive.elixirbeacon.dto.Dataset;
 import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.Error;
@@ -35,6 +37,7 @@ import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconSummaryDataRep
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.OntologyTermColumnCorrespondanceRepository;
 import org.ega_archive.elixircore.enums.DatasetAccessType;
 import org.ega_archive.elixircore.helper.CommonQuery;
+import org.ega_archive.elixircore.util.JsonUtils;
 import org.ega_archive.elixircore.util.StoredProcedureUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -61,6 +64,9 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
 
   @Autowired
   private OntologyTermColumnCorrespondanceRepository ontologyTermColumnCorrespondanceRepository;
+
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @Override
   public Beacon listDatasets(CommonQuery commonQuery, String referenceGenome)
@@ -505,13 +511,20 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
   }
 
   @Override
-  public BeaconAlleleResponse queryBeacon(BeaconRequest request) {
+  public BeaconAlleleResponse queryBeacon(String body) throws IOException {
+
+    BeaconAlleleRequest request = JsonUtils
+        .jsonToObject(body, BeaconAlleleRequest.class, objectMapper);
+
+    String includeDatasetResponses =
+        request.getIncludeDatasetResponses() != null ? request.getIncludeDatasetResponses()
+            .getFilter() : null;
 
     return queryBeacon(request.getDatasetIds(), request.getVariantType(),
         request.getAlternateBases(), request.getReferenceBases(), request.getReferenceName(),
         request.getStart(), request.getStartMin(), request.getStartMax(), request.getEnd(),
         request.getEndMin(), request.getEndMax(), request.getAssemblyId(),
-        request.getIncludeDatasetResponses(), request.getFilters());
+        includeDatasetResponses, request.getFilters());
   }
 
 }

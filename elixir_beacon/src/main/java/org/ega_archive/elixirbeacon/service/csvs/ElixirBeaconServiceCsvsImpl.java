@@ -1,5 +1,7 @@
 package org.ega_archive.elixirbeacon.service.csvs;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.extern.slf4j.Slf4j;
@@ -8,7 +10,7 @@ import org.babelomics.csvs.lib.models.DiseaseGroup;
 import org.babelomics.csvs.lib.ws.QueryResponse;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconRequest;
+import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpRequest;
 import org.ega_archive.elixirbeacon.dto.Dataset;
 import org.ega_archive.elixirbeacon.dto.KeyValuePair;
 import org.ega_archive.elixirbeacon.enums.VariantType;
@@ -17,6 +19,7 @@ import org.ega_archive.elixirbeacon.service.GenomicQuery;
 import org.ega_archive.elixirbeacon.utils.ParseResponse;
 import org.ega_archive.elixircore.exception.NotImplementedException;
 import org.ega_archive.elixircore.helper.CommonQuery;
+import org.ega_archive.elixircore.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
@@ -32,6 +35,9 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
   @Autowired
   private ParseResponse parseResponse;
 
+  @Autowired
+  private ObjectMapper objectMapper;
+
   @Override
   public Beacon listDatasets(CommonQuery commonQuery, String referenceGenome) {
     String url = "http://csvs.clinbioinfosspa.es:8080/csvs/rest/diseases/list";
@@ -42,7 +48,7 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
     Beacon beacon = new Beacon();
 
     List<Dataset> datasets = new ArrayList<>();
-    for(DiseaseGroup disease : diseaseGroupQueryResponse.getResult()) {
+    for (DiseaseGroup disease : diseaseGroupQueryResponse.getResult()) {
       datasets.add(Dataset.builder()
           .id(String.valueOf(disease.getGroupId()))
           .name(disease.getName())
@@ -75,7 +81,7 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
         && StringUtils.isNotBlank(chromosome) && start != null && StringUtils.isBlank(variantType)
         && startMin == null && startMax == null && endMin == null && endMax == null) {
 
-      if(end == null && StringUtils.isNotBlank(alternateBases)) {
+      if (end == null && StringUtils.isNotBlank(alternateBases)) {
         return genomicQuery
             .queryBeaconGenomicSnp(datasetStableIds, alternateBases, referenceBases, chromosome,
                 start, referenceGenome, includeDatasetResponses, filters);
@@ -103,11 +109,19 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
   }
 
   @Override
-  public Object queryBeacon(BeaconRequest request) {
-    return queryBeacon(request.getDatasetIds(), request.getVariantType(),
+  public Object queryBeacon(String body) throws IOException {
+
+    BeaconGenomicSnpRequest request = JsonUtils
+        .jsonToObject(body, BeaconGenomicSnpRequest.class, objectMapper);
+
+    String includeDatasetResponses =
+        request.getIncludeDatasetResponses() != null ? request.getIncludeDatasetResponses()
+            .getFilter() : null;
+
+    return queryBeacon(request.getDatasetIds(), null,
         request.getAlternateBases(), request.getReferenceBases(), request.getReferenceName(),
-        request.getStart(), request.getStartMin(), request.getStartMax(), request.getEnd(),
-        request.getEndMin(), request.getEndMax(), request.getAssemblyId(),
-        request.getIncludeDatasetResponses(), request.getFilters());
+        request.getStart(), null, null, null,
+        null, null, request.getAssemblyId(),
+        includeDatasetResponses, request.getFilters());
   }
 }
