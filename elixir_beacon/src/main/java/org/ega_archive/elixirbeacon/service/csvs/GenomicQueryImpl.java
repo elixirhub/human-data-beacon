@@ -72,6 +72,12 @@ public class GenomicQueryImpl implements GenomicQuery {
     return response;
   }
 
+  /**
+   * This function does a call to Cell Base with the variants to get the rs IDs and fills the Handover.
+   *
+   * @param beaconGenomicSnpResponse
+   * @param variants
+   */
   private void callToCellBase(BeaconGenomicSnpResponse beaconGenomicSnpResponse, List<String> variants) {
     // Call to cellBase and get the rs ID
     String urlCellBase = "http://cellbase.clinbioinfosspa.es/cb/webservices/rest/v4/hsapiens/genomic/variant/";
@@ -90,9 +96,11 @@ public class GenomicQueryImpl implements GenomicQuery {
       JsonArray variantResults = object.getAsJsonArray("result");
       for(JsonElement variantElem : variantResults) {
         JsonObject variantObj = variantElem.getAsJsonObject();
-        String rsId = variantObj.get("id").getAsString();
-        rsIds.add(rsId);
-        log.debug("rs ID: {}", rsId);
+        JsonElement rsIdElem = variantObj.get("id");
+        if(rsIdElem != null) {
+          rsIds.add(rsIdElem.getAsString());
+          log.debug("rs ID: {}", rsIdElem.getAsString());
+        }
       }
     }
 
