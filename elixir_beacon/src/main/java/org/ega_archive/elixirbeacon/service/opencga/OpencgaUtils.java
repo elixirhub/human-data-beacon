@@ -62,8 +62,9 @@ public class OpencgaUtils {
 		}
 	}
 
-	private static final String username = "enod";
-	private static final String password = "3n0d";
-	private static final String host = "http://iva-enod.clinbioinfosspa.es:8080/opencga-1.3.6";
+	// TODO: fill these
+	private static final String username = "";
+	private static final String password = "";
+	private static final String host = "http://iva-enod.clinbioinfosspa.es:8080/opencga-1.3.8";
 
 }

@@ -73,8 +73,8 @@ public class OpencgaGenomicQueryImpl implements GenomicQuery {
 			query.put("reference", referenceBases);
 			query.put("alternate", alternateBases);
 			query.put("includeGenotype", genotypes);
-			// query.put("summary", true);
-			query.put("limit", 1);
+			query.put("summary", true);
+			// query.put("limit", 1);
 			
 			try {
 				OpenCGAClient opencga = OpencgaUtils.getClient();

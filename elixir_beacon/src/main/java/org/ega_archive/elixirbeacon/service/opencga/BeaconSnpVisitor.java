@@ -12,8 +12,10 @@ import org.ega_archive.elixirbeacon.dto.Error;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 import org.mortbay.log.Log;
 import org.opencb.biodata.models.feature.Genotype;
+import org.opencb.biodata.models.variant.StudyEntry;
 import org.opencb.biodata.models.variant.Variant;
 import org.opencb.biodata.models.variant.stats.VariantStats;
+import org.opencb.commons.datastore.core.ObjectMap;
 import org.opencb.commons.datastore.core.Query;
 import org.opencb.commons.datastore.core.QueryOptions;
 import org.opencb.commons.datastore.core.QueryResponse;
@@ -40,32 +42,35 @@ public class BeaconSnpVisitor implements StudyVisitor {
 		String studyId = project.getAlias() + ":" + study.getAlias();
 		Query query = new Query(queryTemplate);
 		query.put("study", studyId);
-		
+
 		QueryOptions options = QueryOptions.empty();
 		DatasetAlleleResponse studyResult = new DatasetAlleleResponse();
 		try {
 
 			VariantQueryResult<Variant> result = opencga.getVariantClient().query2(query, options);
 			studyResult.setDatasetId(OpencgaDatasetId.translateOpencgaToBeacon(project.getId(), study.getId()));
-			studyResult.setExists(0 < result.getNumResults());
+			if (0 < result.getNumResults() && 0 < result.getResult().size()) {
 
-//			if (0 < result.size()) {
-//				Map<String, VariantStats> stats = result.get(0).getStudies().get(0).getStats();
-//				VariantStats statsAll = stats.get("ALL");
-//				long gt01count = statsAll.getGenotypesCount().getOrDefault("0/1", 0).longValue();
-//				long gt11count = statsAll.getGenotypesCount().getOrDefault("1/1", 0).longValue();
-//				long alleleCount = gt01count + gt11count;
-//				studyResult.setSampleCount(alleleCount);
+				List<StudyEntry> studies = result.getResult().get(0).getStudies();
+				if (0 < studies.size()) {
+					StudyEntry studyEntry = studies.get(0);
+					Map<String, VariantStats> stats = studyEntry.getStats();
+					VariantStats statsAll = stats.get("ALL");
+//					long gt01count = statsAll.getGenotypesCount().getOrDefault(Genotype.HET_REF, 0).longValue();
+//					long gt11count = statsAll.getGenotypesCount().getOrDefault(Genotype.HOM_VAR, 0).longValue();
+//					long alleleCount = gt01count + gt11count;
+//					studyResult.setSampleCount(alleleCount);
 //
-//				double gt01freq = statsAll.getGenotypesFreq().getOrDefault("0/1", 0.0f).doubleValue();
-//				double gt11freq = statsAll.getGenotypesFreq().getOrDefault("1/1", 0.0f).doubleValue();
-//				double alleleFreq = gt01freq + gt11freq;
-//				studyResult.setFrequency(new BigDecimal(alleleFreq));
-//
-//				Map<String, Object> info = new HashMap<String, Object>();
-//				info.put("stats", statsAll);
-//				studyResult.setInfo(info);
-//			}
+//					double gt01freq = statsAll.getGenotypesFreq().getOrDefault(Genotype.HET_REF, 0.0f).doubleValue();
+//					double gt11freq = statsAll.getGenotypesFreq().getOrDefault(Genotype.HOM_VAR, 0.0f).doubleValue();
+//					double alleleFreq = gt01freq + gt11freq;
+//					studyResult.setFrequency(new BigDecimal(alleleFreq));
+
+					Map<String, Object> info = new HashMap<String, Object>();
+					info.put("stats", statsAll);
+					studyResult.setInfo(info);
+				}
+			}			
 		} catch (IOException e) {
 			Error error = new Error();
 			error.setErrorCode(ErrorCode.GENERIC_ERROR);
