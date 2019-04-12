@@ -4,15 +4,11 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 
 import java.util.*;
 import java.util.stream.Collectors;
-import jdk.nashorn.internal.parser.JSONParser;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.ArrayStack;
 import org.apache.commons.lang3.StringUtils;
-import org.babelomics.csvs.lib.models.DiseaseCount;
 import org.babelomics.csvs.lib.models.Variant;
 import org.babelomics.csvs.lib.ws.QueryResponse;
 import org.ega_archive.elixirbeacon.dto.*;
@@ -42,9 +38,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     boolean variantExists = !variants.isEmpty() && variants.size() == 1;
     if (variantExists) {
       info = new HashMap<>();
-      //Variant variant = variants.get(0);
       info.put("stats", variants.get(0).getStats());
-      //String varSearch = String.join(":", (new String[] {variant.getChromosome(), String.valueOf(variant.getPosition()),variant.getReference(), variant.getAlternate()}));
     }
 
     BeaconGenomicSnpResponse beaconGenomicSnpResponse = new BeaconGenomicSnpResponse();
@@ -82,31 +76,24 @@ public class GenomicQueryImpl implements GenomicQuery {
     List<Variant> variants = findRegionVariants(chromosome, start, end, referenceBases, null, datasetStableIds, filters);
     List<VariantAnnotation> variantAnnotations= new ArrayList<>();
 
-    String paramsVariantsCellbase = "";
     if (!variants.isEmpty()) {
-      //info = new ArrayList<>();
       for (Variant variant: variants) {
-
         VariantAnnotation variantAnnotation = new VariantAnnotation();
 
         // TODO: grg group search in cellbase
         // Get list variant to search in cellbase
         String varSearch = String.join(":", (new String[] {variant.getChromosome(), String.valueOf(variant.getPosition()),variant.getReference(), variant.getAlternate()}));
-        /* grg paramsVariantCellbase = !paramsVariantCellbase.isEmpty() ? paramsVariantCellbase.concat(","): paramsVariantCellbase;
-        paramsVariantCellbase = paramsVariantCellbase.concat(varSearch);*/
         String dataAnnotation = callToCellBase(varSearch);
         variantAnnotation.setCellBaseInfo(dataAnnotation);
 
         // Get info variant (all subpopulations)
         Map<String, Object> variantInfo = new HashMap<>();
-        //variantInfo.put("stats variant", variants.get(0).getStats());
         variantInfo.put("stats variant", variant.getStats());
         variantInfo.put("variant", varSearch);
         variantAnnotation.setInfo(variantInfo);
 
         // Get variant by subpopulations
         // TODO: Note: only get if have
-        //private List<DatasetAlleleResponse> datasetAlleleResponses;
         List<DatasetAlleleResponse> datasetAlleleResponses = new ArrayList<>();
         if(datasetStableIds != null && !datasetStableIds.isEmpty()) {
           for (String datasetId : datasetStableIds) {
@@ -119,11 +106,8 @@ public class GenomicQueryImpl implements GenomicQuery {
               HashMap infoDataset = new HashMap();
               infoDataset.put("stats dataset", variantsDataset.get(0).getStats());
               datasetAlleleResponse.setInfo(infoDataset);
-              //infoDataset = new HashMap<>();
-              //DiseaseCount stats = variants.get(0).getStats();
-              //infoDataset.put("stats dataset", stats);
 
-              // TODO: grg check if variantCount = sumSample+totlaGts or only totalGts
+              // TODO: grg check if variantCount = sumSample + totlaGts or only totalGts
               datasetAlleleResponse.setSampleCount((long) variantsDataset.get(0).getStats().getTotalGts());
 
               datasetAlleleResponses.add(datasetAlleleResponse);
@@ -168,8 +152,7 @@ public class GenomicQueryImpl implements GenomicQuery {
   /**
    * This function does a call to Cell Base.
    *
-   * @param beaconGenomicSnpResponse
-   * @param variants
+   * @param paramsVariantsCellbase Cellbace parameter of variants to search  chrom:pos:ref:alt,chrom:pos:ref:alt...
    */
   private String callToCellBase(String paramsVariantsCellbase) {
     String urlCellBase = "http://cellbase.clinbioinfosspa.es/cb/webservices/rest/v4/hsapiens/genomic/variant/"+paramsVariantsCellbase + "/annotation";
@@ -185,18 +168,9 @@ public class GenomicQueryImpl implements GenomicQuery {
   /**
    * Parse response Cell Base with the variants to get the rs IDs and fills the Handover.
    *
-   * @param beaconGenomicSnpResponse
-   * @param variants
+   * @param cellBaseResponse Response cellbase that convert to data Handover
    */
   private List<Handover> parseCellBase(String cellBaseResponse) {
-  //private List<Handover> callToCellBase( List<String> variants) {
-    // Call to cellBase and get the rs ID
-    /*String urlCellBase = "http://cellbase.clinbioinfosspa.es/cb/webservices/rest/v4/hsapiens/genomic/variant/";
-    urlCellBase += variants.stream().collect(Collectors.joining(","));
-    urlCellBase += "/annotation";
-    String cellBaseResponse = parseResponse.parseResponse(urlCellBase, null);*/
-    //String cellBaseResponse = findAnnotation(variants.stream().collect(Collectors.joining(",")));
-
     List<String> rsIds = new ArrayList<>();
 
     JsonParser parser = new JsonParser();
@@ -244,7 +218,17 @@ public class GenomicQueryImpl implements GenomicQuery {
     return handoverList;
   }
 
-
+  /**
+   * Find list variants in the region.
+   * @param chromosome Chromosome 1-22,X,Y,MT
+   * @param start Position ini
+   * @param end  Position end
+   * @param referenceBases Reference
+   * @param alternateBases Alternate
+   * @param datasetStableIds Group subpopulation
+   * @param filters  Filters (tecnology , disease(icd10) ...)
+   * @return
+   */
   private List<Variant> findRegionVariants(String chromosome, Integer start, Integer end,
       String referenceBases, String alternateBases, List<String> datasetStableIds,
       List<String> filters) {
@@ -259,7 +243,10 @@ public class GenomicQueryImpl implements GenomicQuery {
       technologyFilter =
           StringUtils.isNotBlank(technologyFilterValues) ? "&technologies=" + technologyFilterValues
               : null;
+
+      // TODO: add filter icd10
     }
+
 
     String url = "http://csvs.clinbioinfosspa.es:8080/csvs/rest/variants/fetch?regions=";
     url = url + chromosome + ":" + start + "-" + end;
@@ -281,45 +268,29 @@ public class GenomicQueryImpl implements GenomicQuery {
     boolean exists =
         variantQueryResponse.getNumTotalResults() > 0 && variantQueryResponse.getResult() != null
             && variantQueryResponse.getResult().get(0) != null;
-    //List<KeyValuePair> info = new ArrayList<>();
-    int numVariants = 0;
+
     List<Variant> variantsResults = new ArrayList<>();
     if (exists) {
       List<Variant> result = variantQueryResponse.getResult();
       for (Variant variant : result) {
         if (checkParameters(referenceBases, variant.getReference(), alternateBases,
             variant.getAlternate(), isRegionQuery)) {
-          numVariants++;
-/*
-          DiseaseCount stats = variant.getStats();
-          info.add(new KeyValuePair("0/0", String.valueOf(stats.getGt00())));
-          info.add(new KeyValuePair("0/1", String.valueOf(stats.getGt01())));
-          info.add(new KeyValuePair("1/1", String.valueOf(stats.getGt11())));
-          info.add(new KeyValuePair("./.", String.valueOf(stats.getGtmissing())));
-          info.add(new KeyValuePair("0 Freq", String.valueOf(stats.getRefFreq())));
-          info.add(new KeyValuePair("1 Freq", String.valueOf(stats.getAltFreq())));
-          info.add(new KeyValuePair("MAF", String.valueOf(stats.getMaf())));
-          // TODO: consider if we should show this info
-//          info.add(new KeyValuePair("Num sample regions", String.valueOf(stats.getSumSampleRegions())));
-//          info.add(new KeyValuePair("Total GTs", String.valueOf(stats.getTotalGts())));
-*/
           variantsResults.add(variant);
-
         }
       }
     }
     return variantsResults;
-    /*
-    if (numVariants > 1) {
-      info = new ArrayList<>();
-    }
-    if (numVariants > 0) {
-      info.add(new KeyValuePair("variantCount", String.valueOf(numVariants)));
-    }
-    return info;
-    */
   }
 
+  /**
+   * Returns to check the parameters if it is a region.
+   * @param referenceBases
+   * @param reference
+   * @param alternateBases
+   * @param alternate
+   * @param isRegionQuery
+   * @return
+   */
   private boolean checkParameters(String referenceBases, String reference, String alternateBases,
       String alternate, boolean isRegionQuery) {
     if (isRegionQuery) {
