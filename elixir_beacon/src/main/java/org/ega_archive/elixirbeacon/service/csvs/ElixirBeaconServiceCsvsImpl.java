@@ -22,7 +22,6 @@ import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 @Slf4j
-@Primary
 @Service
 public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
 

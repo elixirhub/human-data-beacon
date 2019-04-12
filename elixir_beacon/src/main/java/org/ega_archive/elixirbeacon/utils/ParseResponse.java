@@ -32,7 +32,7 @@ public class ParseResponse {
     return (QueryResponse<T>) parseResponse(url, QueryResponse.class, clazz);
   }
 
-  public <T, U> Object parseResponse(String url, String token, Class<T> clazzT, Class<U> clazzU) {
+  private ResponseEntity runTheCall(String url, String token) {
     ResponseEntity response = null;
     try {
       MultiValueMap<String, String> header = null;
@@ -45,6 +45,21 @@ public class ParseResponse {
     } catch (ResourceAccessException ex) {
       throw new ServerDownException(ex.getMessage());
     }
+    return response;
+  }
+
+  /**
+   * Parses the response using the parametrized class sent as an argument.
+   * @param url
+   * @param token
+   * @param clazzT: a parametrized class (i.e. List<U>).
+   * @param clazzU: class to be used to parametrize class T (i.e. T<String>).
+   * @param <T>
+   * @param <U>
+   * @return
+   */
+  public <T, U> Object parseResponse(String url, String token, Class<T> clazzT, Class<U> clazzU) {
+    ResponseEntity response = runTheCall(url, token);
 
     JavaType type = this.objectMapper.getTypeFactory()
         .constructParametricType(clazzT, new Class[]{clazzU});
@@ -61,6 +76,19 @@ public class ParseResponse {
 
   public <T, U> Object parseResponse(String url, Class<T> clazzT, Class<U> clazzU) {
     return parseResponse(url, null, clazzT, clazzU);
+  }
+
+  /**
+   * Returns the response as a String.
+   * @param url
+   * @param token
+   * @return
+   */
+  public String parseResponse(String url, String token) {
+    ResponseEntity response = runTheCall(url, token);
+    String plainResponse = (String) response.getBody();
+    log.debug("response: {}", plainResponse);
+    return plainResponse;
   }
 
 }

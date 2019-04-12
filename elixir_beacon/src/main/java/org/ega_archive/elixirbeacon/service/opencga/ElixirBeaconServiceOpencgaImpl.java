@@ -40,29 +40,17 @@ public class ElixirBeaconServiceOpencgaImpl implements ElixirBeaconService {
 	private GenomicQuery genomicQuery;
 
 	@Override
-	public Beacon listDatasets(CommonQuery commonQuery, String referenceGenome) throws NotFoundException {
+	public Beacon listDatasets(CommonQuery commonQuery, String assembly) throws NotFoundException {
 		try {
 
 			OpenCGAClient opencga = OpencgaUtils.getClient();
-			Stream<Project> projects = OpencgaUtils.getProjects(opencga, referenceGenome);
-
-			List<Dataset> datasets = projects.map(project -> {
-				Dataset dataset = new Dataset();
-				dataset.setId(Long.toString(project.getId()));
-				dataset.setName(project.getName());
-				dataset.setDescription(project.getDescription());
-				dataset.setAssemblyId("GRCh37");
-				dataset.setCreateDateTime(OpencgaUtils.translateOpencgaDate(project.getCreationDate()));
-				dataset.setUpdateDateTime(OpencgaUtils.translateOpencgaDate(project.getLastModified()));
-				return dataset;
-			}).collect(Collectors.toList());
-
+			DatasetLister datasetLister = new DatasetLister();
+			StudyVisitor visitor = new VisitorByAssembly(assembly, datasetLister);
+			OpencgaUtils.visitStudies(datasetLister, opencga);
 			Beacon beacon = new Beacon();
-			beacon.setDatasets(datasets);
+			beacon.setDatasets(datasetLister.getDatasets());
 			return beacon;
-		} catch (IOException |
-
-				ClientException e) {
+		} catch (IOException | ClientException e) {
 			e.printStackTrace();
 			return null;
 		}

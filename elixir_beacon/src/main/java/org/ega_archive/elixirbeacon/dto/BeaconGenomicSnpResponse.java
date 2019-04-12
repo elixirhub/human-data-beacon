@@ -43,4 +43,6 @@ public class BeaconGenomicSnpResponse {
 
   private List<KeyValuePair> info;
 
+  private List<Handover> beaconHandover;
+
 }

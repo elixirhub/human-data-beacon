@@ -16,13 +16,14 @@ import org.opencb.opencga.client.config.GrpcConfig;
 import org.opencb.opencga.client.config.RestConfig;
 import org.opencb.opencga.client.exceptions.ClientException;
 import org.opencb.opencga.client.rest.OpenCGAClient;
+import org.opencb.opencga.client.rest.catalog.ProjectClient;
 import org.opencb.opencga.core.models.Project;
+import org.opencb.opencga.core.models.Study;
 
 public class OpencgaUtils {
 
 	public static DateTime translateOpencgaDate(String dateString) {
 
-		// 20190329112010
 		try {
 			int year = Integer.parseInt(dateString.substring(0, 4));
 			int month = Integer.parseInt(dateString.substring(4, 6));
@@ -32,7 +33,7 @@ public class OpencgaUtils {
 			// int second = Integer.parseInt(dateString.substring(12, 14));
 			return new DateTime(year, month, day, hour, minute);
 		} catch (Exception exc) {
-			Log.debug(exc.getMessage());
+
 			return null;
 		}
 	}
@@ -48,30 +49,17 @@ public class OpencgaUtils {
 		return new OpenCGAClient(username, password, config);
 	}
 
-	public static Stream<Project> getProjects(OpenCGAClient client, String referenceGenome) throws IOException {
-		
-		String[] invalidProjectArray = {				
-				"ENOD_Genomes_qGenomics_GRCh37",
-				"ENOD_Genomes_qGenomics_GRCh37_2",
-				"ENOD_Genomes_qGenomics_GRCh37_3"
-		};	
-		List<String> invalidProjects = Arrays.asList(invalidProjectArray);
-		
-		// TODO: filter projects by referenceGenome
-		
-		
+	public static void visitStudies(StudyVisitor visitor, OpenCGAClient client) throws IOException {
 		Query params = new Query();
 		QueryOptions options = QueryOptions.empty();
 		List<Project> projects = client.getProjectClient().search(params, options).allResults();
-		return projects.stream().filter(project -> !invalidProjects.contains(project.getName()));
-	}
-
-	public static Stream<Project> getProjectSubset(OpenCGAClient client, String referenceGenome,
-			List<String> datasetIds) throws IOException {
-		Stream<Project> projects = getProjects(client, referenceGenome);
-		return ListUtils.isEmpty(datasetIds) ? projects
-				: projects.filter(project -> datasetIds.stream()
-						.anyMatch(datasetId -> Long.toString(project.getId()).equals(datasetId)));
+		for (Project project : projects) {
+			List<Study> studies = client.getProjectClient().getStudies(project.getAlias(), QueryOptions.empty())
+					.allResults();
+			for (Study study : studies) {
+				visitor.visit(project, study);
+			}
+		}
 	}
 
 	private static final String username = "enod";
