@@ -2,6 +2,8 @@ package org.ega_archive.elixirbeacon.dto;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -41,7 +43,7 @@ public class BeaconGenomicSnpResponse {
   // `BeaconAlleleRequest` is not `NONE`, and null otherwise.
   private List<DatasetAlleleResponse> datasetAlleleResponses;
 
-  private List<KeyValuePair> info;
+  private Map<String, Object> info;
 
   private List<Handover> beaconHandover;
 

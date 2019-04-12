@@ -1,5 +1,6 @@
 package org.ega_archive.elixirbeacon.utils;
 
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
@@ -65,7 +66,7 @@ public class ParseResponse {
         .constructParametricType(clazzT, new Class[]{clazzU});
     Object basicDTO = null;
     try {
-      basicDTO = this.objectMapper.readValue((String) response.getBody(), type);
+      basicDTO = this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue((String) response.getBody(), type);
     } catch (IOException ex) {
       throw new RestRuntimeException("500",
           "Exception deserializing object: " + response.getBody() + "\n" + ex.getMessage());

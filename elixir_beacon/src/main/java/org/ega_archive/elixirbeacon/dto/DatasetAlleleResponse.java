@@ -50,6 +50,5 @@ public class DatasetAlleleResponse {
   private String externalUrl;
 
   // Additional structured metadata, key-value pairs
-  private List<KeyValuePair> info;
-
+  private Map<String, Object>info;
 }
