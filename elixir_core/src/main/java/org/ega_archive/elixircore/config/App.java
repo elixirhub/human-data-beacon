@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import org.ega_archive.elixircore.ApplicationContextProvider;
 import org.ega_archive.elixircore.event.sender.RestEventErrorHandler;
+import org.ega_archive.elixircore.interceptor.AuthorizationHeaderInterceptor;
 import org.ega_archive.elixircore.interceptor.CorrelationIdInterceptor;
 import org.ega_archive.elixircore.interceptor.CustomClientAddressInterceptor;
 import org.ega_archive.elixircore.interceptor.CustomTokenInterceptor;
@@ -65,6 +66,11 @@ public class App {
     return restTemplate;
   }
 
+  @Bean
+  public AuthorizationHeaderInterceptor authorizationHeaderInterceptor() {
+    return new AuthorizationHeaderInterceptor();
+  }
+
   private MappingJackson2HttpMessageConverter addJacksonConverter() {
     MappingJackson2HttpMessageConverter converter = new MappingJackson2HttpMessageConverter();
     converter.setObjectMapper(objectMapper());
@@ -77,6 +83,7 @@ public class App {
     interceptors.add(new CustomTokenInterceptor());
     interceptors.add(new CorrelationIdInterceptor());
     interceptors.add(new LogRestInterceptor());
+    interceptors.add(authorizationHeaderInterceptor());
     restTemplate.setInterceptors(interceptors);
   }
 
