@@ -3,13 +3,24 @@ package org.ega_archive.elixirbeacon.service.csvs;
 import java.math.BigDecimal;
 import java.util.*;
 import java.util.stream.Collectors;
+
+import com.mongodb.BasicDBObject;
+import com.mongodb.DBObject;
+import com.querydsl.core.types.Predicate;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.babelomics.csvs.lib.models.Variant;
 import org.babelomics.csvs.lib.ws.QueryResponse;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
+import org.ega_archive.elixirbeacon.convert.Operations;
 import org.ega_archive.elixirbeacon.dto.*;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
+import org.ega_archive.elixirbeacon.model.elixirbeacon.OntologyTerm;
+import org.ega_archive.elixirbeacon.model.elixirbeacon.OntologyTermColumnCorrespondance;
+import org.ega_archive.elixirbeacon.model.elixirbeacon.QOntologyTerm;
+import org.ega_archive.elixirbeacon.model.elixirbeacon.QOntologyTermColumnCorrespondance;
+import org.ega_archive.elixirbeacon.repository.elixirbeacon.OntologyTermColumnCorrespondanceRepository;
+import org.ega_archive.elixirbeacon.repository.elixirbeacon.OntologyTermRepository;
 import org.ega_archive.elixirbeacon.service.GenomicQuery;
 import org.ega_archive.elixirbeacon.utils.ParseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,10 +31,14 @@ import org.springframework.stereotype.Service;
 public class GenomicQueryImpl implements GenomicQuery {
 
 
-  private static final int LIMIT_CSVS = 100 ;
+  private static final int LIMIT_CSVS = 100;
+  private static final int CSVS_BASED = 1;
 
   @Autowired
   private ParseResponse parseResponse;
+
+  @Autowired
+  private OntologyTermColumnCorrespondanceRepository ontologyTermColumnCorrRep;
 
   @Override
   public BeaconGenomicSnpResponse queryBeaconGenomicSnp(List<String> datasetStableIds,
@@ -34,7 +49,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     // TODO: Add new endpoint to CSVS to return variants by dataset and use it here
     // TODO: Move all URLs to the properties file
 
-    List<Variant> variants = findRegionVariants(chromosome, start, start+1, referenceBases, alternateBases, datasetStableIds, filters);
+    List<Variant> variants = findRegionVariants(chromosome, CSVS_BASED == 1 ? start+1 : start, CSVS_BASED == 1 ? start+2 : start+1, referenceBases, alternateBases, datasetStableIds, filters);
     Map<String, Object> info = null;
     boolean variantExists = !variants.isEmpty() && variants.size() == 1;
     if (variantExists) {
@@ -115,7 +130,9 @@ public class GenomicQueryImpl implements GenomicQuery {
   public BeaconGenomicRegionResponse queryBeaconGenomicRegion(List<String> datasetStableIds,
       String referenceBases, String chromosome, Integer start, Integer end, String referenceGenome,
       String includeDatasetResponses, List<String> filters) {
-    List<Variant> variants = findRegionVariants(chromosome, start, end, referenceBases, null, datasetStableIds, filters);
+
+    // check X-based
+    List<Variant> variants = findRegionVariants(chromosome, CSVS_BASED == 1 ? start+1 : start, CSVS_BASED == 1 ? end+1 : end, referenceBases, null, datasetStableIds, filters);
     List<VariantAnnotation> variantAnnotations= new ArrayList<>();
 
     List beaconHandovers = new ArrayList();
@@ -132,6 +149,9 @@ public class GenomicQueryImpl implements GenomicQuery {
         // Get info variant (all subpopulations)
         Map<String, Object> variantInfo = new HashMap<>();
         variantInfo.put("stats variant", variant.getStats());
+        // Return variant 0-based
+        if (CSVS_BASED == 1)
+           varSearch = String.join(":", (new String[] {variant.getChromosome(), String.valueOf(variant.getPosition()-1), variant.getReference(), variant.getAlternate()}));
         variantInfo.put("variant", varSearch);
         variantAnnotation.setInfo(variantInfo);
 
@@ -293,6 +313,22 @@ public class GenomicQueryImpl implements GenomicQuery {
   }
 
   /**
+   * Get equivalence ontology with field to search.
+   * @param ontology Name ontology
+   * @param term Term to search
+   * @return Term if not find
+   */
+  private String getIdOntology(String ontology, String term){
+    Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology.eq(ontology)
+            .and(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term.eq(term));
+
+    OntologyTermColumnCorrespondance ontologyTermColumnCorr = ontologyTermColumnCorrRep.findOne(query);
+
+    return (ontologyTermColumnCorr != null) ? String.valueOf(ontologyTermColumnCorr.getSampleTableColumnName()) : term;
+  }
+
+
+  /**
    * Find list variants in the region.
    * @param chromosome Chromosome 1-22,X,Y,MT
    * @param start Position ini
@@ -314,18 +350,18 @@ public class GenomicQueryImpl implements GenomicQuery {
     if (null != filters) {
       // TODO: load this data to the ontology table and check it
       String technologyFilterValues = filters.stream()
-          .filter(filter -> filter.startsWith("myDictionary.tech"))
-          .map(filter -> filter.split(":", 2)[1])
-          .collect(Collectors.joining(","));
-      technologyFilter =
-          StringUtils.isNotBlank(technologyFilterValues) ? "&technologies=" + technologyFilterValues
-              : null;
-
-      // Filter icd10
-      icd10FilterValues = filters.stream()
-              .filter(filter -> filter.startsWith("myDictionary.icd10"))
+              .filter(filter -> filter.startsWith("myDictionary.tech"))
               .map(filter -> filter.split(":", 2)[1])
-                      .collect(Collectors.toList());
+              .collect(Collectors.joining(","));
+      technologyFilter =
+              StringUtils.isNotBlank(technologyFilterValues) ? "&technologies=" + technologyFilterValues
+                      : null;
+
+      // Convert to filter icd10
+      icd10FilterValues = filters.stream()
+              .filter(filter -> filter.startsWith("ICD-10"))
+              .map(filter -> getIdOntology("ICD-10", filter.split(":", 2)[1]))
+              .collect(Collectors.toList());
     }
 
     // Diseases intersect dataset and icd10
