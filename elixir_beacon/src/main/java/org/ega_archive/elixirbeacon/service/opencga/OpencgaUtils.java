@@ -42,11 +42,11 @@ public class OpencgaUtils {
 		return 0 <= sampleGenotype.indexOf("1");
 	}
 
-	public static OpenCGAClient getClient() throws ClientException {
+	public static OpencgaEnrichedClient getClient() throws ClientException {
 		GrpcConfig grpc = new GrpcConfig();
 		RestConfig rest = new RestConfig(host, 100, 30000, 100);
 		ClientConfiguration config = new ClientConfiguration(rest, grpc);
-		return new OpenCGAClient(username, password, config);
+		return new OpencgaEnrichedClient(username, password, config);
 	}
 
 	public static void visitStudies(StudyVisitor visitor, OpenCGAClient client) throws IOException {

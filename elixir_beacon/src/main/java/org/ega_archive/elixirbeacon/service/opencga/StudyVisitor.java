@@ -5,6 +5,6 @@ import org.opencb.opencga.core.models.Study;
 
 public interface StudyVisitor {
 
-	void visit(Project project, Study study);
+    void visit(Project project, Study study);
 
 }

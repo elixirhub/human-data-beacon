@@ -185,12 +185,6 @@
 			<version>2.8.5</version>
 		</dependency>
 
-		<!--  csvs specific client -->
-		<dependency>
-			<groupId>org.babelomics.csvs</groupId>
-			<artifactId>csvs-lib</artifactId>
-			<version>1.1.0</version>
-		</dependency>		
 		<!-- opencga backend -->
 		<dependency>
 			<groupId>org.opencb.opencga</groupId>

@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
-import org.babelomics.csvs.lib.ws.QueryResponse;
 import org.ega_archive.elixircore.exception.RestRuntimeException;
 import org.ega_archive.elixircore.exception.ServerDownException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,10 +26,6 @@ public class ParseResponse {
 
   @Autowired
   private ObjectMapper objectMapper;
-
-  public <T> QueryResponse<T> parseCsvsResponse(String url, Class<T> clazz) {
-    return (QueryResponse<T>) parseResponse(url, QueryResponse.class, clazz);
-  }
 
   private ResponseEntity runTheCall(String url, String token) {
     ResponseEntity response = null;
