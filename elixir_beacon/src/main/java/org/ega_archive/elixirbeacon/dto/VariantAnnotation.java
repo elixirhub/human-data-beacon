@@ -14,7 +14,7 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 public class VariantAnnotation {
 
-  private String cellBaseInfo;
+  private Map<String, Object> cellBaseInfo;
 
   private List<DatasetAlleleResponse> datasetAlleleResponses;
 

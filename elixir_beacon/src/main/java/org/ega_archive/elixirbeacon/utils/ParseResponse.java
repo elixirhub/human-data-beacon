@@ -4,6 +4,9 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.babelomics.csvs.lib.ws.QueryResponse;
@@ -80,16 +83,23 @@ public class ParseResponse {
   }
 
   /**
-   * Returns the response as a String.
+   * Returns the response as a HashMap.
    * @param url
    * @param token
    * @return
    */
-  public String parseResponse(String url, String token) {
+  public Map<String, Object> parseResponse(String url, String token) {
     ResponseEntity response = runTheCall(url, token);
-    String plainResponse = (String) response.getBody();
-    log.debug("response: {}", plainResponse);
-    return plainResponse;
-  }
 
+    Map<String, Object> basicDTO = null;
+    try {
+      basicDTO = this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue((String) response.getBody(), HashMap.class);
+    } catch (IOException ex) {
+      throw new RestRuntimeException("500",
+              "Exception deserializing object: " + response.getBody() + "\n" + ex.getMessage());
+    }
+    log.debug("response: {}", basicDTO);
+
+    return basicDTO;
+  }
 }
