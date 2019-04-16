@@ -1,9 +1,11 @@
-package org.ega_archive.elixirbeacon.service.csvs;
+package org.ega_archive.elixirbeacon.service.impl.csvs;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.babelomics.csvs.lib.models.DiseaseGroup;
@@ -12,7 +14,6 @@ import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpRequest;
 import org.ega_archive.elixirbeacon.dto.Dataset;
-import org.ega_archive.elixirbeacon.dto.KeyValuePair;
 import org.ega_archive.elixirbeacon.enums.VariantType;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixirbeacon.service.GenomicQuery;
@@ -64,8 +65,8 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
         .parseCsvsResponse(url, Integer.class);
     Integer numIndividuals = integerQueryResponse.getResult().get(0);
 
-    List<KeyValuePair> info = new ArrayList<>();
-    info.add(new KeyValuePair("Number of individuals", numIndividuals.toString()));
+    Map<String, Object> info = new HashMap<>();
+    info.put("Number of individuals", numIndividuals.toString());
     beacon.setInfo(info);
 
     return beacon;

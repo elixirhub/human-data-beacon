@@ -1,18 +1,16 @@
-package org.ega_archive.elixirbeacon.service.csvs;
+package org.ega_archive.elixirbeacon.service.impl;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
-import com.google.gson.JsonPrimitive;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
-import java.util.Optional;
+import java.util.Map;
 import java.util.stream.Collectors;
-import jdk.nashorn.internal.parser.JSONParser;
 import lombok.extern.slf4j.Slf4j;
-import org.apache.commons.collections.ArrayStack;
 import org.apache.commons.lang3.StringUtils;
 import org.babelomics.csvs.lib.models.DiseaseCount;
 import org.babelomics.csvs.lib.models.Variant;
@@ -22,7 +20,6 @@ import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpRequest;
 import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpResponse;
 import org.ega_archive.elixirbeacon.dto.Handover;
 import org.ega_archive.elixirbeacon.dto.HandoverType;
-import org.ega_archive.elixirbeacon.dto.KeyValuePair;
 import org.ega_archive.elixirbeacon.service.GenomicQuery;
 import org.ega_archive.elixirbeacon.utils.ParseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -44,7 +41,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     // TODO: Add new endpoint to CSVS to return variants by dataset and use it here
     // TODO: Move all URLs to the properties file
 
-    List<KeyValuePair> info = findRegionVariants(chromosome, start, start + 1,
+    Map<String, Object> info = findRegionVariants(chromosome, start, start + 1,
         referenceBases, alternateBases, datasetStableIds, filters);
 
     BeaconGenomicSnpResponse beaconGenomicSnpResponse = new BeaconGenomicSnpResponse();
@@ -62,7 +59,7 @@ public class GenomicQueryImpl implements GenomicQuery {
       String referenceBases, String chromosome, Integer start, Integer end, String referenceGenome,
       String includeDatasetResponses, List<String> filters) {
 
-    List<KeyValuePair> info = findRegionVariants(chromosome, start, end, referenceBases, null,
+    Map<String, Object> info = findRegionVariants(chromosome, start, end, referenceBases, null,
         datasetStableIds, filters);
 
     BeaconGenomicRegionResponse response = new BeaconGenomicRegionResponse();
@@ -127,15 +124,20 @@ public class GenomicQueryImpl implements GenomicQuery {
     beaconGenomicSnpResponse.setBeaconHandover(handoverList);
   }
 
-  private boolean findVariantCount(List<KeyValuePair> info) {
-    Optional<Integer> variantCount = info.stream()
-        .filter(v -> StringUtils.equalsIgnoreCase(v.getKey(), "variantCount"))
-        .map(v -> Integer.parseInt(v.getValue()))
-        .findFirst();
-    return variantCount.isPresent() && variantCount.get() > 0;
+  private boolean findVariantCount(Map<String, Object> info) {
+    Integer variantCount = 0;
+    String value = (String) info.get("variantCount");
+    if (StringUtils.isNotBlank(value)) {
+      try {
+        variantCount = Integer.parseInt(value);
+      } catch (NumberFormatException ex) {
+        // Ignore exception
+      }
+    }
+    return variantCount > 0;
   }
 
-  private List<KeyValuePair> findRegionVariants(String chromosome, Integer start, Integer end,
+  private Map<String, Object> findRegionVariants(String chromosome, Integer start, Integer end,
       String referenceBases, String alternateBases, List<String> datasetStableIds,
       List<String> filters) {
 
@@ -171,7 +173,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     boolean exists =
         variantQueryResponse.getNumTotalResults() > 0 && variantQueryResponse.getResult() != null
             && variantQueryResponse.getResult().get(0) != null;
-    List<KeyValuePair> info = new ArrayList<>();
+    Map<String, Object> info = new HashMap<>();
     int numVariants = 0;
     if (exists) {
       List<Variant> result = variantQueryResponse.getResult();
@@ -181,13 +183,13 @@ public class GenomicQueryImpl implements GenomicQuery {
           numVariants++;
 
           DiseaseCount stats = variant.getStats();
-          info.add(new KeyValuePair("0/0", String.valueOf(stats.getGt00())));
-          info.add(new KeyValuePair("0/1", String.valueOf(stats.getGt01())));
-          info.add(new KeyValuePair("1/1", String.valueOf(stats.getGt11())));
-          info.add(new KeyValuePair("./.", String.valueOf(stats.getGtmissing())));
-          info.add(new KeyValuePair("0 Freq", String.valueOf(stats.getRefFreq())));
-          info.add(new KeyValuePair("1 Freq", String.valueOf(stats.getAltFreq())));
-          info.add(new KeyValuePair("MAF", String.valueOf(stats.getMaf())));
+          info.put("0/0", String.valueOf(stats.getGt00()));
+          info.put("0/1", String.valueOf(stats.getGt01()));
+          info.put("1/1", String.valueOf(stats.getGt11()));
+          info.put("./.", String.valueOf(stats.getGtmissing()));
+          info.put("0 Freq", String.valueOf(stats.getRefFreq()));
+          info.put("1 Freq", String.valueOf(stats.getAltFreq()));
+          info.put("MAF", String.valueOf(stats.getMaf()));
           // TODO: consider if we should show this info
 //          info.add(new KeyValuePair("Num sample regions", String.valueOf(stats.getSumSampleRegions())));
 //          info.add(new KeyValuePair("Total GTs", String.valueOf(stats.getTotalGts())));
@@ -195,10 +197,10 @@ public class GenomicQueryImpl implements GenomicQuery {
       }
     }
     if (numVariants > 1) {
-      info = new ArrayList<>();
+      info = new HashMap<>();
     }
     if (numVariants > 0) {
-      info.add(new KeyValuePair("variantCount", String.valueOf(numVariants)));
+      info.put("variantCount", String.valueOf(numVariants));
     }
     return info;
   }

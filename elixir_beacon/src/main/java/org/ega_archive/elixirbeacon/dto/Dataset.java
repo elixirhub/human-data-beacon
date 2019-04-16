@@ -59,7 +59,7 @@ public class Dataset {
   private String externalUrl;
 
   // Additional structured metadata, key-value pairs.
-  private List<KeyValuePair> info;
+  private Map<String, Object> info;
   
 //  public void addDataUseCondition(DataUseCondition condition) {
 //    if(dataUseConditions == null) {

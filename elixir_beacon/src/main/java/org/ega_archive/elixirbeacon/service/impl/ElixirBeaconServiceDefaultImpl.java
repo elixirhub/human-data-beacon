@@ -1,10 +1,12 @@
-package org.ega_archive.elixirbeacon.service;
+package org.ega_archive.elixirbeacon.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,11 +20,9 @@ import org.ega_archive.elixirbeacon.convert.Operations;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleRequest;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpRequest;
 import org.ega_archive.elixirbeacon.dto.Dataset;
 import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.Error;
-import org.ega_archive.elixirbeacon.dto.KeyValuePair;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
 import org.ega_archive.elixirbeacon.enums.VariantType;
@@ -35,6 +35,7 @@ import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconDatasetConsent
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconDatasetRepository;
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconSummaryDataRepository;
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.OntologyTermColumnCorrespondanceRepository;
+import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixircore.enums.DatasetAccessType;
 import org.ega_archive.elixircore.helper.CommonQuery;
 import org.ega_archive.elixircore.util.JsonUtils;
@@ -48,7 +49,7 @@ import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
-public class ElixirBeaconServiceImpl implements ElixirBeaconService {
+public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
 
   @Autowired
   private SampleRequests sampleRequests;
@@ -100,8 +101,8 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
       size += dataset.getVariantCnt();
     }
 
-    List<KeyValuePair> info = new ArrayList<>();
-    info.add(new KeyValuePair(BeaconConstants.SIZE, size.toString()));
+    Map<String, Object> info = new HashMap<>();
+    info.put(BeaconConstants.SIZE, size.toString());
 
     Beacon response = new Beacon();
     response.setDatasets(convertedDatasets);
