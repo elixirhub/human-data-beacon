@@ -32,9 +32,14 @@ import org.springframework.stereotype.Service;
 
 import javassist.NotFoundException;
 
+import javax.servlet.http.HttpServletRequest;
+
 @Primary
 @Service
 public class ElixirBeaconServiceOpencgaImpl implements ElixirBeaconService {
+
+	@Autowired
+	private HttpServletRequest incomingRequest;
 
 	@Autowired
 	private GenomicQuery genomicQuery;
@@ -42,8 +47,10 @@ public class ElixirBeaconServiceOpencgaImpl implements ElixirBeaconService {
 	@Override
 	public Beacon listDatasets(CommonQuery commonQuery, String assembly) throws NotFoundException {
 		try {
+			String authorization = incomingRequest.getHeader("Authorization");
+			String sessionToken = parseSessionToken(authorization );
 
-			OpenCGAClient opencga = OpencgaUtils.getClient();
+			OpenCGAClient opencga = OpencgaUtils.getClient(sessionToken);
 			DatasetLister datasetLister = new DatasetLister();
 			StudyVisitor visitor = new VisitorByAssembly(assembly, datasetLister);
 			OpencgaUtils.visitStudies(datasetLister, opencga);
@@ -61,6 +68,8 @@ public class ElixirBeaconServiceOpencgaImpl implements ElixirBeaconService {
 			String alternateBases, String referenceBases, String chromosome, Integer start, Integer startMin,
 			Integer startMax, Integer end, Integer endMin, Integer endMax, String referenceGenome,
 			String includeDatasetResponses, List<String> filters) {
+		String authorization = incomingRequest.getHeader("Authorization");
+		String sessionToken = parseSessionToken(authorization );
 
 		if (StringUtils.isNotBlank(alternateBases) && StringUtils.isNotBlank(referenceBases)
 				&& StringUtils.isNotBlank(chromosome) && start != null && StringUtils.isBlank(variantType)
@@ -84,4 +93,9 @@ public class ElixirBeaconServiceOpencgaImpl implements ElixirBeaconService {
 	public BeaconAlleleResponse queryBeacon(BeaconRequest request) {
 		return null;
 	}
+
+	private static String parseSessionToken(String authorization) {
+		return authorization.startsWith("Bearer ") ? authorization.substring(7).trim() : null;
+	}
+
 }

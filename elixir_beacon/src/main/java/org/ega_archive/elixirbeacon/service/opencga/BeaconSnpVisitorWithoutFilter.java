@@ -1,30 +1,24 @@
 package org.ega_archive.elixirbeacon.service.opencga;
 
+import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
+import org.ega_archive.elixirbeacon.dto.Error;
+import org.ega_archive.elixirbeacon.enums.ErrorCode;
+import org.opencb.biodata.models.variant.StudyEntry;
+import org.opencb.biodata.models.variant.Variant;
+import org.opencb.biodata.models.variant.stats.VariantStats;
+import org.opencb.commons.datastore.core.Query;
+import org.opencb.commons.datastore.core.QueryOptions;
+import org.opencb.opencga.client.rest.OpenCGAClient;
+import org.opencb.opencga.core.models.Project;
+import org.opencb.opencga.core.models.Study;
+import org.opencb.opencga.core.results.VariantQueryResult;
+
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
-
-import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
-import org.ega_archive.elixirbeacon.dto.Error;
-import org.ega_archive.elixirbeacon.enums.ErrorCode;
-import org.mortbay.log.Log;
-import org.opencb.biodata.models.feature.Genotype;
-import org.opencb.biodata.models.variant.StudyEntry;
-import org.opencb.biodata.models.variant.Variant;
-import org.opencb.biodata.models.variant.stats.VariantStats;
-import org.opencb.commons.datastore.core.ObjectMap;
-import org.opencb.commons.datastore.core.Query;
-import org.opencb.commons.datastore.core.QueryOptions;
-import org.opencb.commons.datastore.core.QueryResponse;
-import org.opencb.opencga.catalog.db.api.StudyDBAdaptor;
-import org.opencb.opencga.client.rest.OpenCGAClient;
-import org.opencb.opencga.core.models.Project;
-import org.opencb.opencga.core.models.Study;
-import org.opencb.opencga.core.results.VariantQueryResult;
 
 public class BeaconSnpVisitorWithoutFilter implements StudyVisitor {
 

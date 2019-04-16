@@ -90,7 +90,6 @@ public class BeaconSnpVisitorWithFilter implements StudyVisitor {
                 // result.setExternalUrl();
                 // result.setInfo();
                 // result.setNote();
-
             }
         }
         results.add(result);

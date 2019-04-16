@@ -33,7 +33,6 @@ public class OpencgaUtils {
 			// int second = Integer.parseInt(dateString.substring(12, 14));
 			return new DateTime(year, month, day, hour, minute);
 		} catch (Exception exc) {
-
 			return null;
 		}
 	}
@@ -42,11 +41,21 @@ public class OpencgaUtils {
 		return 0 <= sampleGenotype.indexOf("1");
 	}
 
+
 	public static OpencgaEnrichedClient getClient() throws ClientException {
+		return getClient(null);
+	}
+
+	public static OpencgaEnrichedClient getClient(String sessionToken) throws ClientException {
 		GrpcConfig grpc = new GrpcConfig();
 		RestConfig rest = new RestConfig(host, 100, 30000, 100);
 		ClientConfiguration config = new ClientConfiguration(rest, grpc);
-		return new OpencgaEnrichedClient(username, password, config);
+
+		if (StringUtils.isNotBlank(sessionToken)) {
+			return new OpencgaEnrichedClient(sessionToken, config);
+		} else {
+			return new OpencgaEnrichedClient(username, password, config);
+		}
 	}
 
 	public static void visitStudies(StudyVisitor visitor, OpenCGAClient client) throws IOException {
