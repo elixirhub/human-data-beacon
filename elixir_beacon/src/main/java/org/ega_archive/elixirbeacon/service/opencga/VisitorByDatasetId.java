@@ -1,6 +1,7 @@
 package org.ega_archive.elixirbeacon.service.opencga;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import org.opencb.commons.utils.ListUtils;
@@ -14,8 +15,8 @@ public class VisitorByDatasetId implements StudyVisitor {
 
 	public VisitorByDatasetId(List<String> datasetIds, StudyVisitor baseVisitor) {
 		this.baseVisitor = baseVisitor;
-		this.datasetIds = ListUtils.isEmpty(datasetIds) ? null : datasetIds.stream().map(datasetId -> OpencgaDatasetId.translateBeaconToOpencga(datasetId))
-				.filter(datasetId -> null != datasetId).collect(Collectors.toList());
+		this.datasetIds = ListUtils.isEmpty(datasetIds) ? null : datasetIds.stream().map(OpencgaDatasetId::translateBeaconToOpencga)
+				.filter(Objects::nonNull).collect(Collectors.toList());
 	}
 
 	@Override

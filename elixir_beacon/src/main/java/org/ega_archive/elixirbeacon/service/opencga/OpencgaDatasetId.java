@@ -19,7 +19,7 @@ class OpencgaDatasetId {
 	}
 
 	public static String translateOpencgaToBeacon(long projectId, long studyId) {
-		return "DATASET:" + Long.toString(projectId) + ":" + Long.toString(studyId);
+		return String.format("DATASET:%s:%s", projectId, studyId);
 	}
 
 	public static OpencgaDatasetId translateBeaconToOpencga(String datasetId) {

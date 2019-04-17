@@ -8,6 +8,7 @@ import org.opencb.opencga.client.rest.AbstractParentClient;
 import org.opencb.opencga.core.models.Sample;
 
 import java.io.IOException;
+import java.util.Objects;
 
 
 public class OpencgaBeaconClient extends AbstractParentClient {
@@ -19,7 +20,7 @@ public class OpencgaBeaconClient extends AbstractParentClient {
     }
 
     public QueryResponse<Sample> getSamplesWithVariant(ObjectMap params, QueryOptions options) throws IOException {
-        if (null != options) {
+        if (Objects.nonNull(options)) {
             params = new ObjectMap(params);
             params.putAll(options);
         }

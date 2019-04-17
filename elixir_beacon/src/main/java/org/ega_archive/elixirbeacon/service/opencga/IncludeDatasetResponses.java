@@ -4,5 +4,6 @@ public enum IncludeDatasetResponses {
     ALL,
     HIT,
     MISS,
+    NULL,
     NONE,
 }
