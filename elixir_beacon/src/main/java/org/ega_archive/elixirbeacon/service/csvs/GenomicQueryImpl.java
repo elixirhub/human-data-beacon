@@ -364,7 +364,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     } catch (Exception e) {
 
     }
-    
+
     return cellBaseResponse;
   }
 
@@ -599,7 +599,7 @@ public class GenomicQueryImpl implements GenomicQuery {
                 .build());
     }
 
-    if (!StringUtils.isBlank(referenceBases) && !Pattern.matches("[ACTG]+|N", alternateBases.toUpperCase())) {
+    if (!StringUtils.isBlank(referenceBases) && !Pattern.matches("[ACTG]+|N", referenceBases.toUpperCase())) {
         errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
                 .message("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N")
                 .build());
