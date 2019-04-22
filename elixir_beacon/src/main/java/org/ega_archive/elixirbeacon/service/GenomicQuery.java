@@ -3,6 +3,7 @@ package org.ega_archive.elixirbeacon.service;
 import java.util.List;
 import org.ega_archive.elixirbeacon.dto.BeaconGenomicRegionResponse;
 import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpResponse;
+import org.ega_archive.elixirbeacon.dto.Dataset;
 
 public interface GenomicQuery {
 
@@ -10,4 +11,5 @@ public interface GenomicQuery {
 
   BeaconGenomicRegionResponse queryBeaconGenomicRegion(List<String> datasetStableIds, String referenceBases, String chromosome, Integer start, Integer end, String referenceGenome, String includeDatasetResponses, List<String> filters);
 
+  List<Dataset> listDatasets();
 }
