@@ -12,6 +12,7 @@ import org.babelomics.csvs.lib.models.DiseaseGroup;
 import org.babelomics.csvs.lib.models.Variant;
 import org.babelomics.csvs.lib.ws.QueryResponse;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
+import org.ega_archive.elixirbeacon.constant.CsvsConstants;
 import org.ega_archive.elixirbeacon.dto.*;
 import org.ega_archive.elixirbeacon.dto.Error;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
@@ -33,15 +34,13 @@ public class GenomicQueryImpl implements GenomicQuery {
 
   @Autowired
   private OntologyTermColumnCorrespondanceRepository ontologyTermColumnCorrRep;
-  private static final int LIMIT_CSVS = 100;
-  private static final int CSVS_BASED = 1;
-  public static final String CSVS_ASSEMMBY_ID = "GRCh37";
+
   private static List<Dataset> LIST_DATASET = new ArrayList<>();
 
   @Override
   public List<Dataset> listDatasets(){
     if (LIST_DATASET.isEmpty()) {
-      String url = "http://csvs.clinbioinfosspa.es:8080/csvs/rest/diseases/list";
+      String url = CsvsConstants.CSVS_URL +"/diseases/list";
 
       QueryResponse<DiseaseGroup> diseaseGroupQueryResponse = parseResponse
               .parseCsvsResponse(url, DiseaseGroup.class);
@@ -51,7 +50,7 @@ public class GenomicQueryImpl implements GenomicQuery {
         datasets.add(Dataset.builder()
                 .id(String.valueOf(disease.getGroupId()))
                 .name(disease.getName())
-                .assemblyId(CSVS_ASSEMMBY_ID)
+                .assemblyId(CsvsConstants.CSVS_ASSEMMBY_ID)
                 .sampleCount((long) disease.getSamples())
                 .variantCount((long) disease.getVariants())
                 .build());
@@ -67,20 +66,18 @@ public class GenomicQueryImpl implements GenomicQuery {
       String alternateBases, String referenceBases, String chromosome, Integer start,
       String referenceGenome, String includeDatasetResponses, List<String> filters) {
 
-    // TODO: check referenceGenome is GRCh37 -> do it in checkParams
     // TODO: Add new endpoint to CSVS to return variants by dataset and use it here
-    // TODO: Move all URLs to the properties file
+    // TODO: Param assembley in query in CSVS
+    // TODO: Develop web service with filters in csvs
 
     BeaconGenomicSnpResponse beaconGenomicSnpResponse = new BeaconGenomicSnpResponse();
     List beaconHandovers = new ArrayList();
-    // TODO: fill the request  grg for disease in the info
     BeaconGenomicSnpRequest request = new BeaconGenomicSnpRequest();
     request.setAlternateBases(alternateBases);
     request.setReferenceBases(referenceBases);
     request.setReferenceName(chromosome);
     request.setStart(start);
-    // TODO: grg Get data from question
-    request.setAssemblyId(CSVS_ASSEMMBY_ID);
+    request.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
     //request.setAssemblyIds(referenceBases);
     request.setDatasetIds(datasetStableIds);
     request.setIncludeDatasetResponses(FilterDatasetResponse.parse(includeDatasetResponses));
@@ -89,7 +86,6 @@ public class GenomicQueryImpl implements GenomicQuery {
 
     boolean variantExists;
     Map<String, Object> info = null;
-
 
     List<Error> errors = checkParams(datasetStableIds, alternateBases, referenceBases, chromosome, start, referenceGenome, filters);
     errors.addAll(checkParamsSnp(alternateBases, referenceBases));
@@ -104,7 +100,8 @@ public class GenomicQueryImpl implements GenomicQuery {
                       .build()
       );
     } else {
-      List<Variant> variants = findRegionVariants(chromosome, CSVS_BASED == 1 ? start + 1 : start, CSVS_BASED == 1 ? start + 2 : start + 1, referenceBases, alternateBases, datasetStableIds, filters);
+      List<Variant> variants = findRegionVariants(chromosome, CsvsConstants.CSVS_BASED == 1 ? start + 1 : start, CsvsConstants.CSVS_BASED == 1 ? start + 2 : start + 1,
+              referenceBases, alternateBases, datasetStableIds, filters);
 
       variantExists = !variants.isEmpty() && variants.size() == 1;
       if (variantExists) {
@@ -114,16 +111,11 @@ public class GenomicQueryImpl implements GenomicQuery {
 
       beaconGenomicSnpResponse.setExists(variantExists);
       if (variantExists) {
-        String varSearch = String.join(":", (new String[]{variants.get(0).getChromosome(), String.valueOf(variants.get(0).getPosition()), variants.get(0).getReference(), variants.get(0).getAlternate()}));
-        Map cellBaseResponse = callToCellBase(varSearch);
+        Map cellBaseResponse = callToCellBase(variants.get(0).getChromosome(),variants.get(0).getPosition(), variants.get(0).getReference(), variants.get(0).getAlternate());
         beaconHandovers = parseCellBase(cellBaseResponse);
 
         // Get variant by subpopulations only get if have
         beaconGenomicSnpResponse.setDatasetAlleleResponses(getDatasetAlleleResponse(datasetStableIds, variants.get(0), filters, includeDatasetResponses));
-        // Add rs of cellbase Note: No exists handover... add info
-        //variantAnnotation.setDatasetAlleleResponses(datasetAlleleResponses);
-        //variantAnnotation.setVariantHandover(parseCellBase(dataAnnotation));
-        //variantAnnotations.add(variantAnnotation);
       }
     }
 
@@ -149,8 +141,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     request.setReferenceName(chromosome);
     request.setStart(start);
     request.setEnd(end);
-    // TODO: Developer web services to get data from question
-    request.setAssemblyId(CSVS_ASSEMMBY_ID);
+    request.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
     //request.setAssemblyIds(referenceBases);
     request.setDatasetIds(datasetStableIds);
     request.setIncludeDatasetResponses(FilterDatasetResponse.parse(includeDatasetResponses));
@@ -177,7 +168,8 @@ public class GenomicQueryImpl implements GenomicQuery {
       );
     } else {
         // check X-based
-        List<Variant> variants = findRegionVariants(chromosome, CSVS_BASED == 1 ? start + 1 : start, CSVS_BASED == 1 ? end + 1 : end, referenceBases, null, datasetStableIds, filters);
+        List<Variant> variants = findRegionVariants(chromosome, CsvsConstants.CSVS_BASED == 1 ? start + 1 : start, CsvsConstants.CSVS_BASED == 1 ? end + 1 : end,
+                referenceBases, null, datasetStableIds, filters);
 
 
         variantExists = !variants.isEmpty() && variants.size() > 0;
@@ -186,8 +178,8 @@ public class GenomicQueryImpl implements GenomicQuery {
             VariantAnnotation variantAnnotation = new VariantAnnotation();
 
             // Get list variant to search in cellbase
-            String varSearch = String.join(":", (new String[]{variant.getChromosome(), String.valueOf(variant.getPosition()), variant.getReference(), variant.getAlternate()}));
-            Map dataAnnotation = callToCellBase(varSearch);
+
+            Map dataAnnotation = callToCellBase(variant.getChromosome(), variant.getPosition(), variant.getReference(), variant.getAlternate());
             variantAnnotation.setCellBaseInfo(dataAnnotation);
             //beaconHandovers = parseCellBase(dataAnnotation);
 
@@ -195,27 +187,24 @@ public class GenomicQueryImpl implements GenomicQuery {
             Map<String, Object> variantInfo = new HashMap<>();
             variantInfo.put("stats variant", variant.getStats());
             // Return variant 0-based
-            if (CSVS_BASED == 1)
+            String varSearch = String.join(":", (new String[]{variant.getChromosome(), String.valueOf(variant.getPosition()), variant.getReference(), variant.getAlternate()}));
+            if (CsvsConstants.CSVS_BASED == 1)
               varSearch = String.join(":", (new String[]{variant.getChromosome(), String.valueOf(variant.getPosition() - 1), variant.getReference(), variant.getAlternate()}));
             variantInfo.put("variant", varSearch);
             variantAnnotation.setInfo(variantInfo);
 
             // Get variant by subpopulations
-            // TODO: Note: only get if have datasetStableIds --> use param
             List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponse(datasetStableIds, variant, filters, includeDatasetResponses);
 
             variantAnnotation.setDatasetAlleleResponses(datasetAlleleResponses);
             variantAnnotation.setVariantHandover(parseCellBase(dataAnnotation));
-
-            // TODO: grg import add "handover" rs of cellbase
-            // beaconHandovers.addAll(genericHandover());
 
             variantAnnotations.add(variantAnnotation);
           }
         }
 
         info.put("variantCount", variants.size());
-        info.put("variantLimit", "Only return the first " +  LIMIT_CSVS + " variants");
+        info.put("variantLimit", "Only return the first " +  CsvsConstants.CSVS_LIMIT + " variants");
       }
 
 
@@ -224,7 +213,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     response.setBeaconHandover(beaconHandovers);
     response.setVariantAnnotation(variantAnnotations);
     response.setExists(variantExists);
-    // TODO: Develop web service with filters in csvs
+
     response.setInfo(info);
     return response;
   }
@@ -243,8 +232,8 @@ public class GenomicQueryImpl implements GenomicQuery {
                     .id("downloads")
                     .label("Download aggregated data corresponding to phenotypically healthy controls of MGP and the IBS population of 1000 genomes phase 3 as well as the pseudo-controls for each ICD10 category")
                     .build())
-            .url("http://csvs.clinbioinfosspa.es/downloads")
-            .note("Go to web http://csvs.clinbioinfosspa.es and accept terms and conditions in the tab 'Downloads'")
+            .url(CsvsConstants.CSVS_URL_DOWNLOADS)
+            .note("Go to web "+ BeaconConstants.BEACON_HOMEPAGE +" and accept terms and conditions in the tab 'Downloads'")
             .build());
 
     genericHandover.add(Handover.builder()
@@ -278,39 +267,46 @@ public class GenomicQueryImpl implements GenomicQuery {
                 .collect(Collectors.toList());
 
       for (String datasetId : datasetStableIds) {
-
         String optionIncludeDatasetResponses = includeDatasetResponses.toLowerCase();
-        // TODO: review if only return one
         DatasetAlleleResponse datasetAlleleResponse = new DatasetAlleleResponse();
         datasetAlleleResponse.setDatasetId(datasetId);
 
+        // Without filters
         List<Variant> variantsDataset = null;
 
         try {
-          variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), filters);
+          variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), null);
         } catch(Exception e){
           optionIncludeDatasetResponses="null";
           datasetAlleleResponse.setError( Error.builder()
                   .errorCode(ErrorCode.GENERIC_ERROR)
-                  .message(
-                          e.getMessage()
-                  )
+                  .message(e.getMessage())
                   .build());
         }
 
         if (variantsDataset != null) {
-          if (!variantsDataset.isEmpty()) { //&& variantsDataset.size() == 1 ??
+          if (!variantsDataset.isEmpty()) {
             datasetAlleleResponse.setExists(variantsDataset.get(0).getStats() != null);
-            HashMap infoDataset = new HashMap();
-            infoDataset.put("stats dataset", variantsDataset.get(0).getStats());
-            datasetAlleleResponse.setInfo(infoDataset);
 
-            // Number of variants matching the allele request in the dataset
+            // Number of variants matching the allele request in the dataset (without filters)
             datasetAlleleResponse.setVariantCount((long) 1);
             // gt01 + gt11
             datasetAlleleResponse.setSampleCount((long) variantsDataset.get(0).getStats().getGt01() + (long) variantsDataset.get(0).getStats().getGt11());
             // AlFreq (Freq1)
             datasetAlleleResponse.setFrequency(BigDecimal.valueOf(variantsDataset.get(0).getStats().getAltFreq()));
+
+            HashMap infoDataset = new HashMap();
+            // Info Without filters
+            if (filters == null || filters.isEmpty()) {
+              infoDataset.put("stats dataset", variantsDataset.get(0).getStats());
+              datasetAlleleResponse.setInfo(infoDataset);
+            } else { // Info wit filters
+              List<Variant> variantsDatasetWithoutFilters = variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), filters);
+              if (variantsDatasetWithoutFilters != null && !variantsDatasetWithoutFilters.isEmpty()) {
+                infoDataset.put("stats dataset", variantsDatasetWithoutFilters.get(0).getStats());
+                datasetAlleleResponse.setInfo(infoDataset);
+              }
+            }
           } else {
             datasetAlleleResponse.setExists(false);
           }
@@ -342,25 +338,33 @@ public class GenomicQueryImpl implements GenomicQuery {
   }
 
 
-
-
   /**
-   * This function does a call to Cell Base.
+   * call to Cell Base.
    *
-   * @param paramsVariantsCellbase Cellbace parameter of variants to search  chrom:pos:ref:alt,chrom:pos:ref:alt...
+   * @param chromosome
+   * @param position
+   * @param reference
+   * @param alternate
+   * @return
    */
-  private Map<String, Object> callToCellBase(String paramsVariantsCellbase) {
-    String urlCellBase = "http://cellbase.clinbioinfosspa.es/cb/webservices/rest/v4/hsapiens/genomic/variant/"+paramsVariantsCellbase + "/annotation";
-
-    // TODO: ignore when ref=* and search alt=ALT when alt=ALT,*
+  private Map<String, Object> callToCellBase(String chromosome, int position, String reference, String alternate){
     Map cellBaseResponse = null;
-    try {
-      cellBaseResponse = parseResponse.parseResponse(urlCellBase, null);
 
-    } catch (Exception e){
+    // Ignore when ref=* and search alt=ALT when alt=ALT,*
+    String ref = reference.split(",")[0];
+    String alt = alternate.split(",")[0];
+
+    // Replace '*' and '' by '-'
+    String paramsVariantsCellbase = String.join(":", (new String[]{chromosome, String.valueOf(position),
+            ("*".equals(ref) || "".equals(ref)) ? "-" : ref, ("*".equals(alt)|| "".equals(alt)) ? "-" : alt}));
+
+    try {
+      cellBaseResponse = parseResponse.parseResponse(CsvsConstants.CELLBASE_URL + "/genomic/variant/" + paramsVariantsCellbase + "/annotation", null);
+
+    } catch (Exception e) {
 
     }
-
+    
     return cellBaseResponse;
   }
 
@@ -396,13 +400,14 @@ public class GenomicQueryImpl implements GenomicQuery {
         }
       }
 
+
       for (String rsId : rsIds) {
         handoverList.add(Handover.builder()
                 .handoverType(HandoverType.builder()
                         .id("data_1106")
                         .label("dbSNP ID")
                         .build())
-                .url("https://www.ncbi.nlm.nih.gov/snp/?term=" + rsId)
+                .url(CsvsConstants.dbSNP_URL_DATABASE +"/?term=" + rsId)
                 .note("Link to dbSNP database")
                 .build());
 
@@ -411,7 +416,7 @@ public class GenomicQueryImpl implements GenomicQuery {
                         .id("data_1106")
                         .label("dbSNP ID")
                         .build())
-                .url("https://api.ncbi.nlm.nih.gov/variation/v0/beta/refsnp/" + rsId.replaceFirst("rs", ""))
+                .url(CsvsConstants.dbSNP_URL_API + "/" + rsId.replaceFirst("rs", ""))
                 .note("Link to dbSNP API")
                 .build());
       }
@@ -456,7 +461,6 @@ public class GenomicQueryImpl implements GenomicQuery {
     String technologyFilter = null;
     List <String> icd10FilterValues = null;
     if (null != filters) {
-      // TODO: load this data to the ontology table and check it
       String technologyFilterValues = filters.stream()
               .filter(filter -> filter.startsWith("myDictionary.tech"))
               .map(filter -> filter.split(":", 2)[1])
@@ -489,9 +493,9 @@ public class GenomicQueryImpl implements GenomicQuery {
       }
     }
 
-    String url = "http://csvs.clinbioinfosspa.es:8080/csvs/rest/variants/fetch?regions=";
+    String url = CsvsConstants.CSVS_URL + "/variants/fetch?regions=";
     url = url + chromosome + ":" + start + "-" + end;
-    url += "&limit=" + LIMIT_CSVS;
+    url += "&limit=" + CsvsConstants.CSVS_LIMIT;
 
     if (StringUtils.isNotBlank(technologyFilter)) {
       url += technologyFilter;
@@ -590,25 +594,30 @@ public class GenomicQueryImpl implements GenomicQuery {
     if (StringUtils.isBlank(chromosome)) {
       errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR).message("'referenceName' is required").build());
     } else {
-      if (!Pattern.matches("^([1-9][0-9]|[1-9]|X|Y|MT)$", chromosome))
+      if (!Pattern.matches("^([1-9][0-9]|[1-9]|X|Y|MT)$", chromosome.toUpperCase()))
         errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR).message("Invalid 'referenceName' parameter, accepted values are 1-22, X, Y, MT")
                 .build());
     }
 
-    if (!StringUtils.isBlank(referenceBases) && !Pattern.matches("[ACTG]+|N", alternateBases)) {
+    if (!StringUtils.isBlank(referenceBases) && !Pattern.matches("[ACTG]+|N", alternateBases.toUpperCase())) {
         errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
                 .message("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N")
                 .build());
     }
 
 
-    if (StringUtils.isNotBlank(referenceGenome) && !CSVS_ASSEMMBY_ID.equals(referenceGenome)){
+    if (StringUtils.isBlank(referenceGenome)){
       errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-              .message("Invalid 'assemblyId' parameter, GRC notation required " + CSVS_ASSEMMBY_ID + ")")
+              .message(" 'assemblyId' ir required  (" + CsvsConstants.CSVS_ASSEMMBY_ID + ")")
               .build());
+
+    } else {
+      if ( !CsvsConstants.CSVS_ASSEMMBY_ID.equals(referenceGenome.toLowerCase()))
+        errors.add(Error.builder().errorCode(ErrorCode.NOT_FOUND).message("Assembly not found. Use " + CsvsConstants.CSVS_ASSEMMBY_ID )
+                .build());
     }
 
-    if (!StringUtils.isBlank(alternateBases) && !Pattern.matches("[ACTG]+|N", alternateBases)) {
+    if (!StringUtils.isBlank(alternateBases) && !Pattern.matches("[ACTG]+|N", alternateBases.toUpperCase())) {
         errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
                 .message("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N")
                 .build());

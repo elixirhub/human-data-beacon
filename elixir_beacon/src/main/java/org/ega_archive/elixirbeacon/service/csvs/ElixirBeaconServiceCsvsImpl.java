@@ -4,8 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.babelomics.csvs.lib.ws.QueryResponse;
+import org.ega_archive.elixirbeacon.constant.CsvsConstants;
 import org.ega_archive.elixirbeacon.dto.*;
+import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
 import org.ega_archive.elixirbeacon.enums.VariantType;
+import org.ega_archive.elixirbeacon.properties.SampleRequests;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixirbeacon.service.GenomicQuery;
 import org.ega_archive.elixirbeacon.utils.ParseResponse;
@@ -18,6 +21,7 @@ import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 
@@ -41,7 +45,7 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
     List<Dataset> datasets = genomicQuery.listDatasets();
     beacon.setDatasets(datasets);
 
-    String url = "http://csvs.clinbioinfosspa.es:8080/csvs/rest/files/samples";
+    String url = CsvsConstants.CSVS_URL + "/files/samples";
     QueryResponse<Integer> integerQueryResponse = parseResponse
         .parseCsvsResponse(url, Integer.class);
     Integer numIndividuals = integerQueryResponse.getResult().get(0);
@@ -49,10 +53,32 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
     List<KeyValuePair> info = new ArrayList<>();
     info.add(new KeyValuePair("Number of individuals", numIndividuals.toString()));
     beacon.setInfo(info);
-
+    beacon.setSampleAlleleRequests(getSampleAlleleRequests());
     return beacon;
   }
 
+
+  private List<BeaconAlleleRequest> getSampleAlleleRequests() {
+    List<BeaconAlleleRequest> sampleAlleleRequests = new ArrayList<BeaconAlleleRequest>();
+    sampleAlleleRequests.add(BeaconAlleleRequest.builder()
+            .assemblyId(CsvsConstants.CSVS_ASSEMMBY_ID)
+            .referenceName("1")
+            .start(69510)
+            .includeDatasetResponses(FilterDatasetResponse.NONE)
+            .referenceBases("A")
+            .alternateBases("G")
+            .build());
+    sampleAlleleRequests.add(BeaconAlleleRequest.builder()
+            .assemblyId(CsvsConstants.CSVS_ASSEMMBY_ID)
+            .start(1)
+            .end(69512)
+            .includeDatasetResponses(FilterDatasetResponse.HIT)
+            .datasetIds(new ArrayList<String>(Arrays.asList("1")))
+            .filters(new ArrayList<String>(Arrays.asList("myDictionary.tech:1", "ICD-10:VIII")))
+            .build());
+
+    return sampleAlleleRequests;
+  }
 
   @Override
   public Object queryBeacon(List<String> datasetStableIds, String variantType,
