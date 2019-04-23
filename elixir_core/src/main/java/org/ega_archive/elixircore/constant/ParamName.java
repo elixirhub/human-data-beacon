@@ -62,5 +62,4 @@ public class ParamName {
   public static final String BEACON_LEVEL = "level";
   public static final String BEACON_INCLUDE_FIELD_DETAILS = "includefielddetails";
   public static final String BEACON_INCLUDE_DATASET_DETAILS = "includedatasetdetails";
-
 }
