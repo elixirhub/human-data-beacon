@@ -1,15 +1,16 @@
 package org.ega_archive.elixircore.test.util;
 
+import com.fasterxml.jackson.core.JsonParseException;
+import com.fasterxml.jackson.databind.JavaType;
+import com.fasterxml.jackson.databind.JsonMappingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
-import java.util.Map;
 import javax.sql.DataSource;
-
 import lombok.extern.slf4j.Slf4j;
 import org.ega_archive.elixircore.dto.Base;
 import org.ega_archive.elixircore.dto.auth.DrupalRequesterUser;
@@ -30,11 +31,6 @@ import org.springframework.security.core.authority.AuthorityUtils;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.util.ReflectionTestUtils;
 import org.springframework.test.web.servlet.MvcResult;
-
-import com.fasterxml.jackson.core.JsonParseException;
-import com.fasterxml.jackson.databind.JavaType;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 /**
  * Useful methods to use in tests.
@@ -173,44 +169,6 @@ public class TestUtils {
         DataSourceUtils.releaseConnection(connection, dataSource);
       }
     }
-  }
-
-  public static void printMapInConsole(Map<String, Object> map) {
-    map.entrySet()
-//        .stream()
-        .forEach(e -> {
-          System.out.println(e.getKey() + " :");
-          if (e.getValue() instanceof Map) {
-            ((Map<String, Object>) e.getValue())
-                .forEach((key, value) -> {
-                  if (value instanceof String) {
-                    System.out.println(" - " + key + " : " + value);
-                  } else if (value instanceof Map) {
-                    System.out.println(" - " + key + " :");
-                    ((Map<String, Object>) value)
-                        .entrySet()
-                        .forEach(entry -> {
-                          if (entry.getValue() instanceof String) {
-                            System.out.println("  - " + entry.getKey() + " : " + entry.getValue());
-                          } else if (entry.getValue() instanceof Map) {
-                            System.out.println("   - " + entry.getKey() + " :");
-                            ((Map<String, String>) entry.getValue())
-                                .forEach((key2, value2) -> {
-                                  System.out.println("     - " + key2 + ": " + value2);
-                                });
-                          }
-                        });
-                  }
-                });
-          } else if (e.getValue() instanceof String) {
-            System.out.println(" - " + e.getValue());
-          }
-
-        });
-  }
-
-  public static void printStringMapInConsole(Map<String, String> map) {
-    map.entrySet().forEach((e) -> System.out.println(e.getKey() + " : " + e.getValue()));
   }
 
 }

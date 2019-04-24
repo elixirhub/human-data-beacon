@@ -6,3 +6,5 @@ INSERT INTO public.dataset_access_level_table(dataset_id, parent_field, field, a
 INSERT INTO public.dataset_access_level_table(dataset_id, parent_field, field, access_level) VALUES (2, 'datasetAlleleResponses', 'new_sensitive_field', 'CONTROLLED');
 INSERT INTO public.dataset_access_level_table(dataset_id, parent_field, field, access_level) VALUES (2, 'beaconDataset', 'new_sensitive_field', 'REGISTERED');
 INSERT INTO public.dataset_access_level_table(dataset_id, parent_field, field, access_level) VALUES (2, 'beaconDataset', 'new_field', 'NOT_SUPPORTED');
+INSERT INTO public.dataset_access_level_table(dataset_id, parent_field, field, access_level) VALUES (3, 'accessLevelSummary', '-', 'PUBLIC');
+

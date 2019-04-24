@@ -112,46 +112,54 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
   }
 
   private List<BeaconAlleleRequest> getSampleAlleleRequests() {
-    List<BeaconAlleleRequest> sampleAlleleRequests = new ArrayList<BeaconAlleleRequest>();
-    sampleAlleleRequests.add(BeaconAlleleRequest.builder()
-        .assemblyId(sampleRequests.getAssemblyId1())
-        .start(sampleRequests.getStart1())
-        .startMin(sampleRequests.getStartMin1())
-        .startMax(sampleRequests.getStartMax1())
-        .end(sampleRequests.getEnd1())
-        .endMin(sampleRequests.getEndMin1())
-        .endMax(sampleRequests.getEndMax1())
-        .referenceName(sampleRequests.getReferenceName1())
-        .referenceBases(sampleRequests.getReferenceBases1())
-        .alternateBases(StringUtils.isBlank(sampleRequests.getAlternateBases1()) ? null : sampleRequests.getAlternateBases1())
-        .datasetIds(sampleRequests.getDatasetIds1().isEmpty() ? null : sampleRequests.getDatasetIds1())
-        .build());
-    sampleAlleleRequests.add(BeaconAlleleRequest.builder()
-        .assemblyId(sampleRequests.getAssemblyId2())
-        .start(sampleRequests.getStart2())
-        .startMin(sampleRequests.getStartMin2())
-        .startMax(sampleRequests.getStartMax2())
-        .end(sampleRequests.getEnd2())
-        .endMin(sampleRequests.getEndMin2())
-        .endMax(sampleRequests.getEndMax2())
-        .referenceName(sampleRequests.getReferenceName2())
-        .referenceBases(sampleRequests.getReferenceBases2())
-        .alternateBases(StringUtils.isBlank(sampleRequests.getAlternateBases2()) ? null : sampleRequests.getAlternateBases2())
-        .datasetIds(sampleRequests.getDatasetIds2().isEmpty() ? null : sampleRequests.getDatasetIds2())
-        .build());
-    sampleAlleleRequests.add(BeaconAlleleRequest.builder()
-        .assemblyId(sampleRequests.getAssemblyId3())
-        .start(sampleRequests.getStart3())
-        .startMin(sampleRequests.getStartMin3())
-        .startMax(sampleRequests.getStartMax3())
-        .end(sampleRequests.getEnd3())
-        .endMin(sampleRequests.getEndMin3())
-        .endMax(sampleRequests.getEndMax3())
-        .referenceBases(sampleRequests.getReferenceBases3())
-        .referenceName(sampleRequests.getReferenceName3())
-        .alternateBases(StringUtils.isBlank(sampleRequests.getAlternateBases3()) ? null : sampleRequests.getAlternateBases3())
-        .datasetIds(sampleRequests.getDatasetIds3().isEmpty() ? null : sampleRequests.getDatasetIds3())
-        .build());
+    List<BeaconAlleleRequest> sampleAlleleRequests = new ArrayList<>();
+    BeaconAlleleRequest sample1 = new BeaconAlleleRequest();
+    sample1.setAssemblyId(sampleRequests.getAssemblyId1());
+    sample1.setStart(sampleRequests.getStart1());
+    sample1.setStartMin(sampleRequests.getStartMin1());
+    sample1.setStartMax(sampleRequests.getStartMax1());
+    sample1.setEnd(sampleRequests.getEnd1());
+    sample1.setEndMin(sampleRequests.getEndMin1());
+    sample1.setEndMax(sampleRequests.getEndMax1());
+    sample1.setReferenceName(sampleRequests.getReferenceName1());
+    sample1.setReferenceBases(sampleRequests.getReferenceBases1());
+    sample1.setAlternateBases(StringUtils.isBlank(sampleRequests.getAlternateBases1()) ? null
+        : sampleRequests.getAlternateBases1());
+    sample1.setDatasetIds(
+        sampleRequests.getDatasetIds1().isEmpty() ? null : sampleRequests.getDatasetIds1());
+    sampleAlleleRequests.add(sample1);
+
+    BeaconAlleleRequest sample2 = new BeaconAlleleRequest();
+    sample2.setAssemblyId(sampleRequests.getAssemblyId2());
+    sample2.setStart(sampleRequests.getStart2());
+    sample2.setStartMin(sampleRequests.getStartMin2());
+    sample2.setStartMax(sampleRequests.getStartMax2());
+    sample2.setEnd(sampleRequests.getEnd2());
+    sample2.setEndMin(sampleRequests.getEndMin2());
+    sample2.setEndMax(sampleRequests.getEndMax2());
+    sample2.setReferenceName(sampleRequests.getReferenceName2());
+    sample2.setReferenceBases(sampleRequests.getReferenceBases2());
+    sample2.setAlternateBases(StringUtils.isBlank(sampleRequests.getAlternateBases2()) ? null
+        : sampleRequests.getAlternateBases2());
+    sample2.setDatasetIds(
+        sampleRequests.getDatasetIds2().isEmpty() ? null : sampleRequests.getDatasetIds2());
+    sampleAlleleRequests.add(sample2);
+
+    BeaconAlleleRequest sample3 = new BeaconAlleleRequest();
+    sample3.setAssemblyId(sampleRequests.getAssemblyId3());
+    sample3.setStart(sampleRequests.getStart3());
+    sample3.setStartMin(sampleRequests.getStartMin3());
+    sample3.setStartMax(sampleRequests.getStartMax3());
+    sample3.setEnd(sampleRequests.getEnd3());
+    sample3.setEndMin(sampleRequests.getEndMin3());
+    sample3.setEndMax(sampleRequests.getEndMax3());
+    sample3.setReferenceBases(sampleRequests.getReferenceBases3());
+    sample3.setReferenceName(sampleRequests.getReferenceName3());
+    sample3.setAlternateBases(StringUtils.isBlank(sampleRequests.getAlternateBases3()) ? null
+        : sampleRequests.getAlternateBases3());
+    sample3.setDatasetIds(
+        sampleRequests.getDatasetIds3().isEmpty() ? null : sampleRequests.getDatasetIds3());
+    sampleAlleleRequests.add(sample3);
     return sampleAlleleRequests;
   }
 
@@ -166,24 +174,23 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
     alternateBases = StringUtils.upperCase(alternateBases);
     referenceBases = StringUtils.upperCase(referenceBases);
     
-    BeaconAlleleRequest request = BeaconAlleleRequest.builder()
-        .alternateBases(alternateBases)
-        .referenceBases(referenceBases)
-        .referenceName(chromosome)
-        .datasetIds(datasetStableIds)
-        .start(start)
-        .startMin(startMin)
-        .startMax(startMax)
-        .end(end)
-        .endMin(endMin)
-        .endMax(endMax)
-        .variantType(variantType)
-        .assemblyId(referenceGenome)
-        .includeDatasetResponses(FilterDatasetResponse.parse(includeDatasetResponses))
-        .filters(filters)
-        .build();
+    BeaconAlleleRequest request = new BeaconAlleleRequest();
+    request.setAlternateBases(alternateBases);
+    request.setReferenceBases(referenceBases);
+    request.setReferenceName(chromosome);
+    request.setDatasetIds(datasetStableIds);
+    request.setStart(start);
+    request.setStartMin(startMin);
+    request.setStartMax(startMax);
+    request.setEnd(end);
+    request.setEndMin(endMin);
+    request.setEndMax(endMax);
+    request.setVariantType(variantType);
+    request.setAssemblyId(referenceGenome);
+    request.setIncludeDatasetResponses(FilterDatasetResponse.parse(includeDatasetResponses));
+    request.setFilters(filters);
     result.setAlleleRequest(request);
-    
+
     VariantType type = VariantType.parse(variantType);
 
     List<String> translatedFilters = new ArrayList<>();

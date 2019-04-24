@@ -3,8 +3,6 @@ package org.ega_archive.elixirbeacon.service;
 import java.io.IOException;
 import java.util.List;
 import javassist.NotFoundException;
-import org.ega_archive.elixirbeacon.dto.Beacon;
-import org.ega_archive.elixirbeacon.dto.BeaconAlleleRequest;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
 import org.ega_archive.elixirbeacon.enums.VariantType;
 import org.ega_archive.elixircore.helper.CommonQuery;
@@ -24,7 +22,7 @@ public interface ElixirBeaconService {
    * @return
    * @throws NotFoundException 
    */
-  Beacon listDatasets(CommonQuery commonQuery, String referenceGenome) throws NotFoundException;
+  Object listDatasets(CommonQuery commonQuery, String referenceGenome) throws NotFoundException;
 
   /**
    * Executes the query against the beacon and basically answers yes or no.

@@ -1,0 +1,243 @@
+{
+  "id" : "elixir-demo-beacon",
+  "name" : "Elixir Demo Beacon",
+  "apiVersion" : "1.0.1",
+  "organization" : {
+    "id" : "EGA",
+    "name" : "European Genome-Phenome Archive (EGA)",
+    "description" : "The European Genome-phenome Archive (EGA) is a service for permanent archiving and sharing of all types of personally identifiable genetic and phenotypic data resulting from biomedical research projects.",
+    "address" : "",
+    "welcomeUrl" : "https://ega-archive.org/",
+    "contactUrl" : "mailto:beacon.ega@crg.eu",
+    "logoUrl" : "https://ega-archive.org/images/logo.png",
+    "info" : null
+  },
+  "description" : "This <a href=\"http://ga4gh.org/#/beacon\">Beacon</a> is based on the GA4GH Beacon <a href=\"https://github.com/ga4gh/schemas/blob/beacon/src/main/resources/avro/beacon.avdl\"></a>",
+  "version" : "v1",
+  "welcomeUrl" : "https://ega-archive.org/elixir_demo_beacon/",
+  "alternativeUrl" : "https://ega-archive.org/elixir_demo_beacon_web/",
+  "createDateTime" : "2015-06-01T00:00.000Z",
+  "updateDateTime" : "2019-01-07T00:00.000Z",
+  "datasets" : [ {
+    "id" : "EGAD00000000001",
+    "name" : null,
+    "description" : "Dataset 1 for testing",
+    "assemblyId" : "grch37",
+    "createDateTime" : null,
+    "updateDateTime" : null,
+    "dataUseConditions" : {
+      "consentCodeDataUse" : {
+        "primaryCategory" : {
+          "code" : "NRES",
+          "description" : "No restrictions on data use.",
+          "additionalConstraint" : null
+        },
+        "secondaryCategories" : [ {
+          "code" : "RS-[XX]",
+          "description" : "Use of the data is limited to studies of [research type] (e.g., pediatric research).",
+          "additionalConstraint" : "pediatric research"
+        } ],
+        "requirements" : [ ],
+        "version" : "v1.0"
+      }
+    },
+    "version" : null,
+    "variantCount" : 3,
+    "callCount" : 1,
+    "sampleCount" : 1,
+    "externalUrl" : null,
+    "info" : {
+      "accessType" : "PUBLIC",
+      "authorized" : "true"
+    }
+  }, {
+    "id" : "EGAD00000000002",
+    "name" : null,
+    "description" : "Dataset 2 for testing",
+    "assemblyId" : "grch37",
+    "createDateTime" : null,
+    "updateDateTime" : null,
+    "dataUseConditions" : {
+      "consentCodeDataUse" : {
+        "primaryCategory" : {
+          "code" : "HMB(CC)",
+          "description" : "Use of the data is limited to health/medical/biomedical purposes; does not include the study of population origins or ancestry.",
+          "additionalConstraint" : null
+        },
+        "secondaryCategories" : [ {
+          "code" : "NMDS",
+          "description" : "Use of the data includes methods development research (e.g., development of software or algorithms) ONLY within the bounds of other data use limitations.",
+          "additionalConstraint" : null
+        }, {
+          "code" : "GSO",
+          "description" : "Use of the data is limited to genetic studies only (i.e., no “phenotype-only” research).",
+          "additionalConstraint" : null
+        } ],
+        "requirements" : [ ],
+        "version" : "v1.0"
+      }
+    },
+    "version" : null,
+    "variantCount" : 2,
+    "callCount" : 1,
+    "sampleCount" : 1,
+    "externalUrl" : null,
+    "info" : {
+      "accessType" : "REGISTERED",
+      "authorized" : "false"
+    }
+  }, {
+    "id" : "EGAD00000000003",
+    "name" : null,
+    "description" : "Dataset 3 for testing",
+    "assemblyId" : "grch38",
+    "createDateTime" : null,
+    "updateDateTime" : null,
+    "dataUseConditions" : {
+      "consentCodeDataUse" : {
+        "primaryCategory" : {
+          "code" : "GRU(CC)",
+          "description" : "For health/medical/biomedical purposes, including the study of population origins or ancestry.",
+          "additionalConstraint" : null
+        },
+        "secondaryCategories" : [ ],
+        "requirements" : [ ],
+        "version" : "v1.0"
+      }
+    },
+    "version" : null,
+    "variantCount" : 2,
+    "callCount" : 1,
+    "sampleCount" : 1,
+    "externalUrl" : null,
+    "info" : {
+      "accessType" : "CONTROLLED",
+      "authorized" : "false"
+    }
+  }, {
+    "id" : "EGAD00000000004",
+    "name" : null,
+    "description" : "Dataset 4 for testing",
+    "assemblyId" : "grch37",
+    "createDateTime" : null,
+    "updateDateTime" : null,
+    "dataUseConditions" : {
+      "consentCodeDataUse" : {
+        "primaryCategory" : {
+          "code" : "GRU(CC)",
+          "description" : "For health/medical/biomedical purposes, including the study of population origins or ancestry.",
+          "additionalConstraint" : null
+        },
+        "secondaryCategories" : [ {
+          "code" : "RUO",
+          "description" : "Use of data is limited to research purposes (e.g., does not include its use in clinical care).",
+          "additionalConstraint" : null
+        } ],
+        "requirements" : [ {
+          "code" : "MOR-[XX]",
+          "description" : "Requestor agrees not to publish results of studies until [date].",
+          "additionalConstraint" : "2017-06-01"
+        } ],
+        "version" : "v1.0"
+      }
+    },
+    "version" : null,
+    "variantCount" : 1,
+    "callCount" : 1,
+    "sampleCount" : 1,
+    "externalUrl" : null,
+    "info" : {
+      "accessType" : "PUBLIC",
+      "authorized" : "true"
+    }
+  }, {
+    "id" : "EGAD00000000005",
+    "name" : null,
+    "description" : "Dataset 5 for testing",
+    "assemblyId" : "grch37",
+    "createDateTime" : null,
+    "updateDateTime" : null,
+    "dataUseConditions" : {
+      "consentCodeDataUse" : {
+        "primaryCategory" : {
+          "code" : "GRU(CC)",
+          "description" : "For health/medical/biomedical purposes, including the study of population origins or ancestry.",
+          "additionalConstraint" : null
+        },
+        "secondaryCategories" : [ {
+          "code" : "RUO",
+          "description" : "Use of data is limited to research purposes (e.g., does not include its use in clinical care).",
+          "additionalConstraint" : null
+        } ],
+        "requirements" : [ {
+          "code" : "GS-[XX]",
+          "description" : "Use of the data is limited to within [geographic region].",
+          "additionalConstraint" : "Europe"
+        }, {
+          "code" : "PS",
+          "description" : "Use of data is limited to use within an approved project.",
+          "additionalConstraint" : "Europe"
+        } ],
+        "version" : "v1.0"
+      }
+    },
+    "version" : null,
+    "variantCount" : 4,
+    "callCount" : 1,
+    "sampleCount" : 1,
+    "externalUrl" : null,
+    "info" : {
+      "accessType" : "PUBLIC",
+      "authorized" : "true"
+    }
+  } ],
+  "sampleAlleleRequests" : [ {
+    "alternateBases" : "C",
+    "referenceBases" : "A",
+    "referenceName" : "1",
+    "start" : 14929,
+    "startMin" : null,
+    "startMax" : null,
+    "end" : null,
+    "endMin" : null,
+    "endMax" : null,
+    "variantType" : null,
+    "assemblyId" : "GRCh37",
+    "datasetIds" : null,
+    "includeDatasetResponses" : null,
+    "filters" : null
+  }, {
+    "alternateBases" : null,
+    "referenceBases" : "N",
+    "referenceName" : "X",
+    "start" : null,
+    "startMin" : 153592310,
+    "startMax" : 153592317,
+    "end" : null,
+    "endMin" : 153517030,
+    "endMax" : 153517050,
+    "variantType" : null,
+    "assemblyId" : "GRCh37",
+    "datasetIds" : [ "EGAD00000000028" ],
+    "includeDatasetResponses" : null,
+    "filters" : null
+  }, {
+    "alternateBases" : null,
+    "referenceBases" : "N",
+    "referenceName" : "X",
+    "start" : 147880925,
+    "startMin" : null,
+    "startMax" : null,
+    "end" : 146342284,
+    "endMin" : null,
+    "endMax" : null,
+    "variantType" : null,
+    "assemblyId" : "GRCh37",
+    "datasetIds" : [ "EGAD00000000028" ],
+    "includeDatasetResponses" : null,
+    "filters" : null
+  } ],
+  "info" : {
+    "size" : "12"
+  }
+}

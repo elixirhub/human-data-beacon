@@ -9,4 +9,8 @@ public interface BeaconAccessLevelService {
       List<String> datasetStableIds, String level, boolean includeFieldDetails,
       boolean includeDatasetDetails);
 
+  AccessLevelResponse listAccessLevels(List<String> fields,
+      List<String> datasetStableIds, String level, boolean includeFieldDetails,
+      boolean includeDatasetDetails, String fileName);
+
 }

@@ -1,0 +1,49 @@
+{
+  "beaconId" : "elixir-demo-beacon",
+  "exists" : false,
+  "error" : null,
+  "alleleRequest" : {
+    "alternateBases" : "A",
+    "referenceBases" : "C",
+    "referenceName" : "21",
+    "start" : 11,
+    "startMin" : null,
+    "startMax" : null,
+    "end" : null,
+    "endMin" : null,
+    "endMax" : null,
+    "assemblyId" : "GRCh37",
+    "datasetIds" : null,
+    "includeDatasetResponses" : "ALL",
+    "filters" : null
+  },
+  "apiVersion" : "1.0.1",
+  "datasetAlleleResponses" : [ {
+    "datasetId" : "EGAD00000000001",
+    "exists" : false,
+    "error" : null,
+    "frequency" : null,
+    "variantCount" : null,
+    "sampleCount" : null,
+    "note" : "OK",
+    "info" : null
+  }, {
+    "datasetId" : "EGAD00000000004",
+    "exists" : false,
+    "error" : null,
+    "frequency" : null,
+    "variantCount" : null,
+    "sampleCount" : null,
+    "note" : "OK",
+    "info" : null
+  }, {
+    "datasetId" : "EGAD00000000005",
+    "exists" : false,
+    "error" : null,
+    "frequency" : null,
+    "variantCount" : null,
+    "sampleCount" : null,
+    "note" : "OK",
+    "info" : null
+  } ]
+}

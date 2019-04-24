@@ -1,0 +1,61 @@
+{
+  "beaconId" : "myBeacon",
+  "exists" : true,
+  "error" : null,
+  "request" : {
+    "alternateBases" : "A",
+    "referenceBases" : "C",
+    "referenceName" : "Y",
+    "start" : 1111,
+    "assemblyId" : "GRCh37",
+    "datasetIds" : null,
+    "includeDatasetResponses" : "ALL",
+    "filters" : [ "myFilter1", "myFilter2" ]
+  },
+  "apiVersion" : "v1.0.1",
+  "datasetAlleleResponses" : [ {
+    "datasetId" : "1",
+    "exists" : true,
+    "error" : null,
+    "variantCount" : 11,
+    "callCount" : 111,
+    "sampleCount" : 2,
+    "note" : "note 1",
+    "externalUrl" : "https://some_url2",
+    "info" : {
+      "myDataset1InfoKey1" : "myValue1",
+      "myDataset1InfoKey2" : "myValue2"
+    }
+  }, {
+    "datasetId" : "1",
+    "exists" : true,
+    "error" : null,
+    "variantCount" : 22,
+    "callCount" : 222,
+    "sampleCount" : 3,
+    "note" : "note 2",
+    "externalUrl" : "https://some_url2",
+    "info" : {
+      "myDataset2InfoKey1" : "myValue1"
+    }
+  } ],
+  "info" : {
+    "myKey1" : "myValue1",
+    "myKey2" : "myValue2"
+  },
+  "beaconHandover" : [ {
+    "handoverType" : {
+      "id" : "CUSTOM",
+      "label" : "myUrl"
+    },
+    "note" : "",
+    "url" : "https://localhost"
+  }, {
+    "handoverType" : {
+      "id" : "CUSTOM",
+      "label" : "myUrl2"
+    },
+    "note" : "",
+    "url" : "https://localhost"
+  } ]
+}

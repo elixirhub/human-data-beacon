@@ -6,6 +6,8 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 import static org.springframework.integration.test.matcher.MapContentMatchers.hasAllEntries;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.sql.SQLException;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -18,6 +20,7 @@ import org.ega_archive.elixirbeacon.Application;
 import org.ega_archive.elixirbeacon.dto.AccessLevelResponse;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 import org.ega_archive.elixircore.test.util.TestUtils;
+import org.ega_archive.elixircore.util.JsonUtils;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -39,6 +42,9 @@ public class AccessLevelTest {
 
   @Resource(name = "elixirbeaconDataSource")
   private DataSource dataSource;
+
+  @Autowired
+  private ObjectMapper objectMapper;
 
   @Before
   public void setUp() throws SQLException {
@@ -208,12 +214,18 @@ public class AccessLevelTest {
    * includeDatasetDetails=false
    */
   @Test
-  public void getSomeAccessLevelsWithoutInfoAboutDatasets() {
+  public void getSomeAccessLevelsWithoutInfoAboutDatasets() throws JsonProcessingException {
     Map<String, Object> expectedMap = fillExpectedMapWithSomeFields();
 
     List<String> fields = Arrays.asList("error", "datasetAlleleResponses", "id");
     AccessLevelResponse accessLevels = beaconAccessLevelService
         .listAccessLevels(fields, null, null, true, false);
+
+    System.out.println("*************");
+    System.out.println(JsonUtils.objectToJson(accessLevels, objectMapper));
+    System.out.println("*************");
+    System.out.println("*************");
+    System.out.println(JsonUtils.objectToJson(expectedMap, objectMapper));
 
     assertThat(accessLevels.getError(), nullValue());
     assertThat(accessLevels.getFields().size(), equalTo(5));

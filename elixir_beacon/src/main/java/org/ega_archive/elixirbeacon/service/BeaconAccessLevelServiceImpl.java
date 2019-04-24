@@ -23,11 +23,15 @@ import org.ega_archive.elixirbeacon.model.elixirbeacon.QDatasetAccessLevel;
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.DatasetAccessLevelRepository;
 import org.ega_archive.elixircore.exception.NotImplementedException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
 @Service
 public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
+
+  @Value("${access.levels.default.yaml.filename}")
+  private String defaultAccessLevelFileName;
 
   public static final String ACCESS_LEVEL_SUMMARY = "accessLevelSummary";
 
@@ -37,7 +41,7 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
   @Override
   public AccessLevelResponse listAccessLevels(List<String> fields,
       List<String> datasetStableIds, String level, boolean includeFieldDetails,
-      boolean includeDatasetDetails) {
+      boolean includeDatasetDetails, String fileName) {
 
     // TODO implement search by "level"
     if (StringUtils.isNotBlank(level)) {
@@ -49,7 +53,7 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
 
     ObjectMapper objectMapper = new ObjectMapper(new YAMLFactory());
     try {
-      InputStream input = this.getClass().getClassLoader().getResourceAsStream("access_levels.yaml");
+      InputStream input = this.getClass().getClassLoader().getResourceAsStream(fileName);
       @SuppressWarnings("unchecked")
       Map<String, Object> map = objectMapper.readValue(input, Map.class);
       map = searchFieldsInMap(map, fields, includeFieldDetails);
@@ -58,7 +62,6 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
         response.setError(error);
       }
       response.setFields(map);
-//      TestUtils.printMapInConsole(map);
     } catch (IOException e) {
       log.error("Exception parsing yaml", e);
     }
@@ -78,6 +81,14 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
     }
 
     return response;
+  }
+
+  @Override
+  public AccessLevelResponse listAccessLevels(List<String> fields, List<String> datasetStableIds,
+      String level, boolean includeFieldDetails, boolean includeDatasetDetails) {
+
+    return listAccessLevels(fields, datasetStableIds, level, includeFieldDetails,
+        includeDatasetDetails, defaultAccessLevelFileName);
   }
 
   private Iterable<DatasetAccessLevel> findDatasets(List<String> fields, List<String> datasetStableIds,

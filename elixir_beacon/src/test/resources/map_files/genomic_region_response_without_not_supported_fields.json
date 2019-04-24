@@ -1,0 +1,42 @@
+{
+  "beaconId" : "myBeacon",
+  "exists" : true,
+  "error" : null,
+  "request" : {
+    "referenceBases" : "C",
+    "referenceName" : "Y",
+    "start" : 1111,
+    "end" : 2222,
+    "assemblyId" : "GRCh37",
+    "datasetIds" : null,
+    "includeDatasetResponses" : "ALL",
+    "filters" : [ "myFilter1", "myFilter2" ]
+  },
+  "apiVersion" : "v1.0.1",
+  "variantAnnotations" : [ {
+    "cellBaseInfo" : "cellbase",
+    "info" : null
+  }, {
+    "cellBaseInfo" : "cellbase",
+    "info" : null
+  } ],
+  "info" : {
+    "myKey1" : "myValue1",
+    "myKey2" : "myValue2"
+  },
+  "beaconHandover" : [ {
+    "handoverType" : {
+      "id" : "CUSTOM",
+      "label" : "myUrl"
+    },
+    "note" : "",
+    "url" : "https://localhost"
+  }, {
+    "handoverType" : {
+      "id" : "CUSTOM",
+      "label" : "myUrl2"
+    },
+    "note" : "",
+    "url" : "https://localhost"
+  } ]
+}

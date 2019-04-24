@@ -1,0 +1,50 @@
+{
+  "beaconId" : "myBeacon",
+  "exists" : true,
+  "error" : null,
+  "request" : {
+    "referenceBases" : "C",
+    "referenceName" : "Y",
+    "start" : 1111,
+    "end" : 2222,
+    "assemblyId" : "GRCh37",
+    "datasetIds" : null,
+    "includeDatasetResponses" : "ALL",
+    "filters" : [ "myFilter1", "myFilter2" ]
+  },
+  "apiVersion" : "v1.0.1",
+  "variantAnnotations" : [ {
+    "datasetAlleleResponses" : [ {
+      "datasetId" : "1",
+      "exists" : true,
+      "error" : null,
+      "frequency" : 0.5,
+      "variantCount" : 11,
+      "sampleCount" : 2,
+      "note" : "note 1",
+      "info" : {
+        "myDataset1InfoKey1" : "myValue1",
+        "myDataset1InfoKey2" : "myValue2"
+      }
+    } ],
+    "info" : null
+  }, {
+    "datasetAlleleResponses" : [ {
+      "datasetId" : "1",
+      "exists" : true,
+      "error" : null,
+      "frequency" : 0.1,
+      "variantCount" : 22,
+      "sampleCount" : 3,
+      "note" : "note 2",
+      "info" : {
+        "myDataset2InfoKey1" : "myValue1"
+      }
+    } ],
+    "info" : null
+  } ],
+  "info" : {
+    "myKey1" : "myValue1",
+    "myKey2" : "myValue2"
+  }
+}

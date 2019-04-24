@@ -10,6 +10,7 @@ import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixircore.constant.ParamName;
 import org.ega_archive.elixircore.helper.CommonQueryHelper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.data.domain.Sort;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -23,10 +24,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class ElixirBeaconController {
 
   @Autowired
+  @Qualifier("elixirBeaconServiceDefaultImpl")
   private ElixirBeaconService elixirBeaconService;
 
   @GetMapping(value = "/")
-  public Beacon listDatasets(
+  public Object listDatasets(
       Sort sort, 
       @RequestParam(required = false) Map<String, String> params) throws NotFoundException {
 

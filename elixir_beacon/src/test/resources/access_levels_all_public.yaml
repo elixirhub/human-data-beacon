@@ -24,7 +24,7 @@ beaconOrganization:
   logoUrl: PUBLIC
   info: PUBLIC
 beaconDataset:
-  accessLevelSummary: REGISTERED
+  accessLevelSummary: PUBLIC
   id: PUBLIC
   name: PUBLIC
   description: PUBLIC
@@ -32,14 +32,12 @@ beaconDataset:
   createDateTime: PUBLIC
   updateDateTime: PUBLIC
   version: PUBLIC
-  variantCount: REGISTERED
+  variantCount: PUBLIC
   callCount: PUBLIC
   sampleCount: PUBLIC
   externalUrl: PUBLIC
   info: PUBLIC
   dataUseConditions: PUBLIC
-  new_sensitive_field: REGISTERED
-  new_field: NOT_SUPPORTED
 beaconAlleleRequest:
   accessLevelSummary: PUBLIC
   referenceName: PUBLIC
@@ -55,6 +53,7 @@ beaconAlleleRequest:
   assemblyId: PUBLIC
   datasetIds: PUBLIC
   includeDatasetResponses: PUBLIC
+  filters: PUBLIC
 beaconAlleleResponse:
   accessLevelSummary: PUBLIC
   beaconId: PUBLIC
@@ -76,27 +75,27 @@ datasetAlleleResponse:
   note: PUBLIC
   externalUrl: PUBLIC
   info: PUBLIC
-  new_sensitive_field: REGISTERED
-  new_non_sensitive_data: PUBLIC
+  datasetHandover: PUBLIC
 beaconError:
   accessLevelSummary: PUBLIC
   errorCode: PUBLIC
   errorMessage: PUBLIC
-sampleAlleleRequests:
-  accessLevelSummary: PUBLIC
-  referenceName: PUBLIC
-  start: PUBLIC
-  end: PUBLIC
-  startMin: PUBLIC
-  startMax: PUBLIC
-  endMin: PUBLIC
-  endMax: PUBLIC
-  referenceBases: PUBLIC
-  alternateBases: PUBLIC
-  variantType: PUBLIC
-  assemblyId: PUBLIC
-  datasetIds: PUBLIC
-  includeDatasetResponses: PUBLIC
+#sampleAlleleRequests:
+#  accessLevelSummary: PUBLIC
+#  referenceName: PUBLIC
+#  start: PUBLIC
+#  end: PUBLIC
+#  startMin: PUBLIC
+#  startMax: PUBLIC
+#  endMin: PUBLIC
+#  endMax: PUBLIC
+#  referenceBases: PUBLIC
+#  alternateBases: PUBLIC
+#  variantType: PUBLIC
+#  assemblyId: PUBLIC
+#  datasetIds: PUBLIC
+#  includeDatasetResponses: PUBLIC
+#  filters: PUBLIC
 dataUseConditions:
   accessLevelSummary: PUBLIC
   consentCodeDataUse: PUBLIC
@@ -108,6 +107,73 @@ consentCodeDataUse:
   requirements: PUBLIC
   version: PUBLIC
 consentCodeCategory:
+  accessLevelSummary: PUBLIC
   code: PUBLIC
   description: PUBLIC
   additionalConstraint: PUBLIC
+beaconHandover:
+  accessLevelSummary: PUBLIC
+  handoverType: PUBLIC
+  note: PUBLIC
+  url: PUBLIC
+datasetHandover:
+  accessLevelSummary: PUBLIC
+  handoverType: PUBLIC
+  note: PUBLIC
+  url: PUBLIC
+handoverType:
+  accessLevelSummary: PUBLIC
+  id: PUBLIC
+  label: PUBLIC
+beaconGenomicSnpRequest:
+  accessLevelSummary: PUBLIC
+  referenceName: PUBLIC
+  start: PUBLIC
+  referenceBases: PUBLIC
+  alternateBases: PUBLIC
+  assemblyId: PUBLIC
+  datasetIds: PUBLIC
+  includeDatasetResponses: PUBLIC
+  filters: PUBLIC
+beaconGenomicSnpResponse:
+  accessLevelSummary: PUBLIC
+  beaconId: PUBLIC
+  apiVersion: PUBLIC
+  exists: PUBLIC
+  error: PUBLIC
+  info: PUBLIC
+  datasetAlleleResponses: PUBLIC
+  request: PUBLIC
+  beaconHandover: PUBLIC
+beaconGenomicRegionRequest:
+  accessLevelSummary: PUBLIC
+  referenceName: PUBLIC
+  start: PUBLIC
+  end: PUBLIC
+  referenceBases: PUBLIC
+  alternateBases: PUBLIC
+  assemblyId: PUBLIC
+  datasetIds: PUBLIC
+  includeDatasetResponses: PUBLIC
+  filters: PUBLIC
+beaconGenomicRegionResponse:
+  accessLevelSummary: PUBLIC
+  beaconId: PUBLIC
+  apiVersion: PUBLIC
+  exists: PUBLIC
+  error: PUBLIC
+  request: PUBLIC
+  variantAnnotations: PUBLIC
+  info: PUBLIC
+  beaconHandover: PUBLIC
+variantAnnotation:
+  accessLevelSummary: PUBLIC
+  cellBaseInfo: PUBLIC
+  datasetAlleleResponses: PUBLIC
+  info: PUBLIC
+  variantHandover: PUBLIC
+variantHandover:
+  accessLevelSummary: PUBLIC
+  handoverType: PUBLIC
+  note: PUBLIC
+  url: PUBLIC

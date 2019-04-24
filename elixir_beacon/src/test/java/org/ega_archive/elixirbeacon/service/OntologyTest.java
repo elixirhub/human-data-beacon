@@ -6,7 +6,6 @@ import static org.hamcrest.Matchers.equalTo;
 import java.sql.SQLException;
 import javax.annotation.Resource;
 import javax.sql.DataSource;
-import javax.validation.constraints.AssertTrue;
 import org.ega_archive.elixirbeacon.Application;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixirbeacon.dto.BeaconOntology;
