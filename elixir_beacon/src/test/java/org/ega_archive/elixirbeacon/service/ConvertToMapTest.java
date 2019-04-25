@@ -637,8 +637,11 @@ public class ConvertToMapTest {
     info3.put("myDataset2InfoKey1", "myValue1");
     datasetResponse2.setInfo(info3);
 
+    Map<String, Object> cellBaseInfo = new HashMap<>();
+    cellBaseInfo.put("cellBase", "some info");
+
     VariantAnnotation variant1 = new VariantAnnotation();
-    variant1.setCellBaseInfo("cellbase");
+    variant1.setCellBaseInfo(cellBaseInfo);
     variant1.setDatasetAlleleResponses(Arrays.asList(datasetResponse1));
     HandoverType handoverType6 = new HandoverType();
     handoverType6.setId("CUSTOM");
@@ -650,7 +653,7 @@ public class ConvertToMapTest {
     variant1.setVariantHandover(Arrays.asList(handover6));
 
     VariantAnnotation variant2 = new VariantAnnotation();
-    variant2.setCellBaseInfo("cellbase");
+    variant2.setCellBaseInfo(cellBaseInfo);
     variant2.setDatasetAlleleResponses(Arrays.asList(datasetResponse2));
     HandoverType handoverType7 = new HandoverType();
     handoverType7.setId("CUSTOM");

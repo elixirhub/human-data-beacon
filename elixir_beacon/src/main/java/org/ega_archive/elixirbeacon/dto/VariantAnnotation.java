@@ -3,6 +3,7 @@ package org.ega_archive.elixirbeacon.dto;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.Map;
+
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +19,7 @@ public class VariantAnnotation {
   @JsonIgnore
   private String[] fields = {"cellBaseInfo", "datasetAlleleResponses", "info", "variantHandover"};
 
-  private String cellBaseInfo;
+  private Map<String, Object> cellBaseInfo;
 
   private List<DatasetAlleleResponse> datasetAlleleResponses;
 
