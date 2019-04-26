@@ -90,7 +90,7 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
             beaconFieldAccessLevels.put("welcomeUrl", AccessLevels.PUBLIC);
             beaconFieldAccessLevels.put("alternativeUrl", AccessLevels.PUBLIC);
             beaconFieldAccessLevels.put("createDateTime", AccessLevels.PUBLIC);
-            beaconFieldAccessLevels.put("updateDateTime", AccessLevels.PUBLIC);
+            beaconFieldAccessLevels.put("updateDateTime", AccessLevels.REGISTERED);
             beaconFieldAccessLevels.put("datasets", AccessLevels.PUBLIC);
             beaconFieldAccessLevels.put("sampleAlleleRequests", AccessLevels.PUBLIC);
             beaconFieldAccessLevels.put("info", AccessLevels.PUBLIC);
@@ -105,7 +105,7 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
             beaconOrganizationFieldAccessLevels.put("welcomeUrl", AccessLevels.PUBLIC);
             beaconOrganizationFieldAccessLevels.put("contactUrl", AccessLevels.PUBLIC);
             beaconOrganizationFieldAccessLevels.put("logoUrl", AccessLevels.PUBLIC);
-            beaconOrganizationFieldAccessLevels.put("info", AccessLevels.PUBLIC);
+            beaconOrganizationFieldAccessLevels.put("info", AccessLevels.NOT_SUPPORTED);
             accessLevels.put("beaconOrganization", beaconOrganizationFieldAccessLevels);
 
             Map<String, String> beaconDatasetFieldAccessLevels = new HashMap<>();
@@ -115,14 +115,14 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
             beaconDatasetFieldAccessLevels.put("description", AccessLevels.PUBLIC);
             beaconDatasetFieldAccessLevels.put("assemblyId", AccessLevels.PUBLIC);
             beaconDatasetFieldAccessLevels.put("createDateTime", AccessLevels.PUBLIC);
-            beaconDatasetFieldAccessLevels.put("updateDateTime", AccessLevels.PUBLIC);
-            beaconDatasetFieldAccessLevels.put("version", AccessLevels.PUBLIC);
-            beaconDatasetFieldAccessLevels.put("variantCount", AccessLevels.PUBLIC);
-            beaconDatasetFieldAccessLevels.put("callCount", AccessLevels.PUBLIC);
+            beaconDatasetFieldAccessLevels.put("updateDateTime", AccessLevels.REGISTERED);
+            beaconDatasetFieldAccessLevels.put("version", AccessLevels.NOT_SUPPORTED);
+            beaconDatasetFieldAccessLevels.put("variantCount", AccessLevels.NOT_SUPPORTED);
+            beaconDatasetFieldAccessLevels.put("callCount", AccessLevels.NOT_SUPPORTED);
             beaconDatasetFieldAccessLevels.put("sampleCount", AccessLevels.PUBLIC);
-            beaconDatasetFieldAccessLevels.put("externalUrl", AccessLevels.PUBLIC);
-            beaconDatasetFieldAccessLevels.put("info", AccessLevels.PUBLIC);
-            beaconDatasetFieldAccessLevels.put("dataUseConditions", AccessLevels.PUBLIC);
+            beaconDatasetFieldAccessLevels.put("externalUrl", AccessLevels.NOT_SUPPORTED);
+            beaconDatasetFieldAccessLevels.put("info", AccessLevels.NOT_SUPPORTED);
+            beaconDatasetFieldAccessLevels.put("dataUseConditions", AccessLevels.NOT_SUPPORTED);
             accessLevels.put("beaconDataset", beaconDatasetFieldAccessLevels);
 
             Map<String, String> beaconAlleleRequestFieldAccessLevels = new HashMap<>();
@@ -160,10 +160,10 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
             datasetAlleleResponsesFieldAccessLevels.put("error", AccessLevels.PUBLIC);
             datasetAlleleResponsesFieldAccessLevels.put("frequency", AccessLevels.PUBLIC);
             datasetAlleleResponsesFieldAccessLevels.put("variantCount", AccessLevels.PUBLIC);
-            datasetAlleleResponsesFieldAccessLevels.put("callCount", AccessLevels.PUBLIC);
+            datasetAlleleResponsesFieldAccessLevels.put("callCount", AccessLevels.NOT_SUPPORTED);
             datasetAlleleResponsesFieldAccessLevels.put("sampleCount", AccessLevels.PUBLIC);
             datasetAlleleResponsesFieldAccessLevels.put("note", AccessLevels.PUBLIC);
-            datasetAlleleResponsesFieldAccessLevels.put("externalUrl", AccessLevels.PUBLIC);
+            datasetAlleleResponsesFieldAccessLevels.put("externalUrl", AccessLevels.NOT_SUPPORTED);
             datasetAlleleResponsesFieldAccessLevels.put("info", AccessLevels.PUBLIC);
             accessLevels.put("datasetAlleleResponses", datasetAlleleResponsesFieldAccessLevels);
 

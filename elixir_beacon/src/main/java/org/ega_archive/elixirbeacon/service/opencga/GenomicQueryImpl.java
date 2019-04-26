@@ -2,6 +2,7 @@ package org.ega_archive.elixirbeacon.service.opencga;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.extern.slf4j.Slf4j;
+import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang3.NotImplementedException;
 import org.ega_archive.elixirbeacon.dto.BeaconGenomicRegionResponse;
 import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpResponse;
@@ -9,7 +10,9 @@ import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.Error;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 import org.ega_archive.elixirbeacon.service.GenomicQuery;
+import org.ega_archive.elixirbeacon.service.GenomicQueryBaseImpl;
 import org.ega_archive.elixircore.event.sender.RestEventSender;
+import org.mortbay.util.StringUtil;
 import org.opencb.commons.utils.ListUtils;
 import org.opencb.opencga.client.exceptions.ClientException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,7 +30,7 @@ import java.util.stream.Collectors;
 @Primary
 @Slf4j
 @Service
-public class OpencgaGenomicQueryImpl implements GenomicQuery {
+public class GenomicQueryImpl extends GenomicQueryBaseImpl {
 
     @Autowired
     private ObjectMapper objectMapper;
@@ -45,31 +48,29 @@ public class OpencgaGenomicQueryImpl implements GenomicQuery {
     public BeaconGenomicSnpResponse queryBeaconGenomicSnp(List<String> datasetStableIds, String alternateBases,
                                                           String referenceBases, String chromosome, Integer start, String referenceGenome,
                                                           String includeDatasetResponsesString, List<String> filters) {
-
-        String variantId = getVariantId(chromosome, start, referenceBases, alternateBases);
-        BeaconGenomicSnpResponse response = new BeaconGenomicSnpResponse();
-        try {
-            IncludeDatasetResponses includeDatasetResponses = parseIncludeDatasetResponses(includeDatasetResponsesString);
-
-            Filter filter = ListUtils.isEmpty(filters) ? null : Filter.parse(filters);
-
-            String authorization = incomingRequest.getHeader("Authorization");
-            String sessionToken = OpencgaUtils.parseSessionToken(authorization );
-            OpencgaEnrichedClient opencga = OpencgaUtils.getClient(sessionToken);
-
-            BeaconSnpVisitor visitor = new BeaconSnpVisitor(opencga, variantId, filter);
-            StudyVisitor wrapper = new VisitorByDatasetId(datasetStableIds, visitor);
-            wrapper = new VisitorByAssembly(referenceGenome, wrapper);
-            OpencgaUtils.visitStudies(wrapper, opencga);
-            List<DatasetAlleleResponse> datasetResponses = visitor.getResults();
-            response.setExists(datasetResponses.stream().anyMatch(DatasetAlleleResponse::isExists));
-            response.setDatasetAlleleResponses(filterDatasetResults(datasetResponses, includeDatasetResponses));
-        } catch (IOException | ClientException e) {
-            Error error = new Error();
-            error.setErrorCode(ErrorCode.GENERIC_ERROR);
-            error.setMessage(e.getMessage());
-            response.setError(error);
-            return response;
+        BeaconGenomicSnpResponse response = super.queryBeaconGenomicSnp(datasetStableIds, alternateBases, referenceBases, chromosome, start, referenceGenome, includeDatasetResponsesString, filters);
+        if (null == response.getError()) {
+            // opencga variant ID
+            String variantId = getVariantId(chromosome, start, referenceBases, alternateBases);
+            try {
+                IncludeDatasetResponses includeDatasetResponses = parseIncludeDatasetResponses(includeDatasetResponsesString);
+                Filter filter = ListUtils.isEmpty(filters) ? null : Filter.parse(filters);
+                String authorization = incomingRequest.getHeader("Authorization");
+                String sessionToken = OpencgaUtils.parseSessionToken(authorization );
+                OpencgaEnrichedClient opencga = OpencgaUtils.getClient(sessionToken);
+                BeaconSnpVisitor visitor = new BeaconSnpVisitor(opencga, variantId, filter);
+                StudyVisitor wrapper = new VisitorByDatasetId(datasetStableIds, visitor);
+                wrapper = new VisitorByAssembly(referenceGenome, wrapper);
+                OpencgaUtils.visitStudies(wrapper, opencga);
+                List<DatasetAlleleResponse> datasetResponses = visitor.getResults();
+                response.setDatasetAlleleResponses(filterDatasetResults(datasetResponses, includeDatasetResponses));
+                response.setExists(datasetResponses.stream().anyMatch(DatasetAlleleResponse::isExists));
+            } catch (IOException | ClientException e) {
+                Error error = new Error();
+                error.setErrorCode(ErrorCode.GENERIC_ERROR);
+                error.setMessage(e.getMessage());
+                response.setError(error);
+            }
         }
         return response;
     }
@@ -98,30 +99,10 @@ public class OpencgaGenomicQueryImpl implements GenomicQuery {
         }
     }
 
-    private static IncludeDatasetResponses parseIncludeDatasetResponses(String value) throws IOException {
-        if (Objects.isNull(value)) {
-            return IncludeDatasetResponses.ALL;
-        } else {
-            switch(value.toLowerCase()) {
-                case "all":
-                     return IncludeDatasetResponses.ALL;
-                case "hit":
-                    return IncludeDatasetResponses.HIT;
-                case "miss":
-                    return IncludeDatasetResponses.MISS;
-                case "null":
-                    return IncludeDatasetResponses.NULL;
-                case "none":
-                    return IncludeDatasetResponses.NONE;
-                default:
-                    throw new IOException("invalid parameter: includeDatasetResponses");
-
-            }
-        }
-    }
-
     private static String getVariantId(String chromosome, Integer start, String reference, String alternate) {
-        return String.format("%s:%s:%s:%s", chromosome, start, reference, alternate);
+        alternate = StringUtils.isBlank(alternate) || "N".equals(alternate) ? "-" : alternate;
+        reference = StringUtils.isBlank(reference) ? "-" : reference;
+        return String.format("%s:%s:%s:%s", chromosome, 1+start, reference, alternate);
     }
 
 }

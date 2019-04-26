@@ -6,6 +6,8 @@ import org.opencb.opencga.client.rest.OpenCGAClient;
 
 public class OpencgaEnrichedClient extends OpenCGAClient {
 
+    private boolean anonymousAccess = true;
+
     private ClientConfiguration clientConfiguration;
 
     public OpencgaEnrichedClient() {
@@ -24,10 +26,15 @@ public class OpencgaEnrichedClient extends OpenCGAClient {
 
     public OpencgaEnrichedClient(String sessionId, ClientConfiguration clientConfiguration) {
         super(sessionId, clientConfiguration);
+        this.anonymousAccess = false;
         this.clientConfiguration = clientConfiguration;
     }
 
     public OpencgaBeaconClient getBeaconClient() {
         return new OpencgaBeaconClient(super.getUserId(), super.getSessionId(), clientConfiguration);
+    }
+
+    public boolean isAccessAnonymous() {
+        return anonymousAccess;
     }
 }

@@ -89,6 +89,10 @@ public class BeaconSnpVisitor implements StudyVisitor {
                 result.setFrequency(new BigDecimal(datasetFrequency));
                 result.setInfo(new HashMap<>());
 
+//                if (!opencga.isAccessAnonymous()) {
+//                    result.getInfo().put("uri", study.getUri());
+//                }
+
                 if (Objects.isNull(filter)) {
                     result.setExists(0 < datasetSampleCount);
                 } else {

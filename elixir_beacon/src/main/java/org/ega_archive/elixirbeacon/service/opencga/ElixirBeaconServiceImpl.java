@@ -22,7 +22,7 @@ import java.util.List;
 
 @Primary
 @Service
-public class ElixirBeaconServiceOpencgaImpl implements ElixirBeaconService {
+public class ElixirBeaconServiceImpl implements ElixirBeaconService {
 
 	@Autowired
 	private HttpServletRequest incomingRequest;
