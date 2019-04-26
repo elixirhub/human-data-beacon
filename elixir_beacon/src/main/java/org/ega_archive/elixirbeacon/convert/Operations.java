@@ -151,11 +151,6 @@ public class Operations {
     Arrays.asList(fields)
         .stream()
         .filter(fieldName -> accessLevelCurrent.containsKey(fieldName))
-        .map(fieldName -> accessLevelCurrent.get(fieldName))
-//        .filter(fieldAccessLevel -> StringUtils.isNotBlank(fieldAccessLevel)
-//            && (!StringUtils.equalsIgnoreCase(fieldAccessLevel, AccessLevel.NOT_SUPPORTED.getLevel())
-//            && (StringUtils.equalsIgnoreCase(fieldAccessLevel, AccessLevel.PUBLIC.getLevel())
-//            || isAuthenticated)))
         .forEach(fieldName -> {
           String value = accessLevelCurrent.get(fieldName);
           if (StringUtils.isNotBlank(value)
@@ -177,31 +172,6 @@ public class Operations {
           }
         });
 
-
-//    for (String fieldName : fields) {
-//
-//      if (accessLevelCurrent.containsKey(fieldName)) {
-//        String value = accessLevelCurrent.get(fieldName);
-//
-//        if (StringUtils.isNotBlank(value)
-//            && (!StringUtils.equalsIgnoreCase(value, AccessLevel.NOT_SUPPORTED.getLevel())
-//            && (StringUtils.equalsIgnoreCase(value, AccessLevel.PUBLIC.getLevel())
-//            || isAuthenticated))) {
-//          // Field is public or is registered/controlled and user is authenticated
-//
-//          Object fieldValue = src.getPropertyValue(fieldName);
-//
-//          if (StringUtils.equalsIgnoreCase(fieldName, "createDateTime")) {
-//            fieldValue = ((DateTime) fieldValue)
-//                .toString(BeaconConstants.ISO8601_DATE_TIME_PATTERN);
-//          } else if (StringUtils.equalsIgnoreCase(fieldName, "updateDateTime")) {
-//            fieldValue = ((DateTime) fieldValue)
-//                .toString(BeaconConstants.ISO8601_DATE_TIME_PATTERN);
-//          }
-//          convertGenericTypeToMap(map, fieldValue, fieldName, accessLevelFields, isAuthenticated);
-//        }
-//      }
-//    }
     return map;
   }
 
