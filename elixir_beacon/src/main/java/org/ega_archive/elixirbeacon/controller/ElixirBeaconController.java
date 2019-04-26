@@ -24,7 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class ElixirBeaconController {
 
   @Autowired
-  @Qualifier("elixirBeaconServiceDefaultImpl")
+  @Qualifier("elixirBeaconServiceCsvsImpl")
   private ElixirBeaconService elixirBeaconService;
 
   @GetMapping(value = "/")

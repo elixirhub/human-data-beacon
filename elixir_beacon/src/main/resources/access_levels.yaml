@@ -43,13 +43,13 @@ beaconAlleleRequest:
   referenceName: PUBLIC
   start: PUBLIC
   end: PUBLIC
-  startMin: NOT_SUPPORTED
-  startMax: NOT_SUPPORTED
-  endMin: NOT_SUPPORTED
-  endMax: NOT_SUPPORTED
+  startMin: PUBLIC
+  startMax: PUBLIC
+  endMin: PUBLIC
+  endMax: PUBLIC
   referenceBases: PUBLIC
   alternateBases: PUBLIC
-  variantType: NOT_SUPPORTED
+  variantType: PUBLIC
   assemblyId: PUBLIC
   datasetIds: PUBLIC
   includeDatasetResponses: PUBLIC
@@ -67,10 +67,10 @@ datasetAlleleResponses:
   datasetId: PUBLIC
   exists: PUBLIC
   error: PUBLIC
-  frequency: NOT_SUPPORTED
-  variantCount: NOT_SUPPORTED
-  callCount: NOT_SUPPORTED
-  sampleCount: NOT_SUPPORTED
+  frequency: PUBLIC
+  variantCount: PUBLIC
+  callCount: PUBLIC
+  sampleCount: PUBLIC
   note: PUBLIC
   externalUrl: PUBLIC
   info: PUBLIC
@@ -79,43 +79,7 @@ beaconError:
   errorCode: PUBLIC
   errorMessage: PUBLIC
 dataUseConditions:
-  accessLevelSummary: NOT_SUPPORTED
-  consentCodeDataUse: NOT_SUPPORTED
-  adamDataUse: NOT_SUPPORTED
-beaconGenomicSnpRequest:
   accessLevelSummary: PUBLIC
-  referenceName: PUBLIC
-  start: PUBLIC
-  referenceBases: PUBLIC
-  alternateBases: PUBLIC
-  assemblyId: PUBLIC
-  datasetIds: PUBLIC
-  includeDatasetResponses: PUBLIC
-beaconGenomicSnpResponse:
-  beaconId: PUBLIC
-  exists: PUBLIC
-  error: PUBLIC
-  request: PUBLIC
-  apiVersion: PUBLIC
-  datasetAlleleResponses: PUBLIC
-  info: PUBLIC
-  beaconHandover: PUBLIC
-beaconGenomicRegionRequest:
-  accessLevelSummary: PUBLIC
-  referenceName: PUBLIC
-  start: PUBLIC
-  end: PUBLIC
-  referenceBases: PUBLIC
-  assemblyId: PUBLIC
-  datasetIds: PUBLIC
-  includeDatasetResponses: PUBLIC
-beaconGenomicRegionResponse:
-  beaconId: PUBLIC
-  exists: PUBLIC
-  error: PUBLIC
-  request: PUBLIC
-  apiVersion: PUBLIC
-  variantAnnotation: PUBLIC
-  datasetAlleleResponses: PUBLIC
-  info: PUBLIC
-  beaconHandover: PUBLIC
+  consentCodeDataUse: PUBLIC
+  adamDataUse: PUBLIC  
+

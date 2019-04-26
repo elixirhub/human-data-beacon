@@ -25,11 +25,12 @@ import org.ega_archive.elixircore.exception.NotImplementedException;
 import org.ega_archive.elixircore.helper.CommonQuery;
 import org.ega_archive.elixircore.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
 
 @Slf4j
-//@Primary
+@Primary
 @Service
 public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
 

@@ -6,8 +6,6 @@ import javassist.NotFoundException;
 import org.ega_archive.elixirbeacon.convert.MapConverter;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconGenomicRegionResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpResponse;
 import org.ega_archive.elixirbeacon.enums.VariantType;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixircore.helper.CommonQuery;
@@ -22,7 +20,7 @@ public class ElixirBeaconServiceDecorator implements ElixirBeaconService {
   private MapConverter wrappedMapConverter;
 
   public ElixirBeaconServiceDecorator(
-      @Qualifier("elixirBeaconServiceDefaultImpl") ElixirBeaconService wrappedBeaconService,
+      @Qualifier("elixirBeaconServiceCsvsImpl") ElixirBeaconService wrappedBeaconService,
       MapConverter wrappedMapConverter) {
     this.wrappedBeaconService = wrappedBeaconService;
     this.wrappedMapConverter = wrappedMapConverter;
@@ -31,6 +29,7 @@ public class ElixirBeaconServiceDecorator implements ElixirBeaconService {
   @Override
   public Beacon listDatasets(CommonQuery commonQuery, String referenceGenome)
       throws NotFoundException {
+    Object response = wrappedBeaconService.listDatasets(commonQuery, referenceGenome);
     return null;
   }
 
