@@ -4,7 +4,6 @@ import com.querydsl.core.types.Predicate;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -13,6 +12,7 @@ import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
+import org.babelomics.csvs.lib.models.DiseaseCount;
 import org.babelomics.csvs.lib.models.DiseaseGroup;
 import org.babelomics.csvs.lib.ws.QueryResponse;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
@@ -126,7 +126,8 @@ public class GenomicQueryImpl implements GenomicQuery {
       variantExists = !variants.isEmpty() && variants.size() == 1;
       if (variantExists) {
         info = new HashMap<>();
-        info.put("stats", variants.get(0).getStats());
+        //info.put("stats", variants.get(0).getStats());
+        info.put("stats", filterVariantStats(variants.get(0).getStats()));
       }
 
       beaconGenomicSnpResponse.setExists(variantExists);
@@ -209,7 +210,8 @@ public class GenomicQueryImpl implements GenomicQuery {
 
           // Get info variant (all subpopulations)
           Map<String, Object> variantInfo = new HashMap<>();
-          variantInfo.put("stats variant", variant.getStats());
+          //variantInfo.put("stats variant", variant.getStats());
+          variantInfo.put("stats variant", filterVariantStats(variant.getStats()));
           // Return variant 0-based
           String varSearch = String.join(":",
               (new String[]{variant.getChromosome(), String.valueOf(variant.getPosition()),
@@ -339,12 +341,14 @@ public class GenomicQueryImpl implements GenomicQuery {
             HashMap infoDataset = new HashMap();
             // Info Without filters
             if (filters == null || filters.isEmpty()) {
-              infoDataset.put("stats dataset", variantsDataset.get(0).getStats());
+              //infoDataset.put("stats dataset", variantsDataset.get(0).getStats());
+              infoDataset.put("stats dataset", filterVariantStats(variantsDataset.get(0).getStats()));
               datasetAlleleResponse.setInfo(infoDataset);
             } else { // Info wit filters
               List<org.babelomics.csvs.lib.models.Variant> variantsDatasetWithoutFilters = variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), filters);
               if (variantsDatasetWithoutFilters != null && !variantsDatasetWithoutFilters.isEmpty()) {
-                infoDataset.put("stats dataset", variantsDatasetWithoutFilters.get(0).getStats());
+                //infoDataset.put("stats dataset", stats);
+                infoDataset.put("stats dataset", filterVariantStats(variantsDatasetWithoutFilters.get(0).getStats()));
                 datasetAlleleResponse.setInfo(infoDataset);
               }
             }
@@ -376,6 +380,20 @@ public class GenomicQueryImpl implements GenomicQuery {
       }
     }
     return datasetAlleleResponses;
+  }
+
+  private Map<String, String> filterVariantStats(DiseaseCount stats) {
+    Map<String, String> statsDataset = new LinkedHashMap<>();
+    statsDataset.put("gt00", Integer.toString(stats.getGt00()));
+    statsDataset.put("gt01", Integer.toString(stats.getGt01()));
+    statsDataset.put("gt11",Integer.toString(stats.getGt11()));
+    statsDataset.put("gtmissing", Integer.toString(stats.getGtmissing()));
+    statsDataset.put("maf", Float.toString(stats.getMaf()));
+    statsDataset.put("refFreq", Float.toString(stats.getRefFreq()));
+    statsDataset.put("altFreq", Float.toString(stats.getAltFreq()));
+    statsDataset.put("sumSampleRegions", Integer.toString(stats.getSumSampleRegions()));
+    statsDataset.put("totalGts", Integer.toString(stats.getTotalGts()));
+    return statsDataset;
   }
 
   /**
@@ -579,31 +597,6 @@ public class GenomicQueryImpl implements GenomicQuery {
       for (org.babelomics.csvs.lib.models.Variant variant : result) {
         if (checkParameters(referenceBases, variant.getReference(), alternateBases,
             variant.getAlternate(), isRegionQuery)) {
-//<<<<<<< HEAD:elixir_beacon/src/main/java/org/ega_archive/elixirbeacon/service/impl/GenomicQueryImpl.java
-//          numVariants++;
-//
-//          DiseaseCount stats = variant.getStats();
-//          info.put("0/0", String.valueOf(stats.getGt00()));
-//          info.put("0/1", String.valueOf(stats.getGt01()));
-//          info.put("1/1", String.valueOf(stats.getGt11()));
-//          info.put("./.", String.valueOf(stats.getGtmissing()));
-//          info.put("0 Freq", String.valueOf(stats.getRefFreq()));
-//          info.put("1 Freq", String.valueOf(stats.getAltFreq()));
-//          info.put("MAF", String.valueOf(stats.getMaf()));
-//          // TODO: consider if we should show this info
-////          info.add(new KeyValuePair("Num sample regions", String.valueOf(stats.getSumSampleRegions())));
-////          info.add(new KeyValuePair("Total GTs", String.valueOf(stats.getTotalGts())));
-//        }
-//      }
-//    }
-//    if (numVariants > 1) {
-//      info = new HashMap<>();
-//    }
-//    if (numVariants > 0) {
-//      info.put("variantCount", String.valueOf(numVariants));
-//    }
-//    return info;
-//=======
           variantsResults.add(variant);
         }
       }
