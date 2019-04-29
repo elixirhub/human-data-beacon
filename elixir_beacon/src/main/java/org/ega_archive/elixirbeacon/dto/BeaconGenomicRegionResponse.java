@@ -5,21 +5,19 @@ import java.util.List;
 import java.util.Map;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixirbeacon.convert.Operations;
 
 @Data
-//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BeaconGenomicRegionResponse {
 
   @JsonIgnore
-  private String[] fields = {"beaconId", "exists", "error", "request", "apiVersion",
-      "variantAnnotations", "info", "beaconHandover"};
+  private String[] fields = {"beaconId", "apiVersion", "exists", "error", "request",
+      "variantsFound", "info", "resultsHandover", "beaconHandover"};
 
   private String beaconId = BeaconConstants.BEACON_ID;
 
@@ -31,9 +29,11 @@ public class BeaconGenomicRegionResponse {
 
   private BeaconGenomicRegionRequest request;
 
-  private List<VariantAnnotation> variantsFound;
+  private List<Variant> variantsFound;
 
   private Map<String, Object> info;
+
+  private List<Handover> resultsHandover; // move dbsnp here in snp queries
 
   private List<Handover> beaconHandover;
 

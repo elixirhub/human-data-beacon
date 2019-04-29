@@ -147,15 +147,17 @@ beaconGenomicRegionResponse:
   exists: PUBLIC
   error: PUBLIC
   request: PUBLIC
-  variantAnnotations: PUBLIC
-  info: PUBLIC
+  variantsFound: PUBLIC
+  resultsHandover: PUBLIC
   beaconHandover: PUBLIC
-variantAnnotation:
-  accessLevelSummary: PUBLIC
-  cellBaseInfo: PUBLIC
-  datasetAlleleResponses: PUBLIC
   info: PUBLIC
+variant:
+  accessLevelSummary: PUBLIC
+  variantDetails: PUBLIC
+  datasetAlleleResponses: PUBLIC
+  variantAnnotations: PUBLIC
   variantHandover: PUBLIC
+  info: PUBLIC
 variantHandover:
   accessLevelSummary: PUBLIC
   handoverType: PUBLIC

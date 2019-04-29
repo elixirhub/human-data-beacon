@@ -33,6 +33,8 @@ public class BeaconAlleleResponse {
 
   private List<DatasetAlleleResponse> datasetAlleleResponses;
 
+  private List<Handover> beaconHandover;
+
   public BeaconAlleleResponse(BeaconGenomicSnpResponse genomicResponse) {
     BeaconAlleleRequest alleleRequest = new BeaconAlleleRequest();
     alleleRequest.setAssemblyId(genomicResponse.getRequest().getAssemblyId());
@@ -49,6 +51,7 @@ public class BeaconAlleleResponse {
     this.datasetAlleleResponses = genomicResponse.getDatasetAlleleResponses();
     this.error = genomicResponse.getError();
     this.exists = genomicResponse.isExists();
+    this.beaconHandover = genomicResponse.getBeaconHandover();
   }
 
   public BeaconAlleleResponse(BeaconGenomicRegionResponse genomicResponse) {
@@ -67,6 +70,7 @@ public class BeaconAlleleResponse {
     //this.datasetAlleleResponses = genomicResponse.getDatasetAlleleResponses();
     this.error = genomicResponse.getError();
     this.exists = genomicResponse.isExists();
+    this.beaconHandover = genomicResponse.getBeaconHandover();
   }
 
   public void addDatasetAlleleResponse(DatasetAlleleResponse datasetAlleleResponse) {

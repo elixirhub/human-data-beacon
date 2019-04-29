@@ -28,7 +28,7 @@ import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpResponse;
 import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.Handover;
 import org.ega_archive.elixirbeacon.dto.HandoverType;
-import org.ega_archive.elixirbeacon.dto.VariantAnnotation;
+import org.ega_archive.elixirbeacon.dto.Variant;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
 import org.ega_archive.elixircore.helper.CommonQuery;
 import org.ega_archive.elixircore.test.util.TestUtils;
@@ -640,8 +640,8 @@ public class ConvertToMapTest {
     Map<String, Object> cellBaseInfo = new HashMap<>();
     cellBaseInfo.put("cellBase", "some info");
 
-    VariantAnnotation variant1 = new VariantAnnotation();
-    variant1.setCellBaseInfo(cellBaseInfo);
+    Variant variant1 = new Variant();
+    //variant1.setCellBaseInfo(cellBaseInfo);
     variant1.setDatasetAlleleResponses(Arrays.asList(datasetResponse1));
     HandoverType handoverType6 = new HandoverType();
     handoverType6.setId("CUSTOM");
@@ -652,8 +652,8 @@ public class ConvertToMapTest {
     handover6.setUrl("https://localhost/dataset");
     variant1.setVariantHandover(Arrays.asList(handover6));
 
-    VariantAnnotation variant2 = new VariantAnnotation();
-    variant2.setCellBaseInfo(cellBaseInfo);
+    Variant variant2 = new Variant();
+    //variant2.setCellBaseInfo(cellBaseInfo);
     variant2.setDatasetAlleleResponses(Arrays.asList(datasetResponse2));
     HandoverType handoverType7 = new HandoverType();
     handoverType7.setId("CUSTOM");
@@ -664,7 +664,7 @@ public class ConvertToMapTest {
     handover7.setUrl("https://localhost/dataset");
     variant2.setVariantHandover(Arrays.asList(handover7));
 
-    response.setVariantAnnotations(Arrays.asList(variant1, variant2));
+    response.setVariantsFound(Arrays.asList(variant1, variant2));
     return response;
   }
 

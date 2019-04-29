@@ -1,6 +1,5 @@
 package org.ega_archive.elixirbeacon.convert;
 
-import com.google.common.collect.Lists;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -20,7 +19,7 @@ import org.ega_archive.elixirbeacon.dto.Error;
 import org.ega_archive.elixirbeacon.dto.Handover;
 import org.ega_archive.elixirbeacon.dto.HandoverType;
 import org.ega_archive.elixirbeacon.dto.Organization;
-import org.ega_archive.elixirbeacon.dto.VariantAnnotation;
+import org.ega_archive.elixirbeacon.dto.Variant;
 import org.ega_archive.elixirbeacon.dto.datause.DataUseCondition;
 import org.ega_archive.elixirbeacon.dto.datause.consent_code.ConsentCode;
 import org.ega_archive.elixirbeacon.dto.datause.consent_code.ConsentCodeCondition;
@@ -30,7 +29,6 @@ import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDataset;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDatasetConsentCode;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.OntologyTerm;
 import org.ega_archive.elixircore.enums.DatasetAccessType;
-import org.ega_archive.elixircore.exception.NotImplementedException;
 import org.ega_archive.elixircore.exception.PreConditionFailed;
 import org.joda.time.DateTime;
 import org.springframework.beans.BeanWrapper;
@@ -222,8 +220,8 @@ public class Operations {
           map.add(((ConsentCodeCondition) object).toMap(accessLevelFields, isAuthenticated));
         } else if (object instanceof Handover) {
           map.add(((Handover) object).toMap(accessLevelFields, key, isAuthenticated));
-        } else if (object instanceof VariantAnnotation) {
-          map.add(((VariantAnnotation) object).toMap(accessLevelFields, isAuthenticated));
+        } else if (object instanceof Variant) {
+          map.add(((Variant) object).toMap(accessLevelFields, isAuthenticated));
         } else {
           isSimpleList = true;
           listObj.add(object);

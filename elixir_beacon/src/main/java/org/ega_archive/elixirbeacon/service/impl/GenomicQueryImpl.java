@@ -14,7 +14,6 @@ import java.util.stream.Collectors;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.babelomics.csvs.lib.models.DiseaseGroup;
-import org.babelomics.csvs.lib.models.Variant;
 import org.babelomics.csvs.lib.ws.QueryResponse;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixirbeacon.constant.CsvsConstants;
@@ -27,7 +26,8 @@ import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.Error;
 import org.ega_archive.elixirbeacon.dto.Handover;
 import org.ega_archive.elixirbeacon.dto.HandoverType;
-import org.ega_archive.elixirbeacon.dto.VariantAnnotation;
+import org.ega_archive.elixirbeacon.dto.Variant;
+import org.ega_archive.elixirbeacon.dto.VariantDetail;
 import org.ega_archive.elixirbeacon.enums.AccessLevel;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
@@ -43,6 +43,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class GenomicQueryImpl implements GenomicQuery {
 
+  public static final String LINK_TO_DB_SNP_API = "Link to dbSNP API";
   @Autowired
   private ParseResponse parseResponse;
 
@@ -101,7 +102,8 @@ public class GenomicQueryImpl implements GenomicQuery {
     request.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
     //request.setAssemblyIds(referenceBases);
     request.setDatasetIds(datasetStableIds);
-    request.setIncludeDatasetResponses(FilterDatasetResponse.parse(includeDatasetResponses));
+    FilterDatasetResponse parsedIncludeDatasetResponses = FilterDatasetResponse.parse(includeDatasetResponses);
+    request.setIncludeDatasetResponses(parsedIncludeDatasetResponses);
     request.setFilters(filters);
     beaconGenomicSnpResponse.setRequest(request);
 
@@ -119,7 +121,7 @@ public class GenomicQueryImpl implements GenomicQuery {
           );
       beaconGenomicSnpResponse.setError(error);
     } else {
-      List<Variant> variants = findRegionVariants(chromosome, CsvsConstants.CSVS_BASED == 1 ? start + 1 : start, CsvsConstants.CSVS_BASED == 1 ? start + 2 : start + 1,
+      List<org.babelomics.csvs.lib.models.Variant> variants = findRegionVariants(chromosome, CsvsConstants.CSVS_BASED == 1 ? start + 1 : start, CsvsConstants.CSVS_BASED == 1 ? start + 2 : start + 1,
               referenceBases, alternateBases, datasetStableIds, filters);
 
       variantExists = !variants.isEmpty() && variants.size() == 1;
@@ -170,7 +172,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     List<Error> errors = checkParams(datasetStableIds, null, referenceBases, chromosome, start, referenceGenome,   filters);
 
     boolean variantExists = false;
-    List<VariantAnnotation> variantAnnotations = new ArrayList<>();
+    List<Variant> variantList = new ArrayList<>();
     Map<String, Object> info = new HashMap<>();
 
     List beaconHandovers = new ArrayList();
@@ -183,51 +185,79 @@ public class GenomicQueryImpl implements GenomicQuery {
       );
       response.setError(error);
     } else {
-        // check X-based
-        List<Variant> variants = findRegionVariants(chromosome, CsvsConstants.CSVS_BASED == 1 ? start + 1 : start, CsvsConstants.CSVS_BASED == 1 ? end + 1 : end,
-                referenceBases, null, datasetStableIds, filters);
+      // check X-based
+      List<org.babelomics.csvs.lib.models.Variant> variants = findRegionVariants(chromosome,
+          CsvsConstants.CSVS_BASED == 1 ? start + 1 : start,
+          CsvsConstants.CSVS_BASED == 1 ? end + 1 : end,
+          referenceBases, null, datasetStableIds, filters);
 
+      variantExists = !variants.isEmpty() && variants.size() > 0;
+      if (variantExists) {
+        for (org.babelomics.csvs.lib.models.Variant variant : variants) {
+          Variant beaconVariant = new Variant();
 
-        variantExists = !variants.isEmpty() && variants.size() > 0;
-        if (variantExists) {
-          for (Variant variant : variants) {
-            VariantAnnotation variantAnnotation = new VariantAnnotation();
+          VariantDetail variantDetail = new VariantDetail();
+          variantDetail.setAlternateBases(variant.getAlternate());
+          variantDetail.setReferenceBases(variant.getReference());
+          variantDetail.setStart(variant.getPosition());
+          variantDetail.setChromosome(variant.getChromosome());
+          beaconVariant.setVariantDetails(variantDetail);
 
-            // Get list variant to search in cellbase
+          // Get list variant to search in cellbase
+          Map cellBaseMap = callToCellBase(variant.getChromosome(), variant.getPosition(),
+              variant.getReference(), variant.getAlternate());
+          //beaconVariant.setCellBaseInfo(cellBaseMap);
+          // TODO call to dbsnp
 
-            Map dataAnnotation = callToCellBase(variant.getChromosome(), variant.getPosition(), variant.getReference(), variant.getAlternate());
-            variantAnnotation.setCellBaseInfo(dataAnnotation);
-            //beaconHandovers = parseCellBase(dataAnnotation);
+          //beaconHandovers = parseCellBase(cellBaseMap);
 
-            // Get info variant (all subpopulations)
-            Map<String, Object> variantInfo = new HashMap<>();
-            variantInfo.put("stats variant", variant.getStats());
-            // Return variant 0-based
-            String varSearch = String.join(":", (new String[]{variant.getChromosome(), String.valueOf(variant.getPosition()), variant.getReference(), variant.getAlternate()}));
-            if (CsvsConstants.CSVS_BASED == 1)
-              varSearch = String.join(":", (new String[]{variant.getChromosome(), String.valueOf(variant.getPosition() - 1), variant.getReference(), variant.getAlternate()}));
-            variantInfo.put("variant", varSearch);
-            variantAnnotation.setInfo(variantInfo);
-
-            // Get variant by subpopulations
-            List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponse(datasetStableIds, variant, filters, includeDatasetResponses);
-
-            variantAnnotation.setDatasetAlleleResponses(datasetAlleleResponses);
-            variantAnnotation.setVariantHandover(parseCellBase(dataAnnotation));
-
-            variantAnnotations.add(variantAnnotation);
+          // Get info variant (all subpopulations)
+          Map<String, Object> variantInfo = new HashMap<>();
+          variantInfo.put("stats variant", variant.getStats());
+          // Return variant 0-based
+          String varSearch = String.join(":",
+              (new String[]{variant.getChromosome(), String.valueOf(variant.getPosition()),
+                  variant.getReference(), variant.getAlternate()}));
+          if (CsvsConstants.CSVS_BASED == 1) {
+            varSearch = String.join(":",
+                (new String[]{variant.getChromosome(), String.valueOf(variant.getPosition() - 1),
+                    variant.getReference(), variant.getAlternate()}));
           }
-        }
+          variantInfo.put("variant", varSearch);
+          beaconVariant.setInfo(variantInfo);
 
-        info.put("variantCount", variants.size());
-        info.put("variantLimit", "Only return the first " +  CsvsConstants.CSVS_LIMIT + " variants");
+          // Get variant by subpopulations
+          List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponse(
+              datasetStableIds, variant, filters, includeDatasetResponses);
+
+          beaconVariant.setDatasetAlleleResponses(datasetAlleleResponses);
+
+          Map<String, Object> variantAnnotations = new LinkedHashMap<>();
+          variantAnnotations.put("cellBase", cellBaseMap);
+
+          List<Handover> variantHandover = parseCellBase(cellBaseMap);
+          variantHandover.stream()
+              .filter(handover -> StringUtils.isNotBlank(handover.getNote()))
+              .filter(handover -> handover.getNote().equalsIgnoreCase(LINK_TO_DB_SNP_API))
+              .forEach(handover -> {
+                Map dbSnpResponse = parseResponse.parseResponse(handover.getUrl(), null);
+                variantAnnotations.put("dbSNP", dbSnpResponse);
+              });
+          beaconVariant.setVariantHandover(variantHandover);
+          beaconVariant.setVariantAnnotations(variantAnnotations);
+
+          variantList.add(beaconVariant);
+        }
       }
 
+      info.put("variantCount", variants.size());
+      info.put("variantLimit", "Only return the first " + CsvsConstants.CSVS_LIMIT + " variants");
+    }
 
     // Links to downloads and contact
     beaconHandovers.addAll(genericHandover());
     response.setBeaconHandover(beaconHandovers);
-    response.setVariantsFound(variantAnnotations);
+    response.setVariantsFound(variantList);
     response.setExists(variantExists);
 
     response.setInfo(info);
@@ -254,7 +284,7 @@ public class GenomicQueryImpl implements GenomicQuery {
 
     handoverType = new HandoverType();
     handoverType.setId("CUSTOM");
-    handoverType.setLabel("Organization name");
+    handoverType.setLabel("Contact to request data");
     handover = new Handover();
     handover.setHandoverType(handoverType);
     handover.setUrl( BeaconConstants.ORGANIZATION_CONTACT );
@@ -272,7 +302,7 @@ public class GenomicQueryImpl implements GenomicQuery {
    * @param filters Filters used to search variant
    * @return
    */
-  private List<DatasetAlleleResponse> getDatasetAlleleResponse(List<String>datasetStableIds, Variant variant,  List<String> filters, String includeDatasetResponses) {
+  private List<DatasetAlleleResponse> getDatasetAlleleResponse(List<String>datasetStableIds, org.babelomics.csvs.lib.models.Variant variant,  List<String> filters, String includeDatasetResponses) {
     List<DatasetAlleleResponse> datasetAlleleResponses = new ArrayList<>();
     FilterDatasetResponse filterDatasetResponse = FilterDatasetResponse.parse(includeDatasetResponses);
     if (filterDatasetResponse.isIncludeDatasets()) {
@@ -288,7 +318,7 @@ public class GenomicQueryImpl implements GenomicQuery {
         datasetAlleleResponse.setDatasetId(datasetId);
 
         // Without filters
-        List<Variant> variantsDataset = null;
+        List<org.babelomics.csvs.lib.models.Variant> variantsDataset = null;
 
         try {
           variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), null);
@@ -317,7 +347,7 @@ public class GenomicQueryImpl implements GenomicQuery {
               infoDataset.put("stats dataset", variantsDataset.get(0).getStats());
               datasetAlleleResponse.setInfo(infoDataset);
             } else { // Info wit filters
-              List<Variant> variantsDatasetWithoutFilters = variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), filters);
+              List<org.babelomics.csvs.lib.models.Variant> variantsDatasetWithoutFilters = variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), filters);
               if (variantsDatasetWithoutFilters != null && !variantsDatasetWithoutFilters.isEmpty()) {
                 infoDataset.put("stats dataset", variantsDatasetWithoutFilters.get(0).getStats());
                 datasetAlleleResponse.setInfo(infoDataset);
@@ -408,14 +438,13 @@ public class GenomicQueryImpl implements GenomicQuery {
                 String rsIdElem = (String) variantElem.get("id");
                 if (rsIdElem != null) {
                   rsIds.add(rsIdElem);
-                  log.debug("rs ID: {}", rsIdElem);
+                  //log.debug("rs ID: {}", rsIdElem);
                 }
               }
             }
           }
         }
       }
-
 
       for (String rsId : rsIds) {
         HandoverType handoverType = new HandoverType();
@@ -433,7 +462,7 @@ public class GenomicQueryImpl implements GenomicQuery {
         handover = new Handover();
         handover.setHandoverType(handoverType);
         handover.setUrl(CsvsConstants.dbSNP_URL_API + "/" + rsId.replaceFirst("rs", ""));
-        handover.setNote("Link to dbSNP API");
+        handover.setNote(LINK_TO_DB_SNP_API);
         handoverList.add(handover);
       }
     }
@@ -484,10 +513,10 @@ public class GenomicQueryImpl implements GenomicQuery {
    * @param filters  Filters (tecnology , disease(icd10) ...)
    * @return
    */
-  private List<Variant> findRegionVariants(String chromosome, Integer start, Integer end,
+  private List<org.babelomics.csvs.lib.models.Variant> findRegionVariants(String chromosome, Integer start, Integer end,
       String referenceBases, String alternateBases, List<String> datasetStableIds,
       List<String> filters) {
-    List<Variant> variantsResults = new ArrayList<>();
+    List<org.babelomics.csvs.lib.models.Variant> variantsResults = new ArrayList<>();
 
     String diseases = null;
     String technologyFilter = null;
@@ -538,8 +567,8 @@ public class GenomicQueryImpl implements GenomicQuery {
     }
 
     log.debug("url {}", url);
-    QueryResponse<Variant> variantQueryResponse = parseResponse
-        .parseCsvsResponse(url, Variant.class);
+    QueryResponse<org.babelomics.csvs.lib.models.Variant> variantQueryResponse = parseResponse
+        .parseCsvsResponse(url, org.babelomics.csvs.lib.models.Variant.class);
     log.debug("response: {}", variantQueryResponse);
 
     boolean isRegionQuery = StringUtils.isBlank(alternateBases) && end != null;
@@ -554,8 +583,8 @@ public class GenomicQueryImpl implements GenomicQuery {
 
 //>>>>>>> fc0aeffb7e6466a2e1299a57279262633f9c078f:elixir_beacon/src/main/java/org/ega_archive/elixirbeacon/service/csvs/GenomicQueryImpl.java
     if (exists) {
-      List<Variant> result = variantQueryResponse.getResult();
-      for (Variant variant : result) {
+      List<org.babelomics.csvs.lib.models.Variant> result = variantQueryResponse.getResult();
+      for (org.babelomics.csvs.lib.models.Variant variant : result) {
         if (checkParameters(referenceBases, variant.getReference(), alternateBases,
             variant.getAlternate(), isRegionQuery)) {
 //<<<<<<< HEAD:elixir_beacon/src/main/java/org/ega_archive/elixirbeacon/service/impl/GenomicQueryImpl.java
