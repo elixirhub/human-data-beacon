@@ -7,7 +7,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "ontology_term", schema = "public", catalog = "ega_beacon_dev")
+@Table(name = "ontology_term", schema = "public")
 public class OntologyTerm {
 
   @Id
@@ -16,5 +16,7 @@ public class OntologyTerm {
   private String ontology;
 
   private String term;
+
+  private String label;
 
 }

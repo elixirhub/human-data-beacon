@@ -122,6 +122,7 @@ public class Operations {
       list.add(BeaconOntologyTerm.builder()
           .ontology(value.getOntology())
           .term(value.getTerm())
+          .label(value.getLabel())
           .build());
     }
     result.setOntologyTerms(list);

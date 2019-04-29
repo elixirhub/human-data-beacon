@@ -99,7 +99,6 @@ public class GenomicQueryImpl implements GenomicQuery {
     request.setReferenceName(chromosome);
     request.setStart(start);
     request.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
-    //request.setAssemblyIds(referenceBases);
     request.setDatasetIds(datasetStableIds);
     FilterDatasetResponse parsedIncludeDatasetResponses = FilterDatasetResponse
         .parse(includeDatasetResponses);
@@ -571,8 +570,8 @@ public class GenomicQueryImpl implements GenomicQuery {
 
       // Convert to filter icd10
       icd10FilterValues = filters.stream()
-          .filter(filter -> filter.startsWith("ICD-10"))
-          .map(filter -> getIdOntology("ICD-10", filter.split(":", 2)[1]))
+          .filter(filter -> filter.startsWith("csvs.icd10"))
+          .map(filter -> getIdOntology("csvs.icd10", filter.split(":", 2)[1]))
           .collect(Collectors.toList());
     }
 
@@ -611,19 +610,13 @@ public class GenomicQueryImpl implements GenomicQuery {
     log.debug("url {}", url);
     QueryResponse<org.babelomics.csvs.lib.models.Variant> variantQueryResponse = parseResponse
         .parseCsvsResponse(url, org.babelomics.csvs.lib.models.Variant.class);
-    log.debug("response: {}", variantQueryResponse);
+    //log.debug("response: {}", variantQueryResponse);
 
     boolean isRegionQuery = StringUtils.isBlank(alternateBases) && end != null;
 
     boolean exists =
         variantQueryResponse.getNumTotalResults() > 0 && variantQueryResponse.getResult() != null
             && variantQueryResponse.getResult().get(0) != null;
-//<<<<<<< HEAD:elixir_beacon/src/main/java/org/ega_archive/elixirbeacon/service/impl/GenomicQueryImpl.java
-//    Map<String, Object> info = new HashMap<>();
-//    int numVariants = 0;
-//=======
-
-//>>>>>>> fc0aeffb7e6466a2e1299a57279262633f9c078f:elixir_beacon/src/main/java/org/ega_archive/elixirbeacon/service/csvs/GenomicQueryImpl.java
     if (exists) {
       List<org.babelomics.csvs.lib.models.Variant> result = variantQueryResponse.getResult();
       for (org.babelomics.csvs.lib.models.Variant variant : result) {
@@ -634,7 +627,6 @@ public class GenomicQueryImpl implements GenomicQuery {
       }
     }
     return variantsResults;
-//>>>>>>> fc0aeffb7e6466a2e1299a57279262633f9c078f:elixir_beacon/src/main/java/org/ega_archive/elixirbeacon/service/csvs/GenomicQueryImpl.java
   }
 
   /**

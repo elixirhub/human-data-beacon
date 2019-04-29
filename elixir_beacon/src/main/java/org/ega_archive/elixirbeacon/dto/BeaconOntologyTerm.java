@@ -15,4 +15,6 @@ public class BeaconOntologyTerm {
 
   private String term;
 
+  private String label;
+
 }
