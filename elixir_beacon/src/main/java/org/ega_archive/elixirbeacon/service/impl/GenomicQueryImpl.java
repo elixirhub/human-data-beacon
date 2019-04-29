@@ -82,7 +82,6 @@ public class GenomicQueryImpl implements GenomicQuery {
     return LIST_DATASET;
   }
 
-
   @Override
   public BeaconGenomicSnpResponse queryBeaconGenomicSnp(List<String> datasetStableIds,
       String alternateBases, String referenceBases, String chromosome, Integer start,
@@ -93,7 +92,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     // TODO: Develop web service with filters in csvs
 
     BeaconGenomicSnpResponse beaconGenomicSnpResponse = new BeaconGenomicSnpResponse();
-    List beaconHandovers = new ArrayList();
+    List resultsHandover = new ArrayList();
     BeaconGenomicSnpRequest request = new BeaconGenomicSnpRequest();
     request.setAlternateBases(alternateBases);
     request.setReferenceBases(referenceBases);
@@ -133,21 +132,18 @@ public class GenomicQueryImpl implements GenomicQuery {
       beaconGenomicSnpResponse.setExists(variantExists);
       if (variantExists) {
         Map cellBaseResponse = callToCellBase(variants.get(0).getChromosome(),variants.get(0).getPosition(), variants.get(0).getReference(), variants.get(0).getAlternate());
-        beaconHandovers = parseCellBase(cellBaseResponse);
+        resultsHandover = parseCellBase(cellBaseResponse);
 
         // Get variant by subpopulations only get if have
         beaconGenomicSnpResponse.setDatasetAlleleResponses(getDatasetAlleleResponse(datasetStableIds, variants.get(0), filters, includeDatasetResponses));
       }
     }
-
+    beaconGenomicSnpResponse.setResultsHandover(resultsHandover);
     // Links to downloads and contact
-    beaconHandovers.addAll(genericHandover());
-    beaconGenomicSnpResponse.setBeaconHandover(beaconHandovers);
+    beaconGenomicSnpResponse.setBeaconHandover(genericHandover());
     beaconGenomicSnpResponse.setInfo(info);
     return beaconGenomicSnpResponse;
   }
-
-
 
   @Override
   public BeaconGenomicRegionResponse queryBeaconGenomicRegion(List<String> datasetStableIds,
@@ -269,7 +265,7 @@ public class GenomicQueryImpl implements GenomicQuery {
    * Method to get generic handover about csvs (Link to download and contact)
    * @return
    */
-  private Collection genericHandover() {
+  private List<Handover> genericHandover() {
     List<Handover> genericHandover= new ArrayList<>();
 
     // Add handover link to download
@@ -293,7 +289,6 @@ public class GenomicQueryImpl implements GenomicQuery {
 
     return genericHandover;
   }
-
 
   /**
    * Get variant by subpopulations only get if have.
@@ -383,7 +378,6 @@ public class GenomicQueryImpl implements GenomicQuery {
     return datasetAlleleResponses;
   }
 
-
   /**
    * call to Cell Base.
    *
@@ -413,8 +407,6 @@ public class GenomicQueryImpl implements GenomicQuery {
 
     return cellBaseResponse;
   }
-
-
 
   /**
    * Parse response Cell Base with the variants to get the rs IDs and fills the Handover.

@@ -105,6 +105,11 @@ datasetHandover:
   handoverType: PUBLIC
   note: PUBLIC
   url: PUBLIC
+resultsHandover:
+  accessLevelSummary: PUBLIC
+  handoverType: PUBLIC
+  note: PUBLIC
+  url: PUBLIC
 handoverType:
   accessLevelSummary: PUBLIC
   id: PUBLIC
@@ -128,6 +133,7 @@ beaconGenomicSnpResponse:
   info: PUBLIC
   datasetAlleleResponses: PUBLIC
   request: PUBLIC
+  resultsHandover: PUBLIC
   beaconHandover: PUBLIC
 beaconGenomicRegionRequest:
   accessLevelSummary: PUBLIC

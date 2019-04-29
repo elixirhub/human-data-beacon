@@ -32,7 +32,7 @@ public class BeaconGenomicSnpResponse {
 
   private Map<String, Object> info;
 
-  private List<Handover> resultsHandover; // move dbsnp here in snp queries
+  private List<Handover> resultsHandover;
 
   private List<Handover> beaconHandover;
 
