@@ -53,12 +53,12 @@ public class GenomicQueryImpl implements GenomicQuery {
   private static List<Dataset> LIST_DATASET = new ArrayList<>();
 
   @Override
-  public List<Dataset> listDatasets(){
+  public List<Dataset> listDatasets() {
     if (LIST_DATASET.isEmpty()) {
-      String url = CsvsConstants.CSVS_URL +"/diseases/list";
+      String url = CsvsConstants.CSVS_URL + "/diseases/list";
 
       QueryResponse<DiseaseGroup> diseaseGroupQueryResponse = parseResponse
-              .parseCsvsResponse(url, DiseaseGroup.class);
+          .parseCsvsResponse(url, DiseaseGroup.class);
 
       // All the datasets are public -> harcode the "authorized" attribute
       Map<String, Object> info = new HashMap<>();
@@ -101,7 +101,8 @@ public class GenomicQueryImpl implements GenomicQuery {
     request.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
     //request.setAssemblyIds(referenceBases);
     request.setDatasetIds(datasetStableIds);
-    FilterDatasetResponse parsedIncludeDatasetResponses = FilterDatasetResponse.parse(includeDatasetResponses);
+    FilterDatasetResponse parsedIncludeDatasetResponses = FilterDatasetResponse
+        .parse(includeDatasetResponses);
     request.setIncludeDatasetResponses(parsedIncludeDatasetResponses);
     request.setFilters(filters);
     beaconGenomicSnpResponse.setRequest(request);
@@ -109,19 +110,22 @@ public class GenomicQueryImpl implements GenomicQuery {
     boolean variantExists;
     Map<String, Object> info = null;
 
-    List<Error> errors = checkParams(datasetStableIds, alternateBases, referenceBases, chromosome, start, referenceGenome, filters);
+    List<Error> errors = checkParams(datasetStableIds, alternateBases, referenceBases, chromosome,
+        start, referenceGenome, filters);
     errors.addAll(checkParamsSnp(alternateBases, referenceBases));
-    if (!errors.isEmpty()){
+    if (!errors.isEmpty()) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
       error.setMessage(
-              errors.stream().map(err -> err.getMessage())
-                  .collect(Collectors.joining(", "))
-          );
+          errors.stream().map(err -> err.getMessage())
+              .collect(Collectors.joining(", "))
+      );
       beaconGenomicSnpResponse.setError(error);
     } else {
-      List<org.babelomics.csvs.lib.models.Variant> variants = findRegionVariants(chromosome, CsvsConstants.CSVS_BASED == 1 ? start + 1 : start, CsvsConstants.CSVS_BASED == 1 ? start + 2 : start + 1,
-              referenceBases, alternateBases, datasetStableIds, filters);
+      List<org.babelomics.csvs.lib.models.Variant> variants = findRegionVariants(chromosome,
+          CsvsConstants.CSVS_BASED == 1 ? start + 1 : start,
+          CsvsConstants.CSVS_BASED == 1 ? start + 2 : start + 1,
+          referenceBases, alternateBases, datasetStableIds, filters);
 
       variantExists = !variants.isEmpty() && variants.size() == 1;
       if (variantExists) {
@@ -132,11 +136,15 @@ public class GenomicQueryImpl implements GenomicQuery {
 
       beaconGenomicSnpResponse.setExists(variantExists);
       if (variantExists) {
-        Map cellBaseResponse = callToCellBase(variants.get(0).getChromosome(),variants.get(0).getPosition(), variants.get(0).getReference(), variants.get(0).getAlternate());
+        Map cellBaseResponse = callToCellBase(variants.get(0).getChromosome(),
+            variants.get(0).getPosition(), variants.get(0).getReference(),
+            variants.get(0).getAlternate());
         resultsHandover = parseCellBase(cellBaseResponse);
 
         // Get variant by subpopulations only get if have
-        beaconGenomicSnpResponse.setDatasetAlleleResponses(getDatasetAlleleResponse(datasetStableIds, variants.get(0), filters, includeDatasetResponses));
+        beaconGenomicSnpResponse.setDatasetAlleleResponses(
+            getDatasetAlleleResponse(datasetStableIds, variants.get(0), filters,
+                parsedIncludeDatasetResponses));
       }
     }
     beaconGenomicSnpResponse.setResultsHandover(resultsHandover);
@@ -161,12 +169,15 @@ public class GenomicQueryImpl implements GenomicQuery {
     request.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
     //request.setAssemblyIds(referenceBases);
     request.setDatasetIds(datasetStableIds);
-    request.setIncludeDatasetResponses(FilterDatasetResponse.parse(includeDatasetResponses));
+    FilterDatasetResponse parsedIncludeDatasetResponses = FilterDatasetResponse
+        .parse(includeDatasetResponses);
+    request.setIncludeDatasetResponses(parsedIncludeDatasetResponses);
     request.setFilters(filters);
 
     response.setRequest(request);
 
-    List<Error> errors = checkParams(datasetStableIds, null, referenceBases, chromosome, start, referenceGenome,   filters);
+    List<Error> errors = checkParams(datasetStableIds, null, referenceBases, chromosome, start,
+        referenceGenome, filters);
 
     boolean variantExists = false;
     List<Variant> variantList = new ArrayList<>();
@@ -226,7 +237,7 @@ public class GenomicQueryImpl implements GenomicQuery {
 
           // Get variant by subpopulations
           List<DatasetAlleleResponse> datasetAlleleResponses = getDatasetAlleleResponse(
-              datasetStableIds, variant, filters, includeDatasetResponses);
+              datasetStableIds, variant, filters, parsedIncludeDatasetResponses);
 
           beaconVariant.setDatasetAlleleResponses(datasetAlleleResponses);
 
@@ -265,10 +276,9 @@ public class GenomicQueryImpl implements GenomicQuery {
 
   /**
    * Method to get generic handover about csvs (Link to download and contact)
-   * @return
    */
   private List<Handover> genericHandover() {
-    List<Handover> genericHandover= new ArrayList<>();
+    List<Handover> genericHandover = new ArrayList<>();
 
     // Add handover link to download
     HandoverType handoverType = new HandoverType();
@@ -277,7 +287,10 @@ public class GenomicQueryImpl implements GenomicQuery {
     Handover handover = new Handover();
     handover.setHandoverType(handoverType);
     handover.setUrl(CsvsConstants.CSVS_URL_DOWNLOADS);
-    handover.setNote("Download aggregated data corresponding to phenotypically healthy controls of MGP and the IBS population of 1000 genomes phase 3 as well as the pseudo-controls for each ICD10 category. Go to web "+ BeaconConstants.BEACON_HOMEPAGE +" and accept terms and conditions in the tab 'Downloads'");
+    handover.setNote(
+        "Download aggregated data corresponding to phenotypically healthy controls of MGP and the IBS population of 1000 genomes phase 3 as well as the pseudo-controls for each ICD10 category. Go to web "
+            + BeaconConstants.BEACON_HOMEPAGE
+            + " and accept terms and conditions in the tab 'Downloads'");
     genericHandover.add(handover);
 
     handoverType = new HandoverType();
@@ -285,8 +298,9 @@ public class GenomicQueryImpl implements GenomicQuery {
     handoverType.setLabel("Contact to request data");
     handover = new Handover();
     handover.setHandoverType(handoverType);
-    handover.setUrl( BeaconConstants.ORGANIZATION_CONTACT );
-    handover.setNote(BeaconConstants.ORGANIZATION_NAME + ". " + BeaconConstants.BEACON_NAME + ", " + BeaconConstants.BEACON_HOMEPAGE);
+    handover.setUrl(BeaconConstants.ORGANIZATION_CONTACT);
+    handover.setNote(BeaconConstants.ORGANIZATION_NAME + ". " + BeaconConstants.BEACON_NAME + ", "
+        + BeaconConstants.BEACON_HOMEPAGE);
     genericHandover.add(handover);
 
     return genericHandover;
@@ -294,23 +308,24 @@ public class GenomicQueryImpl implements GenomicQuery {
 
   /**
    * Get variant by subpopulations only get if have.
+   *
    * @param datasetStableIds Datasets search
    * @param variant to search
    * @param filters Filters used to search variant
-   * @return
    */
-  private List<DatasetAlleleResponse> getDatasetAlleleResponse(List<String>datasetStableIds, org.babelomics.csvs.lib.models.Variant variant,  List<String> filters, String includeDatasetResponses) {
+  private List<DatasetAlleleResponse> getDatasetAlleleResponse(List<String> datasetStableIds,
+      org.babelomics.csvs.lib.models.Variant variant, List<String> filters,
+      FilterDatasetResponse includeDatasetResponses) {
     List<DatasetAlleleResponse> datasetAlleleResponses = new ArrayList<>();
-    FilterDatasetResponse filterDatasetResponse = FilterDatasetResponse.parse(includeDatasetResponses);
-    if (filterDatasetResponse.isIncludeDatasets()) {
+    if (includeDatasetResponses.isIncludeDatasets()) {
       // Gets all ids Dataset that exists
-      if (datasetStableIds == null || datasetStableIds.isEmpty())
+      if (datasetStableIds == null || datasetStableIds.isEmpty()) {
         datasetStableIds = listDatasets().stream()
-                .map(dataset -> dataset.getId())
-                .collect(Collectors.toList());
+            .map(dataset -> dataset.getId())
+            .collect(Collectors.toList());
+      }
 
       for (String datasetId : datasetStableIds) {
-        String optionIncludeDatasetResponses = includeDatasetResponses.toLowerCase();
         DatasetAlleleResponse datasetAlleleResponse = new DatasetAlleleResponse();
         datasetAlleleResponse.setDatasetId(datasetId);
 
@@ -318,9 +333,10 @@ public class GenomicQueryImpl implements GenomicQuery {
         List<org.babelomics.csvs.lib.models.Variant> variantsDataset = null;
 
         try {
-          variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), null);
-        } catch(Exception e){
-          optionIncludeDatasetResponses="null";
+          variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(),
+              variant.getPosition() + 1, variant.getReference(), variant.getAlternate(),
+              Arrays.asList(datasetId), null);
+        } catch (Exception e) {
           Error error = new Error();
           error.setErrorCode(ErrorCode.GENERIC_ERROR);
           error.setMessage(e.getMessage());
@@ -334,21 +350,27 @@ public class GenomicQueryImpl implements GenomicQuery {
             // Number of variants matching the allele request in the dataset (without filters)
             datasetAlleleResponse.setVariantCount((long) 1);
             // gt01 + gt11
-            datasetAlleleResponse.setSampleCount((long) variantsDataset.get(0).getStats().getGt01() + (long) variantsDataset.get(0).getStats().getGt11());
+            datasetAlleleResponse.setSampleCount(
+                (long) variantsDataset.get(0).getStats().getGt01() + (long) variantsDataset.get(0)
+                    .getStats().getGt11());
             // AlFreq (Freq1)
-            datasetAlleleResponse.setFrequency(BigDecimal.valueOf(variantsDataset.get(0).getStats().getAltFreq()));
+            datasetAlleleResponse
+                .setFrequency(BigDecimal.valueOf(variantsDataset.get(0).getStats().getAltFreq()));
 
             HashMap infoDataset = new HashMap();
             // Info Without filters
             if (filters == null || filters.isEmpty()) {
-              //infoDataset.put("stats dataset", variantsDataset.get(0).getStats());
-              infoDataset.put("stats dataset", filterVariantStats(variantsDataset.get(0).getStats()));
+              infoDataset
+                  .put("stats dataset", filterVariantStats(variantsDataset.get(0).getStats()));
               datasetAlleleResponse.setInfo(infoDataset);
             } else { // Info wit filters
-              List<org.babelomics.csvs.lib.models.Variant> variantsDatasetWithoutFilters = variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), filters);
-              if (variantsDatasetWithoutFilters != null && !variantsDatasetWithoutFilters.isEmpty()) {
-                //infoDataset.put("stats dataset", stats);
-                infoDataset.put("stats dataset", filterVariantStats(variantsDatasetWithoutFilters.get(0).getStats()));
+              List<org.babelomics.csvs.lib.models.Variant> variantsDatasetWithoutFilters = variantsDataset = findRegionVariants(
+                  variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1,
+                  variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId),
+                  filters);
+              if (variantsDatasetWithoutFilters != null && !variantsDatasetWithoutFilters
+                  .isEmpty()) {
+                filterVariantStats(variantsDatasetWithoutFilters.get(0).getStats());
                 datasetAlleleResponse.setInfo(infoDataset);
               }
             }
@@ -357,26 +379,27 @@ public class GenomicQueryImpl implements GenomicQuery {
           }
         }
 
-
-        switch (optionIncludeDatasetResponses) {
-          case "hit":
-            if (!variantsDataset.isEmpty())
+        if (datasetAlleleResponse.getError() == null) {
+          switch (includeDatasetResponses.getFilter()) {
+            case "hit":
+              if (!variantsDataset.isEmpty()) {
+                datasetAlleleResponses.add(datasetAlleleResponse);
+              }
+              break;
+            case "miss":
+              if (variantsDataset.isEmpty()) {
+                datasetAlleleResponses.add(datasetAlleleResponse);
+              }
+              break;
+            case "all":
               datasetAlleleResponses.add(datasetAlleleResponse);
-            break;
-          case "miss":
-            if (variantsDataset.isEmpty())
-              datasetAlleleResponses.add(datasetAlleleResponse);
-            break;
-          case "all":
-            datasetAlleleResponses.add(datasetAlleleResponse);
-            break;
-          case "null":
-            datasetAlleleResponses.add(datasetAlleleResponse);
-            break;
-          default:
-            break;
+              break;
+            default:
+              break;
+          }
+        } else {
+          datasetAlleleResponses.add(datasetAlleleResponse);
         }
-
       }
     }
     return datasetAlleleResponses;
@@ -386,7 +409,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     Map<String, String> statsDataset = new LinkedHashMap<>();
     statsDataset.put("gt00", Integer.toString(stats.getGt00()));
     statsDataset.put("gt01", Integer.toString(stats.getGt01()));
-    statsDataset.put("gt11",Integer.toString(stats.getGt11()));
+    statsDataset.put("gt11", Integer.toString(stats.getGt11()));
     statsDataset.put("gtmissing", Integer.toString(stats.getGtmissing()));
     statsDataset.put("maf", Float.toString(stats.getMaf()));
     statsDataset.put("refFreq", Float.toString(stats.getRefFreq()));
@@ -398,14 +421,9 @@ public class GenomicQueryImpl implements GenomicQuery {
 
   /**
    * call to Cell Base.
-   *
-   * @param chromosome
-   * @param position
-   * @param reference
-   * @param alternate
-   * @return
    */
-  private Map<String, Object> callToCellBase(String chromosome, int position, String reference, String alternate){
+  private Map<String, Object> callToCellBase(String chromosome, int position, String reference,
+      String alternate) {
     Map cellBaseResponse = null;
 
     // Ignore when ref=* and search alt=ALT when alt=ALT,*
@@ -413,11 +431,15 @@ public class GenomicQueryImpl implements GenomicQuery {
     String alt = alternate.split(",")[0];
 
     // Replace '*' and '' by '-'
-    String paramsVariantsCellbase = String.join(":", (new String[]{chromosome, String.valueOf(position),
-            ("*".equals(ref) || "".equals(ref)) ? "-" : ref, ("*".equals(alt)|| "".equals(alt)) ? "-" : alt}));
+    String paramsVariantsCellbase = String
+        .join(":", (new String[]{chromosome, String.valueOf(position),
+            ("*".equals(ref) || "".equals(ref)) ? "-" : ref,
+            ("*".equals(alt) || "".equals(alt)) ? "-" : alt}));
 
     try {
-      cellBaseResponse = parseResponse.parseResponse(CsvsConstants.CELLBASE_URL + "/genomic/variant/" + paramsVariantsCellbase + "/annotation", null);
+      cellBaseResponse = parseResponse.parseResponse(
+          CsvsConstants.CELLBASE_URL + "/genomic/variant/" + paramsVariantsCellbase + "/annotation",
+          null);
 
     } catch (Exception e) {
 
@@ -437,10 +459,11 @@ public class GenomicQueryImpl implements GenomicQuery {
 
     if (cellBaseResponse != null && !cellBaseResponse.isEmpty()) {
       if (cellBaseResponse.get("response") != null) {
-        ArrayList<LinkedHashMap> variantArray = (ArrayList<LinkedHashMap>) cellBaseResponse.get("response");
+        ArrayList<LinkedHashMap> variantArray = (ArrayList<LinkedHashMap>) cellBaseResponse
+            .get("response");
         System.out.println(variantArray);
-        if(variantArray != null){
-         for (LinkedHashMap elem : variantArray) {
+        if (variantArray != null) {
+          for (LinkedHashMap elem : variantArray) {
 
             ArrayList<LinkedHashMap> variantResults = (ArrayList<LinkedHashMap>) elem.get("result");
             if (variantResults != null) {
@@ -462,7 +485,7 @@ public class GenomicQueryImpl implements GenomicQuery {
         handoverType.setLabel("dbSNP ID");
         Handover handover = new Handover();
         handover.setHandoverType(handoverType);
-        handover.setUrl(CsvsConstants.dbSNP_URL_DATABASE +"/?term=" + rsId);
+        handover.setUrl(CsvsConstants.dbSNP_URL_DATABASE + "/?term=" + rsId);
         handover.setNote("Link to dbSNP database");
         handoverList.add(handover);
 
@@ -496,71 +519,80 @@ public class GenomicQueryImpl implements GenomicQuery {
 //
 //  private Map<String, Object> findRegionVariants(String chromosome, Integer start, Integer end,
 //=======
+
   /**
    * Get equivalence ontology with field to search.
+   *
    * @param ontology Name ontology
    * @param term Term to search
    * @return Term if not find
    */
-  public String getIdOntology(String ontology, String term){
-    Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology.eq(ontology)
-            .and(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term.eq(term));
+  public String getIdOntology(String ontology, String term) {
+    Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology
+        .eq(ontology)
+        .and(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term.eq(term));
 
-    OntologyTermColumnCorrespondance ontologyTermColumnCorr = ontologyTermColumnCorrRep.findOne(query);
+    OntologyTermColumnCorrespondance ontologyTermColumnCorr = ontologyTermColumnCorrRep
+        .findOne(query);
 
-    return (ontologyTermColumnCorr != null) ? String.valueOf(ontologyTermColumnCorr.getSampleTableColumnName()) : term;
+    return (ontologyTermColumnCorr != null) ? String
+        .valueOf(ontologyTermColumnCorr.getSampleTableColumnName()) : term;
   }
 
 
   /**
    * Find list variants in the region.
+   *
    * @param chromosome Chromosome 1-22,X,Y,MT
    * @param start Position ini
-   * @param end  Position end
+   * @param end Position end
    * @param referenceBases Reference
    * @param alternateBases Alternate
    * @param datasetStableIds Group subpopulation
-   * @param filters  Filters (tecnology , disease(icd10) ...)
-   * @return
+   * @param filters Filters (tecnology , disease(icd10) ...)
    */
-  private List<org.babelomics.csvs.lib.models.Variant> findRegionVariants(String chromosome, Integer start, Integer end,
+  private List<org.babelomics.csvs.lib.models.Variant> findRegionVariants(String chromosome,
+      Integer start, Integer end,
       String referenceBases, String alternateBases, List<String> datasetStableIds,
       List<String> filters) {
     List<org.babelomics.csvs.lib.models.Variant> variantsResults = new ArrayList<>();
 
     String diseases = null;
     String technologyFilter = null;
-    List <String> icd10FilterValues = null;
+    List<String> icd10FilterValues = null;
     if (null != filters) {
       String technologyFilterValues = filters.stream()
-              .filter(filter -> filter.startsWith("csvs.tech"))
-              .map(filter -> filter.split(":", 2)[1])
-              .collect(Collectors.joining(","));
+          .filter(filter -> filter.startsWith("csvs.tech"))
+          .map(filter -> filter.split(":", 2)[1])
+          .collect(Collectors.joining(","));
       technologyFilter =
-              StringUtils.isNotBlank(technologyFilterValues) ? "&technologies=" + technologyFilterValues
-                      : null;
+          StringUtils.isNotBlank(technologyFilterValues) ? "&technologies=" + technologyFilterValues
+              : null;
 
       // Convert to filter icd10
       icd10FilterValues = filters.stream()
-              .filter(filter -> filter.startsWith("ICD-10"))
-              .map(filter -> getIdOntology("ICD-10", filter.split(":", 2)[1]))
-              .collect(Collectors.toList());
+          .filter(filter -> filter.startsWith("ICD-10"))
+          .map(filter -> getIdOntology("ICD-10", filter.split(":", 2)[1]))
+          .collect(Collectors.toList());
     }
 
     // Diseases intersect dataset and icd10
-    if (datasetStableIds != null && !datasetStableIds.isEmpty() && icd10FilterValues != null && !icd10FilterValues.isEmpty()) {
+    if (datasetStableIds != null && !datasetStableIds.isEmpty() && icd10FilterValues != null
+        && !icd10FilterValues.isEmpty()) {
       diseases = datasetStableIds.stream()
-              .filter(icd10FilterValues::contains)
-              .collect(Collectors.joining(","));
+          .filter(icd10FilterValues::contains)
+          .collect(Collectors.joining(","));
       // No search
-      if (diseases == null || diseases.isEmpty())
+      if (diseases == null || diseases.isEmpty()) {
         return variantsResults;
+      }
     } else {
-      if (datasetStableIds != null && !datasetStableIds.isEmpty()){
+      if (datasetStableIds != null && !datasetStableIds.isEmpty()) {
         diseases = String.join(",", datasetStableIds);
       } else {
-        if (icd10FilterValues != null && !icd10FilterValues.isEmpty())
-            diseases = String.join(",", icd10FilterValues);
+        if (icd10FilterValues != null && !icd10FilterValues.isEmpty()) {
+          diseases = String.join(",", icd10FilterValues);
+        }
       }
     }
 
@@ -572,8 +604,8 @@ public class GenomicQueryImpl implements GenomicQuery {
       url += technologyFilter;
     }
 
-    if (StringUtils.isNotBlank(diseases)){
-      url += "&diseases="+ diseases;
+    if (StringUtils.isNotBlank(diseases)) {
+      url += "&diseases=" + diseases;
     }
 
     log.debug("url {}", url);
@@ -607,12 +639,6 @@ public class GenomicQueryImpl implements GenomicQuery {
 
   /**
    * Returns to check the parameters if it is a region.
-   * @param referenceBases
-   * @param reference
-   * @param alternateBases
-   * @param alternate
-   * @param isRegionQuery
-   * @return
    */
   private boolean checkParameters(String referenceBases, String reference, String alternateBases,
       String alternate, boolean isRegionQuery) {
@@ -628,9 +654,6 @@ public class GenomicQueryImpl implements GenomicQuery {
 
   /**
    * Check values params from snp.
-   * @param alternateBases
-   * @param referenceBases
-   * @return
    */
   private List<Error> checkParamsSnp(String alternateBases, String referenceBases) {
 
@@ -652,20 +675,12 @@ public class GenomicQueryImpl implements GenomicQuery {
     return errors;
   }
 
-    /**
-     * Check values params generic.
-     * @param datasetStableIds
-     * @param alternateBases
-     * @param referenceBases
-     * @param chromosome
-     * @param start
-     * @param referenceGenome
-     * @param filters
-     * @return
-     */
-    private List<Error> checkParams(List<String> datasetStableIds,
-                                 String alternateBases, String referenceBases, String chromosome, Integer start,
-                                 String referenceGenome,  List<String> filters) {
+  /**
+   * Check values params generic.
+   */
+  private List<Error> checkParams(List<String> datasetStableIds,
+      String alternateBases, String referenceBases, String chromosome, Integer start,
+      String referenceGenome, List<String> filters) {
     List<Error> errors = new ArrayList<>();
 
     if (StringUtils.isBlank(chromosome)) {
@@ -682,13 +697,13 @@ public class GenomicQueryImpl implements GenomicQuery {
       }
     }
 
-    if (!StringUtils.isBlank(referenceBases) && !Pattern.matches("[ACTG]+|N", referenceBases.toUpperCase())) {
+    if (!StringUtils.isBlank(referenceBases) && !Pattern
+        .matches("[ACTG]+|N", referenceBases.toUpperCase())) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
       error.setMessage("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N");
       errors.add(error);
     }
-
 
     if (StringUtils.isBlank(referenceGenome)) {
       Error error = new Error();
@@ -697,7 +712,7 @@ public class GenomicQueryImpl implements GenomicQuery {
       errors.add(error);
 
     } else {
-      if ( !CsvsConstants.CSVS_ASSEMMBY_ID.equals(referenceGenome.toLowerCase())) {
+      if (!CsvsConstants.CSVS_ASSEMMBY_ID.equals(referenceGenome.toLowerCase())) {
         Error error = new Error();
         error.setErrorCode(ErrorCode.NOT_FOUND);
         error.setMessage("Assembly not found. Use " + CsvsConstants.CSVS_ASSEMMBY_ID);
@@ -705,7 +720,8 @@ public class GenomicQueryImpl implements GenomicQuery {
       }
     }
 
-    if (!StringUtils.isBlank(alternateBases) && !Pattern.matches("[ACTG]+|N", alternateBases.toUpperCase())) {
+    if (!StringUtils.isBlank(alternateBases) && !Pattern
+        .matches("[ACTG]+|N", alternateBases.toUpperCase())) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
       error.setMessage("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N");
@@ -715,11 +731,13 @@ public class GenomicQueryImpl implements GenomicQuery {
     if (datasetStableIds != null) {
       // Remove empty/null strings
       datasetStableIds =
-              datasetStableIds.stream().filter(s -> (StringUtils.isNotBlank(s)))
-                      .collect(Collectors.toList());
+          datasetStableIds.stream().filter(s -> (StringUtils.isNotBlank(s)))
+              .collect(Collectors.toList());
 
       for (String datasetStableId : datasetStableIds) {
-        Dataset dataset = listDatasets().stream().filter(filter -> String.valueOf(filter.getId()).equals(datasetStableId)).findAny().orElse(null);
+        Dataset dataset = listDatasets().stream()
+            .filter(filter -> String.valueOf(filter.getId()).equals(datasetStableId)).findAny()
+            .orElse(null);
         if (dataset == null) {
           Error error = new Error();
           error.setErrorCode(ErrorCode.NOT_FOUND);
@@ -737,29 +755,32 @@ public class GenomicQueryImpl implements GenomicQuery {
   }
 
 
-
   /**
    * Get list errors to checks filters
+   *
    * @param filters List filters to check
-   * @return
    */
   private List<Error> translateFilters(List<String> filters) {
-    List<Error> errors =  new ArrayList<>();
+    List<Error> errors = new ArrayList<>();
 
     for (String filter : filters) {
       filter = filter.replaceAll("\\s+", "");
       String[] tokens = filter.split(":", 2);
       String ontology = tokens[0];
       String term = tokens[1];
-      Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology.eq(ontology)
-              .and(
-                      (QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.sampleTableColumnName.eq(term))
-                              .or(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term.eq(term)));
+      Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology
+          .eq(ontology)
+          .and(
+              (QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.sampleTableColumnName
+                  .eq(term))
+                  .or(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term
+                      .eq(term)));
 
       if (ontologyTermColumnCorrRep.findOne(query) == null) {
         Error error = new Error();
         error.setErrorCode(ErrorCode.GENERIC_ERROR);
-        error.setMessage("Ontology (" + ontology + ") and/or term (" + term + ") not known in this Beacon. Remember that none operator are accepted");
+        error.setMessage("Ontology (" + ontology + ") and/or term (" + term
+            + ") not known in this Beacon. Remember that none operator are accepted");
         errors.add(error);
       }
     }
