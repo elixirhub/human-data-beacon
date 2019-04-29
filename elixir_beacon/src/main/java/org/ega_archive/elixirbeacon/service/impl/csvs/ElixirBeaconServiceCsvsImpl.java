@@ -14,7 +14,9 @@ import org.ega_archive.elixirbeacon.constant.CsvsConstants;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleRequest;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
+import org.ega_archive.elixirbeacon.dto.BeaconGenomicRegionResponse;
 import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpRequest;
+import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpResponse;
 import org.ega_archive.elixirbeacon.dto.Dataset;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
 import org.ega_archive.elixirbeacon.enums.VariantType;
@@ -25,6 +27,7 @@ import org.ega_archive.elixircore.exception.NotImplementedException;
 import org.ega_archive.elixircore.helper.CommonQuery;
 import org.ega_archive.elixircore.util.JsonUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 
@@ -35,6 +38,7 @@ import org.springframework.stereotype.Service;
 public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
 
   @Autowired
+  @Qualifier("genomicQueryImpl")
   private GenomicQuery genomicQuery;
 
   @Autowired
@@ -44,9 +48,9 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
   private ObjectMapper objectMapper;
 
   @Override
-  public Beacon listDatasets(CommonQuery commonQuery, String referenceGenome) {
+  public Object listDatasets(CommonQuery commonQuery, String referenceGenome) {
     Beacon beacon = new Beacon();
-    List<Dataset> datasets = genomicQuery.listDatasets();
+    List<Dataset> datasets = (List<Dataset>) genomicQuery.listDatasets();
     beacon.setDatasets(datasets);
 
     String url = CsvsConstants.CSVS_URL + "/files/samples";
@@ -63,23 +67,24 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
 
 
   private List<BeaconAlleleRequest> getSampleAlleleRequests() {
-    List<BeaconAlleleRequest> sampleAlleleRequests = new ArrayList<BeaconAlleleRequest>();
-    sampleAlleleRequests.add(BeaconAlleleRequest.builder()
-            .assemblyId(CsvsConstants.CSVS_ASSEMMBY_ID)
-            .referenceName("1")
-            .start(69510)
-            .includeDatasetResponses(FilterDatasetResponse.NONE)
-            .referenceBases("A")
-            .alternateBases("G")
-            .build());
-    sampleAlleleRequests.add(BeaconAlleleRequest.builder()
-            .assemblyId(CsvsConstants.CSVS_ASSEMMBY_ID)
-            .start(1)
-            .end(69512)
-            .includeDatasetResponses(FilterDatasetResponse.HIT)
-            .datasetIds(new ArrayList<String>(Arrays.asList("1")))
-            .filters(new ArrayList<String>(Arrays.asList("myDictionary.tech:1", "ICD-10:VIII")))
-            .build());
+    List<BeaconAlleleRequest> sampleAlleleRequests = new ArrayList<>();
+    BeaconAlleleRequest request = new BeaconAlleleRequest();
+    request.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
+    request.setReferenceName("1");
+    request.setStart(69510);
+    request.setIncludeDatasetResponses(FilterDatasetResponse.NONE);
+    request.setReferenceBases("A");
+    request.setAlternateBases("G");
+    sampleAlleleRequests.add(request);
+
+    request = new BeaconAlleleRequest();
+    request.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
+    request.setStart(1);
+    request.setEnd(69512);
+    request.setIncludeDatasetResponses(FilterDatasetResponse.HIT);
+    request.setDatasetIds(new ArrayList<>(Arrays.asList("1")));
+    request.setFilters(new ArrayList<>(Arrays.asList("csvs.tech:1", "ICD-10:VIII")));
+    sampleAlleleRequests.add(request);
 
     return sampleAlleleRequests;
   }
@@ -90,20 +95,22 @@ public class ElixirBeaconServiceCsvsImpl implements ElixirBeaconService {
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
       String referenceGenome, String includeDatasetResponses, List<String> filters) {
 
-
-    if (StringUtils.isNotBlank(referenceBases)
-        && StringUtils.isNotBlank(chromosome) && start != null && StringUtils.isBlank(variantType)
+    if (StringUtils.isNotBlank(chromosome) && start != null && StringUtils.isBlank(variantType)
         && startMin == null && startMax == null && endMin == null && endMax == null) {
 
-      if (end == null && StringUtils.isNotBlank(alternateBases)) {
+      if (end == null && StringUtils.isNotBlank(referenceBases) && StringUtils.isNotBlank(alternateBases)) {
 
-        return genomicQuery
+        BeaconGenomicSnpResponse genomicSnp = (BeaconGenomicSnpResponse) genomicQuery
             .queryBeaconGenomicSnp(datasetStableIds, alternateBases, referenceBases, chromosome,
                 start, referenceGenome, includeDatasetResponses, filters);
+        BeaconAlleleResponse response = new BeaconAlleleResponse(genomicSnp);
+        return response;
       } else if (end != null && StringUtils.isBlank(alternateBases)) {
-        return genomicQuery
+        BeaconGenomicRegionResponse genomicRegion = (BeaconGenomicRegionResponse) genomicQuery
             .queryBeaconGenomicRegion(datasetStableIds, referenceBases, chromosome, start, end,
                 referenceGenome, includeDatasetResponses, filters);
+        BeaconAlleleResponse response = new BeaconAlleleResponse(genomicRegion);
+        return response;
       } else {
         throw new NotImplementedException("Query not implemented");
       }

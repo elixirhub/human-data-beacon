@@ -11,7 +11,7 @@ import org.ega_archive.elixirbeacon.convert.Operations;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
 
 @Data
-@Builder
+//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BeaconAlleleRequest {

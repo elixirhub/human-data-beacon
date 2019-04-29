@@ -12,7 +12,7 @@ import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixirbeacon.convert.Operations;
 
 @Data
-@Builder
+//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BeaconGenomicRegionResponse {
@@ -31,7 +31,7 @@ public class BeaconGenomicRegionResponse {
 
   private BeaconGenomicRegionRequest request;
 
-  private List<VariantAnnotation> variantAnnotations;
+  private List<VariantAnnotation> variantsFound;
 
   private Map<String, Object> info;
 

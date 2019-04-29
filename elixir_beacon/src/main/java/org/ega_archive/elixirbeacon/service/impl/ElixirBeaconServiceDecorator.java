@@ -4,7 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import javassist.NotFoundException;
 import org.ega_archive.elixirbeacon.convert.MapConverter;
-import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
 import org.ega_archive.elixirbeacon.enums.VariantType;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
@@ -27,10 +26,10 @@ public class ElixirBeaconServiceDecorator implements ElixirBeaconService {
   }
 
   @Override
-  public Beacon listDatasets(CommonQuery commonQuery, String referenceGenome)
+  public Object listDatasets(CommonQuery commonQuery, String referenceGenome)
       throws NotFoundException {
     Object response = wrappedBeaconService.listDatasets(commonQuery, referenceGenome);
-    return null;
+    return wrappedMapConverter.convertToMap(response, false);
   }
 
   @Override
@@ -52,11 +51,17 @@ public class ElixirBeaconServiceDecorator implements ElixirBeaconService {
       Integer start, Integer startMin, Integer startMax, Integer end, Integer endMin,
       Integer endMax, String referenceGenome, List<String> filters,
       List<String> translatedFilters) {
-    return null;
+
+    return wrappedBeaconService
+        .checkParams(result, datasetStableIds, type, alternateBases, referenceBases, chromosome,
+            start, startMin, startMax, end,
+            endMin, endMax, referenceGenome, filters, translatedFilters);
   }
 
   @Override
   public Object queryBeacon(String body) throws IOException {
-    return null;
+    Object response = wrappedBeaconService.queryBeacon(body);
+    return wrappedMapConverter.convertToMap(response, false);
   }
+
 }

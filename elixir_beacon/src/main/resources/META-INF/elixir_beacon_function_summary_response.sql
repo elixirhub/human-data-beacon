@@ -142,8 +142,8 @@ BEGIN
 			COUNT(DISTINCT bdat.id)::integer AS num_variants
 		FROM beacon_data_table bdat
 		INNER JOIN beacon_dataset_table bdataset ON bdataset.id=bdat.dataset_id
-		INNER JOIN beacon_data_sample_table bdat_s on bdat_s.data_id=bdat.id
-		INNER JOIN beacon_sample_table s ON s.id=bdat_s.sample_id
+		LEFT JOIN beacon_data_sample_table bdat_s on bdat_s.data_id=bdat.id
+		LEFT JOIN beacon_sample_table s ON s.id=bdat_s.sample_id
 		LEFT JOIN LATERAL (
 			SELECT COALESCE(COUNT(DISTINCT bsam.sample_id), 0)::integer AS sample_cnt
 			FROM beacon_data_sample_table bsam

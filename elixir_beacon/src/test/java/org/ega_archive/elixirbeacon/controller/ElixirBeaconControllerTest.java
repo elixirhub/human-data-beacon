@@ -118,14 +118,13 @@ public class ElixirBeaconControllerTest {
   @Test
   public void callQueryPostMethod() throws Exception {
     
-    BeaconAlleleRequest request = BeaconAlleleRequest.builder()
-        .variantType(VariantType.DUP.getType())
-        .referenceName("19")
-        .start(1234)
-        .referenceBases("C")
-        .assemblyId("grch37")
-        .build();
-    
+    BeaconAlleleRequest request = new BeaconAlleleRequest();
+    request.setVariantType(VariantType.DUP.getType());
+    request.setReferenceName("19");
+    request.setStart(1234);
+    request.setReferenceBases("C");
+    request.setAssemblyId("grch37");
+
     MvcResult mvcResult = mockMvc.perform(post("/beacon/query")
         .content(JsonUtils.objectToJson(request, objectMapper))
         .contentType(MediaType.APPLICATION_JSON_UTF8)

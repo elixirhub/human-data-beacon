@@ -12,7 +12,7 @@ import org.ega_archive.elixirbeacon.convert.Operations;
 import org.ega_archive.elixircore.constant.CoreConstants;
 
 @Data
-@Builder
+//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class DatasetAlleleResponse {

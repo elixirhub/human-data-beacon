@@ -12,7 +12,7 @@ import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixirbeacon.convert.Operations;
 
 @Data
-@Builder
+//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BeaconAlleleResponse {
@@ -32,6 +32,42 @@ public class BeaconAlleleResponse {
   private String apiVersion = BeaconConstants.API;
 
   private List<DatasetAlleleResponse> datasetAlleleResponses;
+
+  public BeaconAlleleResponse(BeaconGenomicSnpResponse genomicResponse) {
+    BeaconAlleleRequest alleleRequest = new BeaconAlleleRequest();
+    alleleRequest.setAssemblyId(genomicResponse.getRequest().getAssemblyId());
+    alleleRequest.setStart(genomicResponse.getRequest().getStart());
+    alleleRequest.setReferenceBases(genomicResponse.getRequest().getReferenceBases());
+    alleleRequest.setAlternateBases(genomicResponse.getRequest().getAlternateBases());
+    alleleRequest.setDatasetIds(genomicResponse.getRequest().getDatasetIds());
+    alleleRequest.setReferenceName(genomicResponse.getRequest().getReferenceName());
+    alleleRequest.setIncludeDatasetResponses(genomicResponse.getRequest().getIncludeDatasetResponses());
+    this.alleleRequest = alleleRequest;
+
+    this.beaconId = genomicResponse.getBeaconId();
+    this.apiVersion = genomicResponse.getApiVersion();
+    this.datasetAlleleResponses = genomicResponse.getDatasetAlleleResponses();
+    this.error = genomicResponse.getError();
+    this.exists = genomicResponse.isExists();
+  }
+
+  public BeaconAlleleResponse(BeaconGenomicRegionResponse genomicResponse) {
+    BeaconAlleleRequest alleleRequest = new BeaconAlleleRequest();
+    alleleRequest.setAssemblyId(genomicResponse.getRequest().getAssemblyId());
+    alleleRequest.setStart(genomicResponse.getRequest().getStart());
+    alleleRequest.setReferenceBases(genomicResponse.getRequest().getReferenceBases());
+    //alleleRequest.setAlternateBases(genomicResponse.getRequest().getAlternateBases());
+    alleleRequest.setDatasetIds(genomicResponse.getRequest().getDatasetIds());
+    alleleRequest.setReferenceName(genomicResponse.getRequest().getReferenceName());
+    alleleRequest.setIncludeDatasetResponses(genomicResponse.getRequest().getIncludeDatasetResponses());
+    this.alleleRequest = alleleRequest;
+
+    this.beaconId = genomicResponse.getBeaconId();
+    this.apiVersion = genomicResponse.getApiVersion();
+    //this.datasetAlleleResponses = genomicResponse.getDatasetAlleleResponses();
+    this.error = genomicResponse.getError();
+    this.exists = genomicResponse.isExists();
+  }
 
   public void addDatasetAlleleResponse(DatasetAlleleResponse datasetAlleleResponse) {
     if (this.datasetAlleleResponses == null) {

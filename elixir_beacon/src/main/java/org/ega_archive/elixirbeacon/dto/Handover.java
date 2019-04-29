@@ -9,7 +9,7 @@ import lombok.NoArgsConstructor;
 import org.ega_archive.elixirbeacon.convert.Operations;
 
 @Data
-@Builder
+//@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Handover {

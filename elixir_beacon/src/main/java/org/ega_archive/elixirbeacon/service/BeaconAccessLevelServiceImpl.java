@@ -5,7 +5,7 @@ import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
 import com.querydsl.core.types.dsl.BooleanExpression;
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -135,7 +135,7 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
   private Map<String, Object> fillDatasetsMap(Iterable<DatasetAccessLevel> datasetFields,
       boolean includeFieldDetails, boolean includeDatasetDetails) {
 
-    Map<String, Object> datasetsMap = new HashMap<>();
+    Map<String, Object> datasetsMap = new LinkedHashMap<>();
     datasetFields.forEach(d -> {
       if (!includeDatasetDetails) {
         if (ACCESS_LEVEL_SUMMARY.equalsIgnoreCase(d.getId().getParentField())) {
@@ -150,14 +150,14 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
         @SuppressWarnings("unchecked")
         Map<String, Object> parentFieldsMap = (Map<String, Object>) datasetsMap.get(d.getId().getDatasetStableId());
         if (parentFieldsMap == null) {
-          parentFieldsMap = new HashMap<>();
+          parentFieldsMap = new LinkedHashMap<>();
         }
 
         if (includeFieldDetails) {
           @SuppressWarnings("unchecked")
           Map<String, String> fieldsMap = (Map<String, String>) parentFieldsMap.get(d.getId().getParentField());
           if (fieldsMap == null) {
-            fieldsMap = new HashMap<>();
+            fieldsMap = new LinkedHashMap<>();
           }
           fieldsMap.put(d.getId().getField(), d.getAccessLevel());
           parentFieldsMap.put(d.getId().getParentField(), fieldsMap);
@@ -176,7 +176,7 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
     Map<String, Object> newMap;
 
     if (fields != null && !fields.isEmpty()) {
-      newMap = new HashMap<>();
+      newMap = new LinkedHashMap<>();
       fields.replaceAll(String::toLowerCase);
 
       map.entrySet()
@@ -223,7 +223,7 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
           Map<String, String> newInnerMap = (Map<String, String>) newMap.get(entry.getKey());
           if (newInnerMap == null) {
             // The key does not exist -> initialize
-            newInnerMap = new HashMap<>();
+            newInnerMap = new LinkedHashMap<>();
             newInnerMap.put(innerEntry.getKey(), value);
           }
           // Add the value to this key
@@ -234,7 +234,7 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
   }
 
   private Map<String, Object> showSummary(Map<String, Object> map) {
-    Map<String, Object> newMap = new HashMap<>();
+    Map<String, Object> newMap = new LinkedHashMap<>();
     map.entrySet()
         .forEach(entry -> {
           @SuppressWarnings("unchecked")

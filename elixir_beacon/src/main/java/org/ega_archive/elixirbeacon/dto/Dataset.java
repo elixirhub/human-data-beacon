@@ -17,7 +17,7 @@ import org.springframework.beans.BeanWrapper;
 import org.springframework.beans.BeanWrapperImpl;
 
 @Data
-@Builder
+//@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Dataset {
@@ -62,6 +62,7 @@ public class Dataset {
 //    dataUseConditions.add(condition);
 //  }
 
+  @SuppressWarnings("unchecked")
   public Map<String, Object> toMap(Map<String, Object> accessLevelFields, boolean isAuthenticated) {
 
     Map<String, Object> defaultAccessLevelDatasets = (Map<String, Object>) accessLevelFields
@@ -88,7 +89,7 @@ public class Dataset {
             continue;
           }
         }
-        if(fieldName.equalsIgnoreCase("dataUseConditions")) {
+        if(fieldName.equalsIgnoreCase("dataUseConditions") && dataUseConditions != null) {
           map.put(fieldName, dataUseConditions.toMap(accessLevelFields, isAuthenticated));
         } else {
           map.put(fieldName, fieldValue);

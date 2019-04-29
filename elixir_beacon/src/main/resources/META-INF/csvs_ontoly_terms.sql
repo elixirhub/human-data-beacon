@@ -22,9 +22,8 @@ INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, addit
 INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'ICD-10', 'XXII', '22', 'XXII Codes for special purposes');
 
 
-INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'myDictionary.tech', '1', '1', 'Illumina');
-INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'myDictionary.tech', '2', '2', 'SOLiD');
-INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'myDictionary.tech', '3', '3', 'Roche 454');
-INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'myDictionary.tech', '4', '4', 'IonTorrent/IonProton');
-INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'myDictionary.tech', '5', '5', 'Nanopore');
-
+INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'csvs.tech', '1', '1', 'Illumina');
+INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'csvs.tech', '2', '2', 'SOLiD');
+INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'csvs.tech', '3', '3', 'Roche 454');
+INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'csvs.tech', '4', '4', 'IonTorrent/IonProton');
+INSERT INTO ontology_term_table (ontology, term, sample_table_column_name, additional_comments) VALUES ( 'csvs.tech', '5', '5', 'Nanopore');

@@ -1,11 +1,10 @@
 package org.ega_archive.elixirbeacon.controller;
 
 import java.util.List;
-import org.ega_archive.elixirbeacon.dto.BeaconGenomicRegionResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconGenomicSnpResponse;
 import org.ega_archive.elixirbeacon.service.GenomicQuery;
 import org.ega_archive.elixircore.constant.ParamName;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,10 +15,11 @@ import org.springframework.web.bind.annotation.RestController;
 public class BeaconGenomicController {
 
   @Autowired
+  @Qualifier("genomicQueryDecorator")
   private GenomicQuery genomicQuery;
 
   @GetMapping(value = "/genomic_snp")
-  public BeaconGenomicSnpResponse queryBeaconGenomicSnp(
+  public Object queryBeaconGenomicSnp(
       @RequestParam(value = ParamName.BEACON_DATASET_IDS, required = false) List<String> datasetStableIds,
       @RequestParam(value = ParamName.BEACON_ALTERNATE_BASES, required = false) String alternateBases,
       @RequestParam(value = ParamName.BEACON_REFERENCE_BASES, required = false) String referenceBases,
@@ -34,7 +34,7 @@ public class BeaconGenomicController {
   }
 
   @GetMapping(value = "/genomic_region")
-  public BeaconGenomicRegionResponse queryBeaconGenomicRegion(
+  public Object queryBeaconGenomicRegion(
       @RequestParam(value = ParamName.BEACON_DATASET_IDS, required = false) List<String> datasetStableIds,
       @RequestParam(value = ParamName.BEACON_REFERENCE_BASES, required = false) String referenceBases,
       @RequestParam(value = ParamName.BEACON_CHROMOSOME, required = false) String chromosome,

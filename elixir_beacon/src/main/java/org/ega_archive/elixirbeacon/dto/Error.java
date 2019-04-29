@@ -10,7 +10,7 @@ import org.ega_archive.elixirbeacon.convert.Operations;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 
 @Data
-@Builder
+//@Builder
 @NoArgsConstructor
 @AllArgsConstructor
 public class Error {

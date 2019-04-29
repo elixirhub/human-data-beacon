@@ -5,12 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import org.ega_archive.elixirbeacon.convert.Operations;
 
 @Data
-@Builder
 @AllArgsConstructor
 public class ConsentCode {
 

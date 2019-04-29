@@ -14,7 +14,7 @@ import org.ega_archive.elixircore.constant.CoreConstants;
 import org.joda.time.DateTime;
 
 @Data
-@Builder
+//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class Beacon {

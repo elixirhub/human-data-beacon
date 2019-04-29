@@ -217,19 +217,18 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
     List<Integer> datasetIds = new ArrayList<>();
 
     if (StringUtils.isBlank(chromosome) || StringUtils.isBlank(referenceGenome) || StringUtils.isBlank(referenceBases)) {
-      Error error = Error.builder()
-          .errorCode(ErrorCode.GENERIC_ERROR)
-          .message("All 'referenceName', 'referenceBases' and/or 'assemblyId' are required")
-          .build();
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("All 'referenceName', 'referenceBases' and/or 'assemblyId' are required");
       result.setError(error);
       return datasetIds;
     }
     if (StringUtils.isNotBlank(referenceGenome)){
       boolean matches = Pattern.matches("^grch[1-9]{2}$", StringUtils.lowerCase(referenceGenome));
       if (!matches) {
-        Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Invalid 'assemblyId' parameter, GRC notation required (e.g. GRCh37)")
-            .build();
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("Invalid 'assemblyId' parameter, GRC notation required (e.g. GRCh37)");
         result.setError(error);
         return datasetIds;
       }
@@ -237,65 +236,59 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
     if (StringUtils.isNotBlank(chromosome)){
       boolean matches = Pattern.matches("^([1-9][0-9]|[1-9]|X|Y|MT)$", chromosome);
       if (!matches) {
-        Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Invalid 'referenceName' parameter, accepted values are 1-22, X, Y, MT")
-            .build();
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("Invalid 'referenceName' parameter, accepted values are 1-22, X, Y, MT");
         result.setError(error);
         return datasetIds;
       }
     }
     
     if (type == null && StringUtils.isBlank(alternateBases)) {
-      Error error = Error.builder()
-          .errorCode(ErrorCode.GENERIC_ERROR)
-          .message("Either 'alternateBases' or 'variantType' is required")
-          .build();
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("Either 'alternateBases' or 'variantType' is required");
       result.setError(error);
     } else if (type != null && StringUtils.isNotBlank(alternateBases)
         && !StringUtils.equalsIgnoreCase(alternateBases, "N")) {
-      Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-          .message(
-              "If 'variantType' is provided then 'alternateBases' must be empty or equal to 'N'")
-          .build();
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage(
+              "If 'variantType' is provided then 'alternateBases' must be empty or equal to 'N'");
       result.setError(error);
       return datasetIds;
     }
     
     if (start == null) {
       if(end != null) {
-        Error error = Error.builder()
-            .errorCode(ErrorCode.GENERIC_ERROR)
-            .message("'start' is required if 'end' is provided")
-            .build();
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("'start' is required if 'end' is provided");
         result.setError(error);
         return datasetIds;
       } else if (startMin == null && startMax == null && endMin == null && endMax == null) {
-        Error error = Error.builder()
-            .errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Either 'start' or all of 'startMin', 'startMax', 'endMin' and 'endMax' are required")
-            .build();
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("Either 'start' or all of 'startMin', 'startMax', 'endMin' and 'endMax' are required");
         result.setError(error);
         return datasetIds;
       } else if (startMin == null || startMax == null || endMin == null || endMax == null) {
-        Error error = Error.builder()
-            .errorCode(ErrorCode.GENERIC_ERROR)
-            .message("All of 'startMin', 'startMax', 'endMin' and 'endMax' are required")
-            .build();
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("All of 'startMin', 'startMax', 'endMin' and 'endMax' are required");
         result.setError(error);
         return datasetIds;
       }
     } else if (startMin != null || startMax != null || endMin != null || endMax != null) {
-      Error error = Error.builder()
-          .errorCode(ErrorCode.GENERIC_ERROR)
-          .message("'start' cannot be provided at the same time as 'startMin', 'startMax', 'endMin' and 'endMax'")
-          .build();
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("'start' cannot be provided at the same time as 'startMin', 'startMax', 'endMin' and 'endMax'");
       result.setError(error);
       return datasetIds;
     } else if (end == null && StringUtils.equalsIgnoreCase(referenceBases, "N")) {
-      Error error = Error.builder()
-          .errorCode(ErrorCode.GENERIC_ERROR)
-          .message("'referenceBases' cannot be 'N' if 'start' is provided and 'end' is missing")
-          .build();
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("'referenceBases' cannot be 'N' if 'start' is provided and 'end' is missing");
       result.setError(error);
       return datasetIds;
     }
@@ -310,10 +303,9 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
         // 1) Dataset exists
         BeaconDataset dataset = beaconDatasetRepository.findByStableId(datasetStableId);
         if (dataset == null) {
-          Error error = Error.builder()
-              .errorCode(ErrorCode.NOT_FOUND)
-              .message("Dataset not found")
-              .build();
+          Error error = new Error();
+          error.setErrorCode(ErrorCode.NOT_FOUND);
+          error.setMessage("Dataset not found");
           result.setError(error);
           return datasetIds;
         } else {
@@ -322,10 +314,9 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
 
         DatasetAccessType datasetAccessType = DatasetAccessType.parse(dataset.getAccessType());
         if (datasetAccessType != DatasetAccessType.PUBLIC) {
-          Error error = Error.builder()
-              .errorCode(ErrorCode.UNAUTHORIZED)
-              .message("Unauthenticated users cannot access this dataset")
-              .build();
+          Error error = new Error();
+          error.setErrorCode(ErrorCode.UNAUTHORIZED);
+          error.setMessage("Unauthenticated users cannot access this dataset");
           result.setError(error);
           return datasetIds;
         }
@@ -333,11 +324,10 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
         // Check that the provided reference genome matches the one specified in the DB for this
         // dataset
         if (!StringUtils.equalsIgnoreCase(dataset.getReferenceGenome(), referenceGenome)) {
-          Error error = Error.builder()
-              .errorCode(ErrorCode.GENERIC_ERROR)
-              .message("The assemblyId of this dataset (" + dataset.getReferenceGenome()
-                  + ") and the provided value (" + referenceGenome + ") do not match")
-              .build();
+          Error error = new Error();
+          error.setErrorCode(ErrorCode.GENERIC_ERROR);
+          error.setMessage("The assemblyId of this dataset (" + dataset.getReferenceGenome()
+                  + ") and the provided value (" + referenceGenome + ") do not match");
           result.setError(error);
           return datasetIds;
         }
@@ -347,9 +337,9 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
     if (StringUtils.isNotBlank(alternateBases)) {
       boolean matches = Pattern.matches("[ACTG]+|N", alternateBases);
       if (!matches) {
-        Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Invalid 'alternateBases' parameter, it must match the pattern [ACTG]+|N")
-            .build();
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("Invalid 'alternateBases' parameter, it must match the pattern [ACTG]+|N");
         result.setError(error);
         return datasetIds;
       }
@@ -357,8 +347,9 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
     if (StringUtils.isNotBlank(referenceBases)) {
       boolean matches = Pattern.matches("[ACTG]+|N", referenceBases);
       if (!matches) {
-        Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N").build();
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N");
         result.setError(error);
         return datasetIds;
       }
@@ -418,12 +409,11 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
       OntologyTermColumnCorrespondance ontologyTerm = ontologyTermColumnCorrespondanceRepository
           .findByOntologyAndTerm(ontology, term);
       if (ontologyTerm == null) {
-        Error error = Error.builder()
-            .errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Ontology (" + ontology + ") and/or term (" + term
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("Ontology (" + ontology + ") and/or term (" + term
                 + ") not known in this Beacon. Remember that only the following operators are accepted in some terms (e.g. age_of_onset): "
-                + "<=, >=, =, <, >")
-            .build();
+                + "<=, >=, =, <, >");
         result.setError(error);
         return true;
       }

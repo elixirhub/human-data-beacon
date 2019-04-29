@@ -28,6 +28,7 @@ import org.ega_archive.elixirbeacon.dto.Error;
 import org.ega_archive.elixirbeacon.dto.Handover;
 import org.ega_archive.elixirbeacon.dto.HandoverType;
 import org.ega_archive.elixirbeacon.dto.VariantAnnotation;
+import org.ega_archive.elixirbeacon.enums.AccessLevel;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.OntologyTermColumnCorrespondance;
@@ -58,15 +59,22 @@ public class GenomicQueryImpl implements GenomicQuery {
       QueryResponse<DiseaseGroup> diseaseGroupQueryResponse = parseResponse
               .parseCsvsResponse(url, DiseaseGroup.class);
 
+      // All the datasets are public -> harcode the "authorized" attribute
+      Map<String, Object> info = new HashMap<>();
+      info.put("authorized", true);
+      info.put("accessType", AccessLevel.PUBLIC.getLevel());
+
       List<Dataset> datasets = new ArrayList<>();
       for (DiseaseGroup disease : diseaseGroupQueryResponse.getResult()) {
-        datasets.add(Dataset.builder()
-                .id(String.valueOf(disease.getGroupId()))
-                .name(disease.getName())
-                .assemblyId(CsvsConstants.CSVS_ASSEMMBY_ID)
-                .sampleCount((long) disease.getSamples())
-                .variantCount((long) disease.getVariants())
-                .build());
+        Dataset dat = new Dataset();
+        dat.setId(String.valueOf(disease.getGroupId()));
+        dat.setName(disease.getName());
+        dat.setDescription(disease.getName());
+        dat.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
+        dat.setSampleCount((long) disease.getSamples());
+        dat.setVariantCount((long) disease.getVariants());
+        dat.setInfo(info);
+        datasets.add(dat);
         LIST_DATASET = datasets;
       }
     }
@@ -103,15 +111,13 @@ public class GenomicQueryImpl implements GenomicQuery {
     List<Error> errors = checkParams(datasetStableIds, alternateBases, referenceBases, chromosome, start, referenceGenome, filters);
     errors.addAll(checkParamsSnp(alternateBases, referenceBases));
     if (!errors.isEmpty()){
-      beaconGenomicSnpResponse.setError(
-              Error.builder()
-                      .errorCode(ErrorCode.GENERIC_ERROR)
-                      .message(
-                              errors.stream().map(error -> error.getMessage())
-                                      .collect(Collectors.joining(", "))
-                      )
-                      .build()
-      );
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage(
+              errors.stream().map(err -> err.getMessage())
+                  .collect(Collectors.joining(", "))
+          );
+      beaconGenomicSnpResponse.setError(error);
     } else {
       List<Variant> variants = findRegionVariants(chromosome, CsvsConstants.CSVS_BASED == 1 ? start + 1 : start, CsvsConstants.CSVS_BASED == 1 ? start + 2 : start + 1,
               referenceBases, alternateBases, datasetStableIds, filters);
@@ -169,15 +175,13 @@ public class GenomicQueryImpl implements GenomicQuery {
 
     List beaconHandovers = new ArrayList();
     if (!errors.isEmpty()) {
-      response.setError(
-              Error.builder()
-                      .errorCode(ErrorCode.GENERIC_ERROR)
-                      .message(
-                              errors.stream().map(error -> error.getMessage())
-                                      .collect(Collectors.joining(", "))
-                      )
-                      .build()
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage(
+          errors.stream().map(err -> err.getMessage())
+              .collect(Collectors.joining(", "))
       );
+      response.setError(error);
     } else {
         // check X-based
         List<Variant> variants = findRegionVariants(chromosome, CsvsConstants.CSVS_BASED == 1 ? start + 1 : start, CsvsConstants.CSVS_BASED == 1 ? end + 1 : end,
@@ -223,7 +227,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     // Links to downloads and contact
     beaconHandovers.addAll(genericHandover());
     response.setBeaconHandover(beaconHandovers);
-    response.setVariantAnnotations(variantAnnotations);
+    response.setVariantsFound(variantAnnotations);
     response.setExists(variantExists);
 
     response.setInfo(info);
@@ -239,23 +243,23 @@ public class GenomicQueryImpl implements GenomicQuery {
     List<Handover> genericHandover= new ArrayList<>();
 
     // Add handover link to download
-    genericHandover.add(Handover.builder()
-            .handoverType(HandoverType.builder()
-                    .id("downloads")
-                    .label("Download aggregated data corresponding to phenotypically healthy controls of MGP and the IBS population of 1000 genomes phase 3 as well as the pseudo-controls for each ICD10 category")
-                    .build())
-            .url(CsvsConstants.CSVS_URL_DOWNLOADS)
-            .note("Go to web "+ BeaconConstants.BEACON_HOMEPAGE +" and accept terms and conditions in the tab 'Downloads'")
-            .build());
+    HandoverType handoverType = new HandoverType();
+    handoverType.setId("CUSTOM");
+    handoverType.setLabel("Download data");
+    Handover handover = new Handover();
+    handover.setHandoverType(handoverType);
+    handover.setUrl(CsvsConstants.CSVS_URL_DOWNLOADS);
+    handover.setNote("Download aggregated data corresponding to phenotypically healthy controls of MGP and the IBS population of 1000 genomes phase 3 as well as the pseudo-controls for each ICD10 category. Go to web "+ BeaconConstants.BEACON_HOMEPAGE +" and accept terms and conditions in the tab 'Downloads'");
+    genericHandover.add(handover);
 
-    genericHandover.add(Handover.builder()
-            .handoverType(HandoverType.builder()
-                    .id("organization")
-                    .label(BeaconConstants.ORGANIZATION_NAME)
-                    .build())
-            .url( BeaconConstants.ORGANIZATION_CONTACT )
-            .note( BeaconConstants.BEACON_NAME + ", " + BeaconConstants.BEACON_HOMEPAGE)
-            .build());
+    handoverType = new HandoverType();
+    handoverType.setId("CUSTOM");
+    handoverType.setLabel("Organization name");
+    handover = new Handover();
+    handover.setHandoverType(handoverType);
+    handover.setUrl( BeaconConstants.ORGANIZATION_CONTACT );
+    handover.setNote(BeaconConstants.ORGANIZATION_NAME + ". " + BeaconConstants.BEACON_NAME + ", " + BeaconConstants.BEACON_HOMEPAGE);
+    genericHandover.add(handover);
 
     return genericHandover;
   }
@@ -290,10 +294,10 @@ public class GenomicQueryImpl implements GenomicQuery {
           variantsDataset = findRegionVariants(variant.getChromosome(), variant.getPosition(), variant.getPosition() + 1, variant.getReference(), variant.getAlternate(), Arrays.asList(datasetId), null);
         } catch(Exception e){
           optionIncludeDatasetResponses="null";
-          datasetAlleleResponse.setError( Error.builder()
-                  .errorCode(ErrorCode.GENERIC_ERROR)
-                  .message(e.getMessage())
-                  .build());
+          Error error = new Error();
+          error.setErrorCode(ErrorCode.GENERIC_ERROR);
+          error.setMessage(e.getMessage());
+          datasetAlleleResponse.setError(error);
         }
 
         if (variantsDataset != null) {
@@ -414,23 +418,23 @@ public class GenomicQueryImpl implements GenomicQuery {
 
 
       for (String rsId : rsIds) {
-        handoverList.add(Handover.builder()
-                .handoverType(HandoverType.builder()
-                        .id("data_1106")
-                        .label("dbSNP ID")
-                        .build())
-                .url(CsvsConstants.dbSNP_URL_DATABASE +"/?term=" + rsId)
-                .note("Link to dbSNP database")
-                .build());
+        HandoverType handoverType = new HandoverType();
+        handoverType.setId("data:1106");
+        handoverType.setLabel("dbSNP ID");
+        Handover handover = new Handover();
+        handover.setHandoverType(handoverType);
+        handover.setUrl(CsvsConstants.dbSNP_URL_DATABASE +"/?term=" + rsId);
+        handover.setNote("Link to dbSNP database");
+        handoverList.add(handover);
 
-        handoverList.add(Handover.builder()
-                .handoverType(HandoverType.builder()
-                        .id("data_1106")
-                        .label("dbSNP ID")
-                        .build())
-                .url(CsvsConstants.dbSNP_URL_API + "/" + rsId.replaceFirst("rs", ""))
-                .note("Link to dbSNP API")
-                .build());
+        handoverType = new HandoverType();
+        handoverType.setId("data:1106");
+        handoverType.setLabel("dbSNP ID");
+        handover = new Handover();
+        handover.setHandoverType(handoverType);
+        handover.setUrl(CsvsConstants.dbSNP_URL_API + "/" + rsId.replaceFirst("rs", ""));
+        handover.setNote("Link to dbSNP API");
+        handoverList.add(handover);
       }
     }
 
@@ -490,7 +494,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     List <String> icd10FilterValues = null;
     if (null != filters) {
       String technologyFilterValues = filters.stream()
-              .filter(filter -> filter.startsWith("myDictionary.tech"))
+              .filter(filter -> filter.startsWith("csvs.tech"))
               .map(filter -> filter.split(":", 2)[1])
               .collect(Collectors.joining(","));
       technologyFilter =
@@ -619,17 +623,17 @@ public class GenomicQueryImpl implements GenomicQuery {
     List<Error> errors = new ArrayList<>();
 
     if (StringUtils.isBlank(referenceBases)) {
-      errors.add(Error.builder()
-              .errorCode(ErrorCode.GENERIC_ERROR)
-              .message("'referenceBases' is required")
-              .build());
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("'referenceBases' is required");
+      errors.add(error);
     }
 
     if (StringUtils.isBlank(alternateBases)) {
-      errors.add(Error.builder()
-              .errorCode(ErrorCode.GENERIC_ERROR)
-              .message("'alternateBases' is required")
-              .build());
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("'alternateBases' is required");
+      errors.add(error);
     }
     return errors;
   }
@@ -651,35 +655,47 @@ public class GenomicQueryImpl implements GenomicQuery {
     List<Error> errors = new ArrayList<>();
 
     if (StringUtils.isBlank(chromosome)) {
-      errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR).message("'referenceName' is required").build());
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("'referenceName' is required");
+      errors.add(error);
     } else {
-      if (!Pattern.matches("^([1-9][0-9]|[1-9]|X|Y|MT)$", chromosome.toUpperCase()))
-        errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR).message("Invalid 'referenceName' parameter, accepted values are 1-22, X, Y, MT")
-                .build());
+      if (!Pattern.matches("^([1-9][0-9]|[1-9]|X|Y|MT)$", chromosome.toUpperCase())) {
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("Invalid 'referenceName' parameter, accepted values are 1-22, X, Y, MT");
+        errors.add(error);
+      }
     }
 
     if (!StringUtils.isBlank(referenceBases) && !Pattern.matches("[ACTG]+|N", referenceBases.toUpperCase())) {
-        errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-                .message("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N")
-                .build());
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N");
+      errors.add(error);
     }
 
 
-    if (StringUtils.isBlank(referenceGenome)){
-      errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-              .message(" 'assemblyId' ir required  (" + CsvsConstants.CSVS_ASSEMMBY_ID + ")")
-              .build());
+    if (StringUtils.isBlank(referenceGenome)) {
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("'assemblyId' ir required  (" + CsvsConstants.CSVS_ASSEMMBY_ID + ")");
+      errors.add(error);
 
     } else {
-      if ( !CsvsConstants.CSVS_ASSEMMBY_ID.equals(referenceGenome.toLowerCase()))
-        errors.add(Error.builder().errorCode(ErrorCode.NOT_FOUND).message("Assembly not found. Use " + CsvsConstants.CSVS_ASSEMMBY_ID )
-                .build());
+      if ( !CsvsConstants.CSVS_ASSEMMBY_ID.equals(referenceGenome.toLowerCase())) {
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.NOT_FOUND);
+        error.setMessage("Assembly not found. Use " + CsvsConstants.CSVS_ASSEMMBY_ID);
+        errors.add(error);
+      }
     }
 
     if (!StringUtils.isBlank(alternateBases) && !Pattern.matches("[ACTG]+|N", alternateBases.toUpperCase())) {
-        errors.add(Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-                .message("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N")
-                .build());
+      Error error = new Error();
+      error.setErrorCode(ErrorCode.GENERIC_ERROR);
+      error.setMessage("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N");
+      errors.add(error);
     }
 
     if (datasetStableIds != null) {
@@ -691,10 +707,10 @@ public class GenomicQueryImpl implements GenomicQuery {
       for (String datasetStableId : datasetStableIds) {
         Dataset dataset = listDatasets().stream().filter(filter -> String.valueOf(filter.getId()).equals(datasetStableId)).findAny().orElse(null);
         if (dataset == null) {
-          errors.add(Error.builder()
-                  .errorCode(ErrorCode.NOT_FOUND)
-                  .message("Dataset not found")
-                  .build());
+          Error error = new Error();
+          error.setErrorCode(ErrorCode.NOT_FOUND);
+          error.setMessage("Dataset not found");
+          errors.add(error);
         }
       }
     }
@@ -727,10 +743,10 @@ public class GenomicQueryImpl implements GenomicQuery {
                               .or(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term.eq(term)));
 
       if (ontologyTermColumnCorrRep.findOne(query) == null) {
-        errors.add(Error.builder()
-                .errorCode(ErrorCode.GENERIC_ERROR)
-                .message("Ontology (" + ontology + ") and/or term (" + term + ") not known in this Beacon. Remember that none operator are accepted")
-                .build());
+        Error error = new Error();
+        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+        error.setMessage("Ontology (" + ontology + ") and/or term (" + term + ") not known in this Beacon. Remember that none operator are accepted");
+        errors.add(error);
       }
     }
     return errors;

@@ -11,7 +11,7 @@ import lombok.NoArgsConstructor;
 import org.ega_archive.elixirbeacon.convert.Operations;
 
 @Data
-@Builder
+//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class VariantAnnotation {
