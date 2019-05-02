@@ -31,6 +31,8 @@ public class BeaconAlleleResponse {
 
   private List<DatasetAlleleResponse> datasetAlleleResponses;
 
+  private List<Handover> resultHandover;
+
   private List<Handover> beaconHandover;
 
   public BeaconAlleleResponse(BeaconGenomicSnpResponse genomicResponse) {
