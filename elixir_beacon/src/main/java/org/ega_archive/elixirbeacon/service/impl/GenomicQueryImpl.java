@@ -755,27 +755,51 @@ public class GenomicQueryImpl implements GenomicQuery {
   private List<Error> translateFilters(List<String> filters) {
     List<Error> errors = new ArrayList<>();
 
-    for (String filter : filters) {
-      filter = filter.replaceAll("\\s+", "");
-      String[] tokens = filter.split(":", 2);
-      String ontology = tokens[0];
-      String term = tokens[1];
-      Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology
-          .eq(ontology)
-          .and(
-              (QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.sampleTableColumnName
-                  .eq(term))
-                  .or(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term
-                      .eq(term)));
+    filters.stream()
+        .filter(filter -> StringUtils.isNotBlank(filter))
+        .forEach(filter -> {
+          filter = filter.replaceAll("\\s+", "");
+          String[] tokens = filter.split(":", 2);
+          String ontology = tokens[0];
+          String term = tokens[1];
+          Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology
+              .eq(ontology)
+              .and(
+                  (QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.sampleTableColumnName
+                      .eq(term))
+                      .or(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term
+                          .eq(term)));
 
-      if (ontologyTermColumnCorrRep.findOne(query) == null) {
-        Error error = new Error();
-        error.setErrorCode(ErrorCode.GENERIC_ERROR);
-        error.setMessage("Ontology (" + ontology + ") and/or term (" + term
-            + ") not known in this Beacon. Remember that none operator are accepted");
-        errors.add(error);
-      }
-    }
+          if (ontologyTermColumnCorrRep.findOne(query) == null) {
+            Error error = new Error();
+            error.setErrorCode(ErrorCode.GENERIC_ERROR);
+            error.setMessage("Ontology (" + ontology + ") and/or term (" + term
+                + ") not known in this Beacon. Remember that none operator are accepted");
+            errors.add(error);
+          }
+        });
+
+//    for (String filter : filters) {
+//      filter = filter.replaceAll("\\s+", "");
+//      String[] tokens = filter.split(":", 2);
+//      String ontology = tokens[0];
+//      String term = tokens[1];
+//      Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology
+//          .eq(ontology)
+//          .and(
+//              (QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.sampleTableColumnName
+//                  .eq(term))
+//                  .or(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term
+//                      .eq(term)));
+//
+//      if (ontologyTermColumnCorrRep.findOne(query) == null) {
+//        Error error = new Error();
+//        error.setErrorCode(ErrorCode.GENERIC_ERROR);
+//        error.setMessage("Ontology (" + ontology + ") and/or term (" + term
+//            + ") not known in this Beacon. Remember that none operator are accepted");
+//        errors.add(error);
+//      }
+//    }
     return errors;
   }
 }
