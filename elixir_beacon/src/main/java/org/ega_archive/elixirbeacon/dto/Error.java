@@ -14,7 +14,7 @@ import org.ega_archive.elixirbeacon.enums.ErrorCode;
 public class Error {
 
   @JsonIgnore
-  private String[] fields = {"errorCode", "message"};
+  private String[] fields = {"errorCode", "errorMessage"};
 
   // Numeric status code
   private ErrorCode errorCode;
