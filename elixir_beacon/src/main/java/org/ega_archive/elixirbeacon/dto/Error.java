@@ -32,11 +32,11 @@ public class Error {
   // match the provided value
   // - HTTP error code 400: Invalid alternateBases parameter, it can only be [ACTG]+
   // - HTTP error code 400: Invalid referenceBases parameter, it can only be [ACTG]+
-  private String message;
+  private String errorMessage;
 
   public Error(ErrorCode errorCode, String message) {
     this.errorCode = errorCode;
-    this.message = message;
+    this.errorMessage = message;
   }
 
   public Object toMap(Map<String, Object> accessLevelFields, boolean isAuthenticated) {

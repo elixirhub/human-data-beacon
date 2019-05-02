@@ -115,8 +115,8 @@ public class GenomicQueryImpl implements GenomicQuery {
     if (!errors.isEmpty()) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
-      error.setMessage(
-          errors.stream().map(err -> err.getMessage())
+      error.setErrorMessage(
+          errors.stream().map(err -> err.getErrorMessage())
               .collect(Collectors.joining(", "))
       );
       beaconGenomicSnpResponse.setError(error);
@@ -186,8 +186,8 @@ public class GenomicQueryImpl implements GenomicQuery {
     if (!errors.isEmpty()) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
-      error.setMessage(
-          errors.stream().map(err -> err.getMessage())
+      error.setErrorMessage(
+          errors.stream().map(err -> err.getErrorMessage())
               .collect(Collectors.joining(", "))
       );
       response.setError(error);
@@ -338,7 +338,7 @@ public class GenomicQueryImpl implements GenomicQuery {
         } catch (Exception e) {
           Error error = new Error();
           error.setErrorCode(ErrorCode.GENERIC_ERROR);
-          error.setMessage(e.getMessage());
+          error.setErrorMessage(e.getMessage());
           datasetAlleleResponse.setError(error);
         }
 
@@ -654,14 +654,14 @@ public class GenomicQueryImpl implements GenomicQuery {
     if (StringUtils.isBlank(referenceBases)) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
-      error.setMessage("'referenceBases' is required");
+      error.setErrorMessage("'referenceBases' is required");
       errors.add(error);
     }
 
     if (StringUtils.isBlank(alternateBases)) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
-      error.setMessage("'alternateBases' is required");
+      error.setErrorMessage("'alternateBases' is required");
       errors.add(error);
     }
     return errors;
@@ -678,13 +678,13 @@ public class GenomicQueryImpl implements GenomicQuery {
     if (StringUtils.isBlank(chromosome)) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
-      error.setMessage("'referenceName' is required");
+      error.setErrorMessage("'referenceName' is required");
       errors.add(error);
     } else {
       if (!Pattern.matches("^([1-9][0-9]|[1-9]|X|Y|MT)$", chromosome.toUpperCase())) {
         Error error = new Error();
         error.setErrorCode(ErrorCode.GENERIC_ERROR);
-        error.setMessage("Invalid 'referenceName' parameter, accepted values are 1-22, X, Y, MT");
+        error.setErrorMessage("Invalid 'referenceName' parameter, accepted values are 1-22, X, Y, MT");
         errors.add(error);
       }
     }
@@ -693,21 +693,21 @@ public class GenomicQueryImpl implements GenomicQuery {
         .matches("[ACTG]+|N", referenceBases.toUpperCase())) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
-      error.setMessage("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N");
+      error.setErrorMessage("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N");
       errors.add(error);
     }
 
     if (StringUtils.isBlank(referenceGenome)) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
-      error.setMessage("'assemblyId' ir required  (" + CsvsConstants.CSVS_ASSEMMBY_ID + ")");
+      error.setErrorMessage("'assemblyId' ir required  (" + CsvsConstants.CSVS_ASSEMMBY_ID + ")");
       errors.add(error);
 
     } else {
       if (!CsvsConstants.CSVS_ASSEMMBY_ID.equals(referenceGenome.toLowerCase())) {
         Error error = new Error();
         error.setErrorCode(ErrorCode.NOT_FOUND);
-        error.setMessage("Assembly not found. Use " + CsvsConstants.CSVS_ASSEMMBY_ID);
+        error.setErrorMessage("Assembly not found. Use " + CsvsConstants.CSVS_ASSEMMBY_ID);
         errors.add(error);
       }
     }
@@ -716,7 +716,7 @@ public class GenomicQueryImpl implements GenomicQuery {
         .matches("[ACTG]+|N", alternateBases.toUpperCase())) {
       Error error = new Error();
       error.setErrorCode(ErrorCode.GENERIC_ERROR);
-      error.setMessage("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N");
+      error.setErrorMessage("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N");
       errors.add(error);
     }
 
@@ -733,7 +733,7 @@ public class GenomicQueryImpl implements GenomicQuery {
         if (dataset == null) {
           Error error = new Error();
           error.setErrorCode(ErrorCode.NOT_FOUND);
-          error.setMessage("Dataset not found");
+          error.setErrorMessage("Dataset not found");
           errors.add(error);
         }
       }
@@ -773,7 +773,7 @@ public class GenomicQueryImpl implements GenomicQuery {
           if (ontologyTermColumnCorrRep.findOne(query) == null) {
             Error error = new Error();
             error.setErrorCode(ErrorCode.GENERIC_ERROR);
-            error.setMessage("Ontology (" + ontology + ") and/or term (" + term
+            error.setErrorMessage("Ontology (" + ontology + ") and/or term (" + term
                 + ") not known in this Beacon. Remember that none operator are accepted");
             errors.add(error);
           }
@@ -795,7 +795,7 @@ public class GenomicQueryImpl implements GenomicQuery {
 //      if (ontologyTermColumnCorrRep.findOne(query) == null) {
 //        Error error = new Error();
 //        error.setErrorCode(ErrorCode.GENERIC_ERROR);
-//        error.setMessage("Ontology (" + ontology + ") and/or term (" + term
+//        error.setErrorMessage("Ontology (" + ontology + ") and/or term (" + term
 //            + ") not known in this Beacon. Remember that none operator are accepted");
 //        errors.add(error);
 //      }

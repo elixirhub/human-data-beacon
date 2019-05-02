@@ -79,7 +79,7 @@ datasetAlleleResponse:
 beaconError:
   accessLevelSummary: PUBLIC
   errorCode: PUBLIC
-  message: PUBLIC
+  errorMessage: PUBLIC
 dataUseConditions:
   accessLevelSummary: NOT_SUPPORTED
   consentCodeDataUse: NOT_SUPPORTED
