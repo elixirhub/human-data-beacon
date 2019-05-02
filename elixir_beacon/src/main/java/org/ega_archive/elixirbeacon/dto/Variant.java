@@ -23,8 +23,6 @@ public class Variant {
 
   private Map<String, Object> variantAnnotations;
 
-  //private Map<String, Object> cellBaseInfo;
-
   private List<Handover> variantHandover;
 
   private Map<String, Object> info;

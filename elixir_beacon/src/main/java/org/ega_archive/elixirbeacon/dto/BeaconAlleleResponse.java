@@ -5,14 +5,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixirbeacon.convert.Operations;
 
 @Data
-//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BeaconAlleleResponse {

@@ -4,14 +4,12 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.List;
 import java.util.Map;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.ega_archive.elixirbeacon.convert.Operations;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
 
 @Data
-//@Builder
 @AllArgsConstructor
 @NoArgsConstructor
 public class BeaconGenomicSnpRequest {
