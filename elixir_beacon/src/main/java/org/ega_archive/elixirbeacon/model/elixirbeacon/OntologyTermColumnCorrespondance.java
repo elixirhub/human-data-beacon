@@ -8,7 +8,7 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "ontology_term_column_correspondance", schema = "public", catalog = "ega_beacon_dev")
+@Table(name = "ontology_term_column_correspondance", schema = "public")
 public class OntologyTermColumnCorrespondance {
 
   @Id
