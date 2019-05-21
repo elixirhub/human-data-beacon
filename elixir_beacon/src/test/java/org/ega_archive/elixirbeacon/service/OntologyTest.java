@@ -44,7 +44,7 @@ public class OntologyTest {
 
   @Test
   public void list() {
-    BeaconOntology beaconOntology = beaconOntologyService.listOntologyTerms();
+    BeaconOntology beaconOntology = beaconOntologyService.listFilteringTerms();
 
     assertThat(beaconOntology.getBeaconId(), equalTo(BeaconConstants.BEACON_ID));
     assertThat(beaconOntology.getVersion(), equalTo(CoreConstants.API_VERSION));

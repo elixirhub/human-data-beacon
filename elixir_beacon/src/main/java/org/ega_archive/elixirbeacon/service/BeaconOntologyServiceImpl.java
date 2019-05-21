@@ -16,7 +16,7 @@ public class BeaconOntologyServiceImpl implements BeaconOntologyService {
   private OntologyTermRepository ontologyTermRepository;
 
   @Override
-  public BeaconOntology listOntologyTerms() {
+  public BeaconOntology listFilteringTerms() {
     List<OntologyTerm> all = ontologyTermRepository.findAll();
     BeaconOntology result = Operations.convertToBeaconOntologyTerm(all);
     return result;
