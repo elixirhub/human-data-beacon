@@ -2,6 +2,8 @@ package org.ega_archive.elixirbeacon.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,6 +13,7 @@ import org.ega_archive.elixirbeacon.convert.Operations;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class Organization {
 
   @JsonIgnore
@@ -31,6 +34,7 @@ public class Organization {
 
   private String logoUrl = BeaconConstants.ORGANIZATION_LOGO;
 
+  @JsonInclude(JsonInclude.Include.NON_NULL)
   private Map<String, String> info;
 
   public Object toMap(Map<String, Object> accessLevelFields, boolean isAuthenticated) {

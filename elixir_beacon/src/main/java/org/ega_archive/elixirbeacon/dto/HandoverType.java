@@ -2,6 +2,8 @@ package org.ega_archive.elixirbeacon.dto;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.Map;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -12,6 +14,7 @@ import org.ega_archive.elixirbeacon.convert.Operations;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@JsonInclude(JsonInclude.Include.NON_NULL)
 public class HandoverType {
 
   @JsonIgnore

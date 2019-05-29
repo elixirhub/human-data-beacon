@@ -87,9 +87,9 @@ public class GenomicQueryImpl implements GenomicQuery {
       String alternateBases, String referenceBases, String chromosome, Integer start,
       String referenceGenome, String includeDatasetResponses, List<String> filters) {
 
-    // TODO: Add new endpoint to CSVS to return variants by dataset and use it here
-    // TODO: Param assembley in query in CSVS
-    // TODO: Develop web service with filters in csvs
+    // TODO: csvs Add new endpoint to CSVS to return variants by dataset and use it here
+    // TODO: csvs Param assembley in query in CSVS
+    // TODO: csvs Develop web service with filters in csvs
 
     BeaconGenomicSnpResponse beaconGenomicSnpResponse = new BeaconGenomicSnpResponse();
     List resultsHandover = new ArrayList();
@@ -213,10 +213,6 @@ public class GenomicQueryImpl implements GenomicQuery {
           // Get list variant to search in cellbase
           Map cellBaseMap = callToCellBase(variant.getChromosome(), variant.getPosition(),
               variant.getReference(), variant.getAlternate());
-          //beaconVariant.setCellBaseInfo(cellBaseMap);
-          // TODO call to dbsnp
-
-          //beaconHandovers = parseCellBase(cellBaseMap);
 
           // Get info variant (all subpopulations)
           Map<String, Object> variantInfo = new HashMap<>();
@@ -460,7 +456,7 @@ public class GenomicQueryImpl implements GenomicQuery {
       if (cellBaseResponse.get("response") != null) {
         ArrayList<LinkedHashMap> variantArray = (ArrayList<LinkedHashMap>) cellBaseResponse
             .get("response");
-        System.out.println(variantArray);
+
         if (variantArray != null) {
           for (LinkedHashMap elem : variantArray) {
 
@@ -481,7 +477,7 @@ public class GenomicQueryImpl implements GenomicQuery {
       for (String rsId : rsIds) {
         HandoverType handoverType = new HandoverType();
         handoverType.setId("data:1106");
-        handoverType.setLabel("dbSNP ID");
+        handoverType.setLabel("dbSNP");
         Handover handover = new Handover();
         handover.setHandoverType(handoverType);
         handover.setUrl(CsvsConstants.dbSNP_URL_DATABASE + "/?term=" + rsId);
@@ -490,7 +486,7 @@ public class GenomicQueryImpl implements GenomicQuery {
 
         handoverType = new HandoverType();
         handoverType.setId("data:1106");
-        handoverType.setLabel("dbSNP ID");
+        handoverType.setLabel("dbSNP");
         handover = new Handover();
         handover.setHandoverType(handoverType);
         handover.setUrl(CsvsConstants.dbSNP_URL_API + "/" + rsId.replaceFirst("rs", ""));

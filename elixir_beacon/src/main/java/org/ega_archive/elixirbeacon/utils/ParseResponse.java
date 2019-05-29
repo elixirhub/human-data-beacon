@@ -1,12 +1,17 @@
 package org.ega_archive.elixirbeacon.utils;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.TimeZone;
 
+import com.fasterxml.jackson.databind.SerializationFeature;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.lang3.StringUtils;
 import org.babelomics.csvs.lib.ws.QueryResponse;
@@ -69,13 +74,16 @@ public class ParseResponse {
         .constructParametricType(clazzT, new Class[]{clazzU});
     Object basicDTO = null;
     try {
-      basicDTO = this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue((String) response.getBody(), type);
+      this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      this.objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+      basicDTO = this.objectMapper.readValue((String) response.getBody(), type);
     } catch (IOException ex) {
       throw new RestRuntimeException("500",
           "Exception deserializing object: " + response.getBody() + "\n" + ex.getMessage());
+    } finally {
+      log.debug("response: {}", basicDTO);
+      return basicDTO;
     }
-    log.debug("response: {}", basicDTO);
-    return basicDTO;
   }
 
   public <T, U> Object parseResponse(String url, Class<T> clazzT, Class<U> clazzU) {
@@ -89,17 +97,21 @@ public class ParseResponse {
    * @return
    */
   public Map<String, Object> parseResponse(String url, String token) {
-    ResponseEntity response = runTheCall(url, token);
 
     Map<String, Object> basicDTO = null;
     try {
-      basicDTO = this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false).readValue((String) response.getBody(), HashMap.class);
+      ResponseEntity response = runTheCall(url, token);
+      this.objectMapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+      this.objectMapper.configure(SerializationFeature.WRITE_NULL_MAP_VALUES, false);
+      basicDTO = this.objectMapper.readValue((String) response.getBody(), HashMap.class);
     } catch (IOException ex) {
       throw new RestRuntimeException("500",
-              "Exception deserializing object: " + response.getBody() + "\n" + ex.getMessage());
+              "Exception deserializing object: " + url + "\n" + ex.getMessage());
+    } finally {
+      log.debug("response: {}", basicDTO);
+      return basicDTO;
     }
-    log.debug("response: {}", basicDTO);
 
-    return basicDTO;
   }
+
 }
