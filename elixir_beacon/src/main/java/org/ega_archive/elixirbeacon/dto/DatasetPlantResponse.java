@@ -2,6 +2,7 @@ package org.ega_archive.elixirbeacon.dto;
 
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import java.math.BigInteger;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -34,13 +35,13 @@ public class DatasetPlantResponse {
   private BigDecimal frequency;
 
   // Number of variants matching the allele request in the dataset.
-  private Long variantCount;
+  private BigInteger variantCount;
 
   // Number of calls matching the allele request in the dataset.
-  private Long callCount;
+  private BigInteger callCount;
 
   // Number of samples matching the allele request in the dataset.
-  private Long sampleCount;
+  private BigInteger sampleCount;
 
   // Additional note or description of the response.
   private String note = CoreConstants.OK;
@@ -54,5 +55,5 @@ public class DatasetPlantResponse {
   private Map<String,Object> info;
 
   // test parameter for extra beacon Request.
-  private boolean test;
+  private boolean mcpdParamExample;
 }

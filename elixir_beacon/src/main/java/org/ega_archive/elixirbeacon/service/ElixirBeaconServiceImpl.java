@@ -527,9 +527,9 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       datasetResponse.setDatasetId(dataset.getStableId());
       datasetResponse.setExists(true);
       datasetResponse.setFrequency(data.getFrequency());
-      datasetResponse.setVariantCount(new Long(data.getVariantCnt()));
-      datasetResponse.setCallCount(new Long(data.getCallCnt()));
-      datasetResponse.setSampleCount(new Long(data.getSampleCnt()));
+      datasetResponse.setVariantCount(data.getVariantCnt());
+      datasetResponse.setCallCount(data.getCallCnt());
+      datasetResponse.setSampleCount(data.getSampleCnt());
 
 
       // get the info field's content (a Json-compatible String)
@@ -556,7 +556,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       // check if "mcpdParamExample == info[mcpd][genus]"
       // this is just one example.
       JSONObject mcpd = (JSONObject) info.get("mcpd");
-      String genus = (String) x.get("genus");
+      String genus = (String) mcpd.get("genus");
       Boolean genusValid = false;
 
       if(genus.equals(mcpdParamExample)){
@@ -565,7 +565,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
         genusValid = false;
       }
 
-      datasetResponse.setmcpdParamExample(genusValid);
+      datasetResponse.setMcpdParamExample(genusValid);
 
       result.addDatasetPlantResponse(datasetResponse);
 
@@ -827,7 +827,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
     return queryPlantBeacon(request.getDatasetIds(), request.getVariantType(),
         request.getAlternateBases(), request.getReferenceBases(), request.getReferenceName(),
         request.getStart(), request.getStartMin(), request.getStartMax(), request.getEnd(),
-        request.getEndMin(), request.getEndMax(), request.getAssemblyId(),request.getmcpdParamExample(),
+        request.getEndMin(), request.getEndMax(), request.getAssemblyId(),request.getMcpdParamExample(),
         request.getIncludeDatasetResponses());
   }
 

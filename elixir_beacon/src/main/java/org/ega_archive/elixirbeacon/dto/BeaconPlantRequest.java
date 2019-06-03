@@ -128,6 +128,6 @@ public class BeaconPlantRequest {
    */
   private String info; // MODIFIED
 
-  private String test;
+  private String mcpdParamExample;
 
 }

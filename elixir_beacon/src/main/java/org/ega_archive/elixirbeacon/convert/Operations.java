@@ -33,10 +33,10 @@ public class Operations {
     beaconDataset.setSampleCount(dataset.getSampleCnt());
     beaconDataset.setAssemblyId(dataset.getReferenceGenome());
 
-    List<KeyValuePair> info = new ArrayList<>();
-    info.add(new KeyValuePair(BeaconConstants.ACCESS_TYPE, DatasetAccessType.parse(dataset.getAccessType())
-        .getType()));
-    info.add(new KeyValuePair(BeaconConstants.AUTHORIZED, Boolean.toString(authorized)));
+    // Create Info object to contain a hashmap of string-Object pairings
+    Map<String,Object> info = new HashMap<String,Object>();
+    info.put(BeaconConstants.ACCESS_TYPE, DatasetAccessType.parse(dataset.getAccessType()));
+    info.put(BeaconConstants.AUTHORIZED, Boolean.toString(authorized));
     beaconDataset.setInfo(info);
 
     DataUseCondition dataUseCondition = DataUseCondition.builder()
