@@ -121,4 +121,10 @@ public class BeaconAlleleRequest {
    */
   private FilterDatasetResponse includeDatasetResponses;
 
+  /**
+   * Contains the metadata JSON string
+   * this is a test while checking if it works in the original Request/Response pair.
+   * Once done, I'll copy it into a separate Request and figure out how to call different requests depending on need.
+   */
+  private String info;
 }

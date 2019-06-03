@@ -63,6 +63,14 @@
 			<scope>provided</scope>
 		</dependency>
 
+
+		<!-- Json Parsing Library -->
+		<dependency>
+			<groupId>com.googlecode.json-simple</groupId>
+			<artifactId>json-simple</artifactId>
+		</dependency>
+
+
 		<!-- Spring security -->
 		<dependency>
 			<groupId>org.springframework.security</groupId>

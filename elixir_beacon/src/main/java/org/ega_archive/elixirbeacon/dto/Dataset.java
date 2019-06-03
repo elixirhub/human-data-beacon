@@ -11,6 +11,8 @@ import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixirbeacon.dto.datause.DataUseCondition;
 import org.joda.time.DateTime;
 
+import java.util.Map;
+
 @Data
 @Builder
 @NoArgsConstructor
@@ -39,7 +41,7 @@ public class Dataset {
 
   // Data use conditions for this dataset
   private DataUseCondition dataUseConditions;
-  
+
   // Version of the dataset
   private String version;
 
@@ -56,13 +58,13 @@ public class Dataset {
   private String externalUrl;
 
   // Additional structured metadata, key-value pairs.
-  private List<KeyValuePair> info;
-  
+  private Map<String,Object> info;
+
 //  public void addDataUseCondition(DataUseCondition condition) {
 //    if(dataUseConditions == null) {
 //      dataUseConditions = new ArrayList<DataUseCondition>();
 //    }
 //    dataUseConditions.add(condition);
 //  }
-  
+
 }

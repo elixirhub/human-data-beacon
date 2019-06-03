@@ -41,4 +41,9 @@ public class BeaconDataset implements Serializable {
 	@Column(name="variant_cnt")
 	private BigInteger variantCnt;
 
+	// Added the info field, which now exists as json string in the SQL database.
+	// The info field is meant to contain structured metadata,
+	// like the multi-crop passport descriptors, for the dataset.
+	@Column(name="info")
+	private String info;
 }

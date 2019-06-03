@@ -9,6 +9,8 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import org.ega_archive.elixircore.constant.CoreConstants;
 
+import java.util.Map;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -46,6 +48,6 @@ public class DatasetAlleleResponse {
   private String externalUrl;
 
   // Additional structured metadata, key-value pairs
-  private List<KeyValuePair> info;
+  private Map<String,Object> info;
 
 }

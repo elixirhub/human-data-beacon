@@ -10,6 +10,8 @@ import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixircore.constant.CoreConstants;
 import org.joda.time.DateTime;
 
+import java.util.Map;
+
 @Data
 @Builder
 @AllArgsConstructor
@@ -58,6 +60,6 @@ public class Beacon {
   private List<BeaconAlleleRequest> sampleAlleleRequests;
 
   // Additional structured metadata, key-value pairs
-  private List<KeyValuePair> info;
+  private Map<String,Object> info;
 
 }

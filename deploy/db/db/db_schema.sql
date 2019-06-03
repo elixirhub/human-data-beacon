@@ -16,19 +16,21 @@ CREATE TABLE public.beacon_dataset_table
 (
     id SERIAL NOT NULL PRIMARY KEY,
     stable_id character varying(50) NOT NULL,
+    species_id character varying(50),
     description character varying(800),
     access_type character varying(10),
     reference_genome character varying(50),
     variant_cnt bigint NOT NULL,
     call_cnt bigint,
     sample_cnt bigint NOT NULL,
+    info character varchar
     CONSTRAINT beacon_dataset_table_access_type_check CHECK (access_type = ANY (ARRAY['PUBLIC', 'REGISTERED', 'CONTROLLED']))
 );
 
 CREATE TABLE public.beacon_data_table (
     id SERIAL NOT NULL PRIMARY KEY,
     dataset_id integer NOT NULL REFERENCES public.beacon_dataset_table (id),
-    chromosome character varying(2) NOT NULL,
+    chromosome character varying(4) NOT NULL,
     variant_id text,
     reference text NOT NULL,
     alternate text NOT NULL,
@@ -39,7 +41,7 @@ CREATE TABLE public.beacon_data_table (
     variant_cnt integer,
     call_cnt integer,
     sample_cnt integer,
-	matching_sample_cnt integer,
+    matching_sample_cnt integer,
     frequency decimal
 
 );
@@ -65,7 +67,7 @@ CREATE TABLE public.beacon_data_sample_table (
 -- Temporary table for loading data into beacon_data_sample_table
 CREATE TABLE public.tmp_data_sample_table (
   dataset_id integer NOT NULL REFERENCES public.beacon_dataset_table (id),
-  chromosome character varying(2) NOT NULL,
+  chromosome character varying(4) NOT NULL,
   variant_id text,
   reference text NOT NULL,
   alternate text NOT NULL,
@@ -152,18 +154,19 @@ LEFT JOIN beacon_data_sample_table d_sam ON d_sam.data_id=d.id
 GROUP BY dat.id, d.variant_cnt, d.call_cnt, d.sample_cnt, d.frequency;
 
 CREATE OR REPLACE VIEW beacon_dataset AS
-SELECT
-	d.id,
-	d.stable_id,
-	d.description,
-	d.access_type,
-	d.reference_genome,
-	d.variant_cnt,
-	d.call_cnt,
-	d.sample_cnt
-FROM beacon_dataset_table d
-WHERE (d.access_type = ANY (ARRAY['PUBLIC', 'REGISTERED', 'CONTROLLED']))
-AND d.variant_cnt > 0 AND d.reference_genome != '';
+	SELECT
+		d.id,
+		d.stable_id,
+		d.description,
+		d.access_type,
+		d.reference_genome,
+		d.variant_cnt,
+		d.call_cnt,
+		d.sample_cnt,
+		d.info
+	FROM beacon_dataset_table d
+	WHERE (d.access_type = ANY (ARRAY['PUBLIC', 'REGISTERED', 'CONTROLLED']))
+    AND d.variant_cnt > 0 AND d.reference_genome != '';
 
 CREATE OR REPLACE VIEW beacon_dataset_consent_code AS
 SELECT dc.dataset_id,
