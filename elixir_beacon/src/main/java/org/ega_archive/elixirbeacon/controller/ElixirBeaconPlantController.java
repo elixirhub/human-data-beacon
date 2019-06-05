@@ -34,7 +34,7 @@ public class ElixirBeaconPlantController {
       @RequestParam(value = ParamName.BEACON_ALTERNATE_BASES, required = false) String alternateBases,
       @RequestParam(value = ParamName.BEACON_REFERENCE_BASES, required = false) String referenceBases,
       @RequestParam(value = ParamName.BEACON_CHROMOSOME, required = false) String chromosome,
-      @RequestParam(value = "test", required = false) String test,
+      @RequestParam(value = "mcpdParamExample", required = false) String mcpdParamExample,
       @RequestParam(value = ParamName.BEACON_START, required = false) Integer start,
       @RequestParam(value = ParamName.BEACON_START_MIN, required = false) Integer startMin,
       @RequestParam(value = ParamName.BEACON_START_MAX, required = false) Integer startMax,
@@ -46,7 +46,7 @@ public class ElixirBeaconPlantController {
       @RequestParam(value = ParamName.BEACON_INCLUDE_DATASET_RESPONSES, required = false) String includeDatasetResponses) {
 
     return elixirBeaconService.queryPlantBeacon(datasetStableIds, variantType, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome, test,
+        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome, mcpdParamExample,
         includeDatasetResponses);
   }
 
