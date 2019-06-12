@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import javassist.NotFoundException;
-import org.ega_archive.elixirbeacon.dto.Beacon;
-import org.ega_archive.elixirbeacon.dto.BeaconAlleleRequest;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixircore.constant.ParamName;
 import org.ega_archive.elixircore.helper.CommonQueryHelper;

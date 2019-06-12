@@ -1,0 +1,234 @@
+- id: 1
+  stableId: I
+  description: I Certain infectious and parasitic diseases
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 2
+  stableId: II
+  description:  II Neoplasms
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 3
+  stableId: III
+  description: III Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+
+- id: 4
+  stableId: IV
+  description: IV Endocrine, nutritional and metabolic diseases
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 5
+  stableId: V
+  description: V Mental and behavioural disorders
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 6
+  stableId: VI
+  description: VI Diseases of the nervous system
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 7
+  stableId: VII
+  description: VII Diseases of the eye and adnexa
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 8
+  stableId: VIII
+  description: VIII Diseases of the ear and mastoid process
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 9
+  stableId: IX
+  description: IX Diseases of the circulatory system
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 10
+  stableId: X
+  description: X Diseases of the respiratory system
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 11
+  stableId: XI
+  description: XI Diseases of the digestive system
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 12
+  stableId: XII
+  description: XII Diseases of the skin and subcutaneous tissue
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 13
+  stableId: XIII
+  description: XIII Diseases of the musculoskeletal system and connective tissue
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 14
+  stableId: XIV
+  description: XIV Diseases of the genitourinary system
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 15
+  stableId: XV
+  description: XV Pregnancy, childbirth and the puerperium
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 16
+  stableId: XVI
+  description: XVI Certain conditions originating in the perinatal period
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 17
+  stableId: XVII
+  description: XVII Congenital malformations, deformations and chromosomal abnormalities
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 18
+  stableId: XVIII
+  description: XVIII Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 19
+  stableId: XIX
+  description: XIX Injury, poisoning and certain other consequences of external causes
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 20
+  stableId: XX
+  description: XX External causes of morbidity and mortality
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 21
+  stableId: XXI
+  description: XXI Factors influencing health status and contact with health services
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 22
+  stableId: XXII
+  description: XXII Codes for special purposes
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 23
+  stableId: MGP
+  description: MGP (267 healthy controls)
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 24
+  stableId: IBS
+  description: IBS (107 Spanish individuals from 1000genomes)"
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 25
+  stableId: V (controls)
+  description: V Mental and behavioural disorders(controls)
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1
+
+- id: 26
+  stableId: Healthy (controls)
+  description: Healthy controls
+  accessType: PUBLIC
+  referenceGenome: GRCh37
+  variantCnt: 1
+  callCnt: 1
+  sampleCnt: 1

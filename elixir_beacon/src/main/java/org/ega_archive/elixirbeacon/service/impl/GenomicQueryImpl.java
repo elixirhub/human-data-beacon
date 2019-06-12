@@ -1,6 +1,5 @@
 package org.ega_archive.elixirbeacon.service.impl;
 
-import com.querydsl.core.types.Predicate;
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -32,11 +31,10 @@ import org.ega_archive.elixirbeacon.enums.AccessLevel;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.OntologyTermColumnCorrespondance;
-import org.ega_archive.elixirbeacon.model.elixirbeacon.QOntologyTermColumnCorrespondance;
-import org.ega_archive.elixirbeacon.repository.elixirbeacon.OntologyTermColumnCorrespondanceRepository;
 import org.ega_archive.elixirbeacon.service.GenomicQuery;
 import org.ega_archive.elixirbeacon.utils.ParseResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 @Slf4j
@@ -47,8 +45,8 @@ public class GenomicQueryImpl implements GenomicQuery {
   @Autowired
   private ParseResponse parseResponse;
 
-  @Autowired
-  private OntologyTermColumnCorrespondanceRepository ontologyTermColumnCorrRep;
+  @Value("${ontology.terms.default.yaml.filename}")
+  private String defaultOntologyTermFileName;
 
   private static List<Dataset> LIST_DATASET = new ArrayList<>();
 
@@ -90,6 +88,7 @@ public class GenomicQueryImpl implements GenomicQuery {
     // TODO: csvs Add new endpoint to CSVS to return variants by dataset and use it here
     // TODO: csvs Param assembley in query in CSVS
     // TODO: csvs Develop web service with filters in csvs
+    // TODO: no call cellbase if not neccesary (query search variant)
 
     BeaconGenomicSnpResponse beaconGenomicSnpResponse = new BeaconGenomicSnpResponse();
     List resultsHandover = new ArrayList();
@@ -129,7 +128,6 @@ public class GenomicQueryImpl implements GenomicQuery {
       variantExists = !variants.isEmpty() && variants.size() == 1;
       if (variantExists) {
         info = new HashMap<>();
-        //info.put("stats", variants.get(0).getStats());
         info.put("stats", filterVariantStats(variants.get(0).getStats()));
       }
 
@@ -166,7 +164,6 @@ public class GenomicQueryImpl implements GenomicQuery {
     request.setStart(start);
     request.setEnd(end);
     request.setAssemblyId(CsvsConstants.CSVS_ASSEMMBY_ID);
-    //request.setAssemblyIds(referenceBases);
     request.setDatasetIds(datasetStableIds);
     FilterDatasetResponse parsedIncludeDatasetResponses = FilterDatasetResponse
         .parse(includeDatasetResponses);
@@ -216,7 +213,6 @@ public class GenomicQueryImpl implements GenomicQuery {
 
           // Get info variant (all subpopulations)
           Map<String, Object> variantInfo = new HashMap<>();
-          //variantInfo.put("stats variant", variant.getStats());
           variantInfo.put("stats variant", filterVariantStats(variant.getStats()));
           // Return variant 0-based
           String varSearch = String.join(":",
@@ -466,7 +462,6 @@ public class GenomicQueryImpl implements GenomicQuery {
                 String rsIdElem = (String) variantElem.get("id");
                 if (rsIdElem != null) {
                   rsIds.add(rsIdElem);
-                  //log.debug("rs ID: {}", rsIdElem);
                 }
               }
             }
@@ -498,23 +493,6 @@ public class GenomicQueryImpl implements GenomicQuery {
     return handoverList;
   }
 
-//<<<<<<< HEAD:elixir_beacon/src/main/java/org/ega_archive/elixirbeacon/service/impl/GenomicQueryImpl.java
-//  private boolean findVariantCount(Map<String, Object> info) {
-//    Integer variantCount = 0;
-//    String value = (String) info.get("variantCount");
-//    if (StringUtils.isNotBlank(value)) {
-//      try {
-//        variantCount = Integer.parseInt(value);
-//      } catch (NumberFormatException ex) {
-//        // Ignore exception
-//      }
-//    }
-//    return variantCount > 0;
-//  }
-//
-//  private Map<String, Object> findRegionVariants(String chromosome, Integer start, Integer end,
-//=======
-
   /**
    * Get equivalence ontology with field to search.
    *
@@ -523,12 +501,8 @@ public class GenomicQueryImpl implements GenomicQuery {
    * @return Term if not find
    */
   public String getIdOntology(String ontology, String term) {
-    Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology
-        .eq(ontology)
-        .and(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term.eq(term));
-
-    OntologyTermColumnCorrespondance ontologyTermColumnCorr = ontologyTermColumnCorrRep
-        .findOne(query);
+    OntologyTermColumnCorrespondance ontologyTermColumnCorr =  CsvsConstants.CSVS_ONTOLOGY_TERM_COLUMN_CORRESPONDANCE.stream().
+            filter(ont -> ontology.equals(ont.getTerm()) && term.equals(ont.getTerm())).findAny().orElse(null);
 
     return (ontologyTermColumnCorr != null) ? String
         .valueOf(ontologyTermColumnCorr.getSampleTableColumnName()) : term;
@@ -606,7 +580,6 @@ public class GenomicQueryImpl implements GenomicQuery {
     log.debug("url {}", url);
     QueryResponse<org.babelomics.csvs.lib.models.Variant> variantQueryResponse = parseResponse
         .parseCsvsResponse(url, org.babelomics.csvs.lib.models.Variant.class);
-    //log.debug("response: {}", variantQueryResponse);
 
     boolean isRegionQuery = StringUtils.isBlank(alternateBases) && end != null;
 
@@ -758,15 +731,13 @@ public class GenomicQueryImpl implements GenomicQuery {
           String[] tokens = filter.split(":", 2);
           String ontology = tokens[0];
           String term = tokens[1];
-          Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology
-              .eq(ontology)
-              .and(
-                  (QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.sampleTableColumnName
-                      .eq(term))
-                      .or(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term
-                          .eq(term)));
 
-          if (ontologyTermColumnCorrRep.findOne(query) == null) {
+          OntologyTermColumnCorrespondance ontologyTermColumnCorr =  CsvsConstants.CSVS_ONTOLOGY_TERM_COLUMN_CORRESPONDANCE.stream().
+                  filter(ont -> ontology.equals(ont.getOntology()) &&
+                          (term.equals(ont.getSampleTableColumnName()) || term.equals(ont.getTerm()))
+                  ).findAny().orElse(null);
+
+          if(ontologyTermColumnCorr == null){
             Error error = new Error();
             error.setErrorCode(ErrorCode.GENERIC_ERROR);
             error.setErrorMessage("Ontology (" + ontology + ") and/or term (" + term
@@ -774,28 +745,6 @@ public class GenomicQueryImpl implements GenomicQuery {
             errors.add(error);
           }
         });
-
-//    for (String filter : filters) {
-//      filter = filter.replaceAll("\\s+", "");
-//      String[] tokens = filter.split(":", 2);
-//      String ontology = tokens[0];
-//      String term = tokens[1];
-//      Predicate query = QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.ontology
-//          .eq(ontology)
-//          .and(
-//              (QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.sampleTableColumnName
-//                  .eq(term))
-//                  .or(QOntologyTermColumnCorrespondance.ontologyTermColumnCorrespondance.term
-//                      .eq(term)));
-//
-//      if (ontologyTermColumnCorrRep.findOne(query) == null) {
-//        Error error = new Error();
-//        error.setErrorCode(ErrorCode.GENERIC_ERROR);
-//        error.setErrorMessage("Ontology (" + ontology + ") and/or term (" + term
-//            + ") not known in this Beacon. Remember that none operator are accepted");
-//        errors.add(error);
-//      }
-//    }
     return errors;
   }
 }

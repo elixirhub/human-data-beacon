@@ -2,12 +2,7 @@ package org.ega_archive.elixirbeacon.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -16,6 +11,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
+import org.ega_archive.elixirbeacon.constant.CsvsConstants;
 import org.ega_archive.elixirbeacon.convert.Operations;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleRequest;
@@ -31,17 +27,12 @@ import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDataset;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDatasetConsentCode;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.OntologyTermColumnCorrespondance;
 import org.ega_archive.elixirbeacon.properties.SampleRequests;
-import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconDatasetConsentCodeRepository;
-import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconDatasetRepository;
-import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconSummaryDataRepository;
-import org.ega_archive.elixirbeacon.repository.elixirbeacon.OntologyTermColumnCorrespondanceRepository;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixircore.enums.DatasetAccessType;
 import org.ega_archive.elixircore.helper.CommonQuery;
 import org.ega_archive.elixircore.util.JsonUtils;
 import org.ega_archive.elixircore.util.StoredProcedureUtils;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.data.domain.Sort.Direction;
 import org.springframework.data.domain.Sort.Order;
@@ -55,18 +46,6 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
   private SampleRequests sampleRequests;
 
   @Autowired
-  private BeaconDatasetRepository beaconDatasetRepository;
-  
-  @Autowired
-  private BeaconSummaryDataRepository beaconDataRepository;
-  
-  @Autowired
-  private BeaconDatasetConsentCodeRepository beaconDatasetConsentCodeRepository;
-
-  @Autowired
-  private OntologyTermColumnCorrespondanceRepository ontologyTermColumnCorrespondanceRepository;
-
-  @Autowired
   private ObjectMapper objectMapper;
 
   @Override
@@ -77,14 +56,18 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
 
     List<Dataset> convertedDatasets = new ArrayList<Dataset>();
 
-    Page<BeaconDataset> allDatasets = null;
+    List<BeaconDataset> allDatasets = null;
     if (StringUtils.isNotBlank(referenceGenome)) {
       referenceGenome = StringUtils.lowerCase(referenceGenome);
-      allDatasets =
-          beaconDatasetRepository.findByReferenceGenome(referenceGenome, commonQuery.getPageable());
+      String finalReferenceGenome = referenceGenome;
+      allDatasets =  CsvsConstants.CSVS_BEACON_DATASET.stream().filter(dat -> finalReferenceGenome.equals(dat.getReferenceGenome())).collect(Collectors.toList());
     } else {
-      allDatasets = beaconDatasetRepository.findAll(commonQuery);
+      allDatasets = CsvsConstants.CSVS_BEACON_DATASET;
     }
+
+    // Order by id
+    Collections.sort( allDatasets,  (BeaconDataset a1, BeaconDataset a2) -> a1.getId().compareTo(a2.getId()));
+
 
     Integer size = 0;
     for (BeaconDataset dataset : allDatasets) {
@@ -93,8 +76,9 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
       if (accessType == DatasetAccessType.PUBLIC) {
         authorized = true;
       }
-      List<BeaconDatasetConsentCode> ccDataUseConditions =
-          beaconDatasetConsentCodeRepository.findByDatasetId(dataset.getId());
+     List<BeaconDatasetConsentCode> ccDataUseConditions = CsvsConstants.CSVS_DATASET_CONSENT_CODE.stream().
+           filter(cc -> dataset.getId() == cc.getId().getDatasetId()).collect(Collectors.toList());
+
 
       convertedDatasets.add(Operations.convert(dataset, authorized, ccDataUseConditions));
 
@@ -301,7 +285,7 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
       
       for (String datasetStableId : datasetStableIds) {
         // 1) Dataset exists
-        BeaconDataset dataset = beaconDatasetRepository.findByStableId(datasetStableId);
+        BeaconDataset dataset = CsvsConstants.CSVS_BEACON_DATASET.stream().filter(dat -> datasetStableId.equals(dat.getStableId())).findAny().orElse(null);
         if (dataset == null) {
           Error error = new Error();
           error.setErrorCode(ErrorCode.NOT_FOUND);
@@ -354,23 +338,6 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
         return datasetIds;
       }
     }
-//    if (type != null && type != VariantType.SNP && type != VariantType.INSERTION
-//        && type != VariantType.DELELETION && type != VariantType.DUPLICATION) {
-//      Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-//          .message("Invalid 'variantType' parameter").build();
-//      result.setError(error);
-//      return datasetIds;
-//    }
-
-//    if (type != VariantType.SNP && type != VariantType.INSERTION && type != VariantType.DELELETION
-//        && type != VariantType.DUPLICATION) {
-//      Error error = Error.builder()
-//          .errorCode(ErrorCode.GENERIC_ERROR)
-//          .message("Invalid alternateBases parameter")
-//          .build();
-//      result.setError(error);
-//      return datasetIds;
-//    }
 
     if (filters != null) {
       if (translateFilters(result, filters, translatedFilters)) {
@@ -406,8 +373,12 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
         value = operationTokens[1];
       }
       // Search this ontology and term in the DB
-      OntologyTermColumnCorrespondance ontologyTerm = ontologyTermColumnCorrespondanceRepository
-          .findByOntologyAndTerm(ontology, term);
+      String finalTerm = term;
+      OntologyTermColumnCorrespondance ontologyTerm =  CsvsConstants.CSVS_ONTOLOGY_TERM_COLUMN_CORRESPONDANCE.stream().
+              filter(ont -> ontology.equals(ont.getOntology()) &&
+                      (finalTerm.equals(ont.getSampleTableColumnName()) || finalTerm.equals(ont.getTerm()))
+              ).findAny().orElse(null);
+
       if (ontologyTerm == null) {
         Error error = new Error();
         error.setErrorCode(ErrorCode.GENERIC_ERROR);
@@ -427,7 +398,6 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
         value = "'" + value + "'";
       }
       value = operator + value;
-//      log.debug("Value: {}", value);
       translatedFilters.add(ontologyTerm.getSampleTableColumnName() + value);
     }
     return false;
@@ -456,10 +426,8 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
     if (translatedFilters != null && !translatedFilters.isEmpty()) {
       filters = StoredProcedureUtils.joinArrayOfString(translatedFilters, " AND ");
     }
-    List<BeaconDataSummary> dataList = beaconDataRepository
-        .searchForVariantsQuery(variantType, start,
-            startMin, startMax, end, endMin, endMax, chromosome, referenceBases, alternateBases,
-            referenceGenome, StoredProcedureUtils.joinArrayOfInteger(datasetIds), filters);
+    List<BeaconDataSummary> dataList = CsvsConstants.CSVS_DATA_SUMMARY;
+
     numResults = dataList.size();
     globalExists = numResults > 0;
 
@@ -467,7 +435,7 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
       if (result.getAlleleRequest().getIncludeDatasetResponses() == FilterDatasetResponse.ALL
           || result.getAlleleRequest().getIncludeDatasetResponses() == FilterDatasetResponse.HIT) {
         DatasetAlleleResponse datasetResponse = new DatasetAlleleResponse();
-        BeaconDataset dataset = beaconDatasetRepository.findOne(data.getDatasetId());
+        BeaconDataset dataset = CsvsConstants.CSVS_BEACON_DATASET.stream().filter(dat -> dat.getId().equals(data.getDatasetId())).findAny().orElse(new BeaconDataset());
         datasetResponse.setDatasetId(dataset.getStableId());
         datasetResponse.setExists(true);
         datasetResponse.setFrequency(data.getFrequency());
@@ -492,7 +460,7 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
         || result.getAlleleRequest().getIncludeDatasetResponses() == FilterDatasetResponse.ALL)) {
       for (Integer datasetId : missingDatasets) {
         DatasetAlleleResponse datasetResponse = new DatasetAlleleResponse();
-        BeaconDataset dataset = beaconDatasetRepository.findOne(datasetId);
+        BeaconDataset dataset = CsvsConstants.CSVS_BEACON_DATASET.stream().filter(dat -> dat.getId().equals(datasetId)).findAny().orElse(new BeaconDataset());
         datasetResponse.setDatasetId(dataset.getStableId());
         datasetResponse.setExists(false);
         result.addDatasetAlleleResponse(datasetResponse);
@@ -502,9 +470,11 @@ public class ElixirBeaconServiceDefaultImpl implements ElixirBeaconService {
   }
 
   private List<Integer> findAuthorizedDatasets(String referenceGenome) {
-    referenceGenome = StringUtils.lowerCase(referenceGenome);
-    List<Integer> publicDatasets = beaconDatasetRepository
-        .findReferenceGenomeAndAccessType(referenceGenome, DatasetAccessType.PUBLIC.getType());
+    String finalReferenceGenome = StringUtils.lowerCase(referenceGenome);
+    List<Integer> publicDatasets = CsvsConstants.CSVS_BEACON_DATASET.stream().filter(dat->
+            finalReferenceGenome.equals(dat.getReferenceGenome().toLowerCase()) &&
+                    DatasetAccessType.PUBLIC.getType().equals(dat.getAccessType().toUpperCase())).map(BeaconDataset::getId).collect(Collectors.toList());
+
     return publicDatasets;
   }
 

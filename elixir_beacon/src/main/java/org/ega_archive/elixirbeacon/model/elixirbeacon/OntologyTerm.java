@@ -1,16 +1,16 @@
 package org.ega_archive.elixirbeacon.model.elixirbeacon;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Table;
-import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
-@Data
-@Entity
-@Table(name = "ontology_term", schema = "public")
+@Getter
+@Setter
+@EqualsAndHashCode
+@NoArgsConstructor
 public class OntologyTerm {
 
-  @Id
   private Integer id;
 
   private String ontology;

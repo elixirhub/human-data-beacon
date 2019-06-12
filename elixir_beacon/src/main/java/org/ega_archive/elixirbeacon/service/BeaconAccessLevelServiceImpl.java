@@ -2,7 +2,6 @@ package org.ega_archive.elixirbeacon.service;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory;
-import com.querydsl.core.types.dsl.BooleanExpression;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.LinkedHashMap;
@@ -15,14 +14,12 @@ import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
+import org.ega_archive.elixirbeacon.constant.CsvsConstants;
 import org.ega_archive.elixirbeacon.dto.AccessLevelResponse;
 import org.ega_archive.elixirbeacon.dto.Error;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.DatasetAccessLevel;
-import org.ega_archive.elixirbeacon.model.elixirbeacon.QDatasetAccessLevel;
-import org.ega_archive.elixirbeacon.repository.elixirbeacon.DatasetAccessLevelRepository;
 import org.ega_archive.elixircore.exception.NotImplementedException;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -34,9 +31,6 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
   private String defaultAccessLevelFileName;
 
   public static final String ACCESS_LEVEL_SUMMARY = "accessLevelSummary";
-
-  @Autowired
-  private DatasetAccessLevelRepository datasetAccessLevelRepository;
 
   @Override
   public AccessLevelResponse listAccessLevels(List<String> fields,
@@ -93,42 +87,27 @@ public class BeaconAccessLevelServiceImpl implements BeaconAccessLevelService {
 
   private Iterable<DatasetAccessLevel> findDatasets(List<String> fields, List<String> datasetStableIds,
       boolean includeFieldDetails, boolean includeDatasetDetails, AccessLevelResponse response) {
-    // Get datasets
-    BooleanExpression condition = null;
-    QDatasetAccessLevel qDatasetAccessLevel = QDatasetAccessLevel.datasetAccessLevel;
+
+    List<DatasetAccessLevel>  datasetAccessLevels = CsvsConstants.CSVS_DATASET_ACCESS_LEVEL;
+
     if (response.getError() == null && datasetStableIds != null && !datasetStableIds.isEmpty()) {
-      condition = qDatasetAccessLevel.id.datasetStableId.in(datasetStableIds);
+      datasetAccessLevels =  datasetAccessLevels.stream().filter(acc -> datasetStableIds.contains(acc.getId().getDatasetStableId())).collect(Collectors.toList());
     }
     if (fields != null && !fields.isEmpty()) {
-      BooleanExpression fieldsIn = null;
-      if (includeFieldDetails) {
-        // Look for a match among the parent fields or children
-        fieldsIn = qDatasetAccessLevel.id.parentField.toLowerCase().in(fields)
-            .or(qDatasetAccessLevel.id.field.toLowerCase().in(fields));
-      } else {
-        // Look for a match only among the parent fields
-        fieldsIn = qDatasetAccessLevel.id.parentField.toLowerCase().in(fields);
-      }
-      if (condition != null) {
-        condition = condition.and(fieldsIn);
-      } else {
-        condition = fieldsIn;
-      }
-    } else if(!includeDatasetDetails) {
-      // Only show the summary
-      BooleanExpression findSummary = qDatasetAccessLevel.id.parentField.toLowerCase().eq(ACCESS_LEVEL_SUMMARY.toLowerCase());
-      if (condition != null) {
-        condition = condition.and(findSummary);
-      } else {
-        condition = findSummary;
-      }
-    }
-    Iterable<DatasetAccessLevel> datasetAccessLevels = null;
-    if (condition != null) {
-      datasetAccessLevels = datasetAccessLevelRepository.findAll(condition);
+        if (includeFieldDetails) {
+          // Look for a match among the parent fields or children
+          datasetAccessLevels= datasetAccessLevels.stream().filter(acc -> fields.contains(acc.getId().getParentField().toLowerCase()) || fields.contains(acc.getId().getField().toLowerCase())).collect(Collectors.toList());
+        } else {
+          // Look for a match only among the parent fields
+          datasetAccessLevels = datasetAccessLevels.stream().filter(acc -> fields.contains(acc.getId().getField().toLowerCase())).collect(Collectors.toList());
+        }
     } else {
-      datasetAccessLevels = datasetAccessLevelRepository.findAll();
+        if(!includeDatasetDetails) {
+          // Only show the summary
+          datasetAccessLevels = datasetAccessLevels.stream().filter(acc -> ACCESS_LEVEL_SUMMARY.toLowerCase().equals(acc.getId().getParentField().toLowerCase())).collect(Collectors.toList());
+        }
     }
+
     return datasetAccessLevels;
   }
 

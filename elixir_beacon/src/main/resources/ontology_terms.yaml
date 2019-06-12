@@ -1,0 +1,215 @@
+- id: 1
+  ontology: ICD-10
+  term: I
+  label: I Certain infectious and parasitic diseases
+  sampleTableColumnName: 1
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 2
+  ontology: ICD-10
+  term: II
+  label:  II Neoplasms
+  sampleTableColumnName: 2
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 3
+  ontology: ICD-10
+  term: III
+  label: III Diseases of the blood and blood-forming organs and certain disorders involving the immune mechanism
+  sampleTableColumnName: 3
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 4
+  ontology: ICD-10
+  term: IV
+  label: IV Endocrine, nutritional and metabolic diseases
+  sampleTableColumnName: 4
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 5
+  ontology: ICD-10
+  term: V
+  label: V Mental and behavioural disorders
+  sampleTableColumnName: 5
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 6
+  ontology: ICD-10
+  term: VI
+  label: VI Diseases of the nervous system
+  sampleTableColumnName: 6
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 7
+  ontology: ICD-10
+  term: VII
+  label: VII Diseases of the eye and adnexa
+  sampleTableColumnName: 7
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 8
+  ontology: ICD-10
+  term: VIII
+  label: VIII Diseases of the ear and mastoid process
+  sampleTableColumnName: 8
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 9
+  ontology: ICD-10
+  term: IX
+  label: IX Diseases of the circulatory system
+  sampleTableColumnName: 9
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 10
+  ontology: ICD-10
+  term: X
+  label: X Diseases of the respiratory system
+  sampleTableColumnName: 10
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 11
+  ontology: ICD-10
+  term: XI
+  label: XI Diseases of the digestive system
+  sampleTableColumnName: 11
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 12
+  ontology: ICD-10
+  term: XII
+  label: XII Diseases of the skin and subcutaneous tissue
+  sampleTableColumnName: 12
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 13
+  ontology: ICD-10
+  term: XIII
+  label: XIII Diseases of the musculoskeletal system and connective tissue
+  sampleTableColumnName: 13
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 14
+  ontology: ICD-10
+  term: XIV
+  label: XIV Diseases of the genitourinary system
+  sampleTableColumnName: 14
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 15
+  ontology: ICD-10
+  term: XV
+  label: XV Pregnancy, childbirth and the puerperium
+  sampleTableColumnName: 15
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 16
+  ontology: ICD-10
+  term: XVI
+  label: XVI Certain conditions originating in the perinatal period
+  sampleTableColumnName: 16
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 17
+  ontology: ICD-10
+  term: XVII
+  label: XVII Congenital malformations, deformations and chromosomal abnormalities
+  sampleTableColumnName: 17
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 18
+  ontology: ICD-10
+  term: XVIII
+  label: XVIII Symptoms, signs and abnormal clinical and laboratory findings, not elsewhere classified
+  sampleTableColumnName: 18
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 19
+  ontology: ICD-10
+  term: XIX
+  label: XIX Injury, poisoning and certain other consequences of external causes
+  sampleTableColumnName: 19
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 20
+  ontology: ICD-10
+  term: XX
+  label: XX External causes of morbidity and mortality
+  sampleTableColumnName: 20
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 21
+  ontology: ICD-10
+  term: XXI
+  label: XXI Factors influencing health status and contact with health services
+  sampleTableColumnName: 21
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 22
+  ontology: ICD-10
+  term: XXII
+  label: XXII Codes for special purposes
+  sampleTableColumnName: 22
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 23
+  ontology: csvs.tech
+  term: 1
+  label: Illumina
+  sampleTableColumnName: 1
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 24
+  ontology: csvs.tech
+  term: 2
+  label: SOLiD
+  sampleTableColumnName: 2
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 25
+  ontology: csvs.tech
+  term: 3
+  label: Roche 454
+  sampleTableColumnName: 3
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 26
+  ontology: csvs.tech
+  term: 4
+  label: IonTorrent/IonProton
+  sampleTableColumnName: 4
+  sampleTableColumnValue:
+  additionalComments:
+
+- id: 27
+  ontology: csvs.tech
+  term: 5
+  label: Nanopore
+  sampleTableColumnName: 5
+  sampleTableColumnValue:
+  additionalComments:

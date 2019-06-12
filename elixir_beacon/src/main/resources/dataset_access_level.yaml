@@ -1,0 +1,155 @@
+- id:
+    datasetStableId: I
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: II
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: III
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: IV
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: V
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: VI
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: VII
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: VIII
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XI
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: X
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XI
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XII
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XIII
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XIV
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XV
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XVI
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XVII
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XVIII
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XIX
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XX
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XXI
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: XXII
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: MGP
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: IBS
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: V (controls)
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
+
+- id:
+    datasetStableId: Healthy (controls)
+    parentField: accessLevelSummary
+    field: ''
+  accessLevel: PUBLIC
