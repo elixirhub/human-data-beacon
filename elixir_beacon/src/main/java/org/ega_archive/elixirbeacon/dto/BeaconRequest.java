@@ -37,7 +37,24 @@ public class BeaconRequest {
 
   private String info; // metadata field
 
-  private String mcpdParamExample; // example mcpd field
+  // MCPD parameters:
+
+  private String puid;
+
+  private String accenumb;
+
+  private String ancest;
+
+  private String cropname;
+
+  // BioSample parameters
+
+  private String sampletype;
+
+  private String tissue;
+
+  private String age;
+
 
   private List<String> datasetIds;
 

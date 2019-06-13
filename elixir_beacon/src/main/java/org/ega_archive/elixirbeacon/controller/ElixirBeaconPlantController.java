@@ -34,7 +34,6 @@ public class ElixirBeaconPlantController {
       @RequestParam(value = ParamName.BEACON_ALTERNATE_BASES, required = false) String alternateBases,
       @RequestParam(value = ParamName.BEACON_REFERENCE_BASES, required = false) String referenceBases,
       @RequestParam(value = ParamName.BEACON_CHROMOSOME, required = false) String chromosome,
-      @RequestParam(value = "mcpdParamExample", required = false) String mcpdParamExample,
       @RequestParam(value = ParamName.BEACON_START, required = false) Integer start,
       @RequestParam(value = ParamName.BEACON_START_MIN, required = false) Integer startMin,
       @RequestParam(value = ParamName.BEACON_START_MAX, required = false) Integer startMax,
@@ -43,10 +42,21 @@ public class ElixirBeaconPlantController {
       @RequestParam(value = ParamName.BEACON_END_MAX, required = false) Integer endMax,
       @RequestParam(value = ParamName.VARIANT_TYPE, required = false) String variantType,
       @RequestParam(value = ParamName.BEACON_REFERENCE_GENOME, required = false) String referenceGenome,
+      // MCPD parameters
+      @RequestParam(value = "puid", required = false) String puid,
+      @RequestParam(value = "accenumb", required = false) String accenumb,
+      @RequestParam(value = "ancest", required = false) String ancest,
+      @RequestParam(value = "cropname", required = false) String cropname,
+      // BioSample parameters
+      @RequestParam(value = "sampletype", required = false) String sampletype,
+      @RequestParam(value = "tissue", required = false) String tissue,
+      @RequestParam(value = "age", required = false) String age,
+
       @RequestParam(value = ParamName.BEACON_INCLUDE_DATASET_RESPONSES, required = false) String includeDatasetResponses) {
 
     return elixirBeaconService.queryPlantBeacon(datasetStableIds, variantType, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome, mcpdParamExample,
+        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
+        puid, accenumb, ancest, cropname, sampletype, tissue, age,
         includeDatasetResponses);
   }
 

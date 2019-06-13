@@ -54,6 +54,37 @@ public class DatasetPlantResponse {
   //private List<KeyValuePair> info;
   private Map<String,Object> info;
 
-  // test parameter for extra beacon Request.
-  private boolean mcpdParamExample;
+  // MCPD V2.1 PUID.  a persistent, unique identifier assigned to an accession. (http://www.fao.org/plant-treaty/areas-of-work/global-information-system/doi/en/)
+  // The return value is a boolean indicating if the dataset has the correct PUID.
+  private boolean puid;
+
+  // MCPD v2.1 ACCENUMB. the identifier given when the dataset is added to Genebank.
+  // The return value is a boolean indicating if the dataset has the correct Accession Number.
+  private boolean accenumb;
+
+  // MCPD V2.1 ANCEST. Ancestral data, like the pedigree or parental varieties of the plant studied.
+  // The return value is a boolean indicating if the searched for terms were present in the Ancestral Data field of the dataset.
+  // AKA., was variety term provided by the user (ex.: "Hanna") in the dataset's ANCEST field (ex.: "Hanna/7*Atlas//Turk/8*Atlas")
+  private boolean ancest;
+
+  // MCPD V2.1 CROPNAME. common name of the crop, like "malting Barley", "Macademia"...
+  // Boolean value indicating if the common name is present in the dataset's cropname field.
+  // check does not depend on character case. AKA., "Macademia" == "macademia"
+  private boolean cropname;
+
+  // BioSample parameters
+
+  // BioSample Sample Type (cell culture, mixed culture, tissue sample, whole organism, single cell or metagenomic assembly)
+  // Boolean indicating if the sample type asked for (provided as list to user to choose from) is the same as the datasets.
+  private boolean sampletype;
+
+
+  // BioSample Tissue (Type of tissue the sample was taken from)
+  // Boolean indicating if the tissue type is the same as the one in the dataset.
+  private boolean tissue;
+
+  // BioSample Age (At time of sampling)
+  // Boolean indicating if the age is the same. format of both fields in dataset and web is "<value> <unit>"
+  private boolean age;
+  
 }

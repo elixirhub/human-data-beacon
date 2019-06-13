@@ -123,11 +123,57 @@ public class BeaconPlantRequest {
 
   /**
    * Contains the metadata JSON string
-   * this is a test while checking if it works in the original Request/Response pair.
-   * Once done, I'll copy it into a separate Request and figure out how to call different requests depending on need.
+   * Serves as a way for the user to see the full MCPD and BioSample metadata of the returned datasets.
    */
-  private String info; // MODIFIED
+  private String info;
 
-  private String mcpdParamExample;
+  /**
+   * MCPD V2.1 PUID.  a persistent, unique identifier assigned to an accession. (http://www.fao.org/plant-treaty/areas-of-work/global-information-system/doi/en/)
+   * The request value is a String containing the PUID of the dataset the user wants to query against.
+   */
+  private String puid;
+
+  /**
+   * MCPD v2.1 ACCENUMB. the identifier given when the dataset is added to Genebank.
+   * The request value is a String containing the Accession Number of the dataset the user wants.
+   */
+  private String accenumb;
+
+  /**
+   * MCPD V2.1 ANCEST. Ancestral data, like the pedigree or parental varieties of the plant studied.
+   * The request value is a String containing the ancestral information the user wants to query for.
+   * Ex: "Hanna", "Hanna/7*Atlas//Turk/8*Atlas"
+   */
+  private String ancest;
+
+  /**
+   * MCPD V2.1 CROPNAME. common name of the crop, like "malting Barley", "Macademia"...
+   * Request value is the common crop name the user is looking to filter for.
+   * check does not depend on character case. AKA., "Macademia" == "macademia"
+   */
+  private String cropname;
+
+  // BioSample parameters
+
+  /**
+   * BioSample Sample Type (cell culture, mixed culture, tissue sample, whole organism, single cell or metagenomic assembly)
+   * String with the sample type the user wants their datasets to have (provided as list for user to choose from).
+   */
+  private String sampletype;
+
+
+  /**
+   * BioSample Tissue (Type of tissue the sample was taken from)
+   * String of the tissue typethe user wants (leaves, root, ...)
+   */
+  private String tissue;
+
+  /**
+   * BioSample Age (At time of sampling)
+   * String giving the age the user wants their samples to be older/younger than.
+   * The Plant Request then returns a boolean indicating if the parameter "<=" / ">=" to the Age of the given Unit.
+   * Another check consistenly returns False if the dataset's age Unit (years, days, hours...) is inconsistent with the one given by the user.
+   */
+  private String age;
 
 }

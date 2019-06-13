@@ -54,6 +54,7 @@ import org.ega_archive.elixirbeacon.dto.BeaconPlantRequest;
 import org.ega_archive.elixirbeacon.dto.BeaconPlantResponse;
 import org.ega_archive.elixirbeacon.dto.DatasetPlantResponse;
 
+
 @Slf4j
 @Service
 public class ElixirBeaconServiceImpl implements ElixirBeaconService {
@@ -489,13 +490,13 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
 
 
 // New Plant query related set of functions.
-// For now, integrates a "mcpdParamExample" to demonstrate.
 // For the Elixir All Hands Meeting in June 2019 it will be changed to
-// a small set of 2-3 parameters that a plant researcher might wish to filter on
+// a small set of 3-5 parameters that a plant researcher might wish to filter on.
 
 private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, String referenceBases,
     String alternateBases, String chromosome, Integer start, Integer startMin, Integer startMax,
-    Integer end, Integer endMin, Integer endMax, String referenceGenome, String mcpdParamExample,
+    Integer end, Integer endMin, Integer endMax, String referenceGenome, String puid, String accenumb,
+    String ancest, String cropname, String sampletype, String tissue, String age,
     BeaconPlantResponse result) {
 
   if (datasetIds == null || datasetIds.isEmpty()) {
@@ -509,15 +510,21 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
   log.debug(
       "Calling query with params: variantType={}, start={}, startMin={}, startMax={}, end={}, "
           + "endMin={}, endMax={}, chrom={}, reference={}, alternate={}, assemblyId={}, "
-          + "datasetIds={} + mcpdParamExample={}", variantType, start, startMin, startMax, end, endMin, endMax,
-      chromosome, referenceBases, alternateBases, referenceGenome, datasetIds,mcpdParamExample);
+          + "datasetIds={} + puid={} + accenumb={} + ancest={} + cropname={} + sampletype={} + tissue={} + age={}"
+          , variantType, start, startMin, startMax, end, endMin, endMax,
+          chromosome, referenceBases, alternateBases, referenceGenome, datasetIds,
+          puid, accenumb, ancest, cropname, sampletype, tissue, age);
 
   List<BeaconDataSummary> dataList = beaconDataRepository
       .searchForVariantsQuery(variantType, start,
           startMin, startMax, end, endMin, endMax, chromosome, referenceBases, alternateBases,
           referenceGenome, StoredProcedureUtils.joinArray(datasetIds));
   numResults = dataList.size();
-  globalExists = numResults > 0;
+  // globalExists = numResults > 0;
+  // Now that a query can be wrong due to tests that need to be done datalist by datalist
+  // globalExists can only be True if the number of datalists answering the above query
+  // that ALSO have all the metadata fields correct, is > 1
+
 
   for (BeaconDataSummary data : dataList) {
     if (result.getPlantRequest().getIncludeDatasetResponses() == FilterDatasetResponse.ALL
@@ -532,6 +539,8 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       datasetResponse.setSampleCount(data.getSampleCnt());
 
 
+
+
       // get the info field's content (a Json-compatible String)
       String metadataString = dataset.getInfo();
       // Initialize a JSON parser and an object to store the JSON in.
@@ -541,31 +550,192 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       try {
         jsonMapping = (JSONObject) parser.parse(metadataString);
       } catch (Exception e) {
+        log.debug("TEST");
         e.printStackTrace();
       }
 
-
       Map<String,Object> info = new HashMap<String,Object>(); // MODIFIED
-
 
       info = jsonMapping;
       datasetResponse.setInfo(info);
 
+      // MCPD and BioSample tests
+      // TODO: Discuss if it should return an error in case the Beacon Maintainer failed
+      //  to fill out the necessary metadata for the Plant query, or still return a result.
 
-      // Now that info is created and filled with the parsed JSON string,
-      // check if "mcpdParamExample == info[mcpd][genus]"
-      // this is just one example.
+
       JSONObject mcpd = (JSONObject) info.get("mcpd");
-      String genus = (String) mcpd.get("genus");
-      Boolean genusValid = false;
 
-      if(genus.equals(mcpdParamExample)){
-        genusValid = true;
+
+      // PUID check
+
+
+      Boolean puidMatch = false;
+
+      // if user didn't ask for puid verification, set boolean to true.
+      // Else, test for equality with Dataset value.
+      // If dataset doesn't contain a puid value, log error and set boolean to false.
+
+      String dataset_puid = (String) mcpd.get("puid");
+
+
+        // check that the parameter was given. if it wasn't return TRUE for match.
+      if(puid == null){
+        puidMatch = true;
+        // first; check that the DB contains the puid field and is not null.
+        // if it doesn't, go to next statement, if it does, evaluate second condition.
+      } else if ( !(dataset_puid == null) && (dataset_puid.equals(puid)) ) {
+        puidMatch = true;
       } else {
-        genusValid = false;
+        puidMatch = false;
       }
 
-      datasetResponse.setMcpdParamExample(genusValid);
+
+      datasetResponse.setPuid(puidMatch);
+
+
+      // accession number check
+
+
+      Boolean accenumbMatch = false;
+
+      // same logic as above
+
+      String dataset_accenumb = (String) mcpd.get("accenumb");
+      if(accenumb == null ){
+        accenumbMatch = true;
+      } else if ( (dataset_accenumb != null) && dataset_accenumb.equals(accenumb)) {
+        accenumbMatch = true;
+      } else {
+        accenumbMatch = false;
+      }
+
+
+      datasetResponse.setAccenumb(accenumbMatch);
+
+
+      // ancestral data check
+
+
+      Boolean ancestMatch = false;
+
+      // same logic as above, but check for user's value inside the other, total match not needed.
+
+      String dataset_ancest = (String) mcpd.get("ancest");
+      if(ancest == null){
+        ancestMatch = true;
+      } else if ((dataset_ancest != null) && (dataset_ancest.toLowerCase().contains(ancest.toLowerCase())) ) {
+        ancestMatch = true;
+      } else {
+        ancestMatch = false;
+      }
+
+      datasetResponse.setAncest(ancestMatch);
+
+
+      // crop name check
+
+
+      Boolean cropnameMatch = false;
+
+      // same logic as above
+
+      String dataset_cropname = (String) mcpd.get("cropname");
+      if(cropname == null){
+        cropnameMatch = true;
+      } else if ((dataset_cropname != null) && dataset_cropname.toLowerCase().contains(cropname.toLowerCase())) {
+        cropnameMatch = true;
+      } else {
+        cropnameMatch = false;
+      }
+
+
+      datasetResponse.setCropname(cropnameMatch);
+
+
+      // BioSamples
+      JSONObject bio = (JSONObject) info.get("biosamples");
+      // Sample Type check
+
+
+      Boolean sampletypeMatch = false;
+      // same logic as puid
+
+      String dataset_sampletype = (String) bio.get("sampletype");
+
+      if(sampletype == null){
+        sampletypeMatch = true;
+      } else if ((dataset_sampletype != null) && dataset_sampletype.equals(sampletype)) {
+        sampletypeMatch = true;
+      } else {
+        sampletypeMatch = false;
+      }
+
+      datasetResponse.setSampletype(sampletypeMatch);
+
+
+      // Tissue type check
+
+
+      Boolean tissueMatch = false;
+
+      // same logic as puid
+
+      String dataset_tissue = (String) bio.get("tissue");
+      if(tissue == null){
+        tissueMatch = true;
+      } else if ((dataset_tissue != null) && dataset_tissue.equals(tissue)) {
+        tissueMatch = true;
+      } else {
+        tissueMatch = false;
+      }
+
+      datasetResponse.setTissue(tissueMatch);
+
+
+      // Age check
+
+
+      Boolean ageMatch = false;
+
+      // Web service is set so the user:
+      // Chooses an option between ">=" or "<="
+      // enters an age (1.5, 20, 3...) values
+      // resulting in a string: ">= 10 Days"
+      // "<= 1.5 Hours"
+
+      // TODO: Verify why this isn't working AFTER the Elixir All Hands meeting presentation.
+
+      String dataset_age = (String) bio.get("age");
+      if(age == null){
+        ageMatch = true;
+      } else {
+        log.debug(age,dataset_age);
+        //String[] splitAge = age.split(" ");
+        //String comparator = splitAge[0];
+        //String value = splitAge[1];
+        // check if value is <= or >= to the dataset's age value. set variable accordingly
+        //if ( (dataset_age != null) &&  (((comparator.equals(">=") ) && (Double.parseDouble(value) >= Double.parseDouble(dataset_age))) || ((comparator.equals("<=") ) && (Double.parseDouble(value) <= Double.parseDouble(dataset_age)))) ) {
+        if ( (dataset_age != null) && (Double.parseDouble(age) == Double.parseDouble(dataset_age))){
+          ageMatch = true;
+        } else {
+          ageMatch = false;
+        }
+        }
+
+      datasetResponse.setAge(ageMatch);
+
+      // Now that we have the True/False comparison values,
+      // reset Exists to False if one of our new parameters doesn't match:
+      if (!(ageMatch && tissueMatch && sampletypeMatch && cropnameMatch && ancestMatch && accenumbMatch && puidMatch)) {
+        datasetResponse.setExists(false);
+        datasetResponse.setNote("Metadata Mistmatch.");
+        // If the dataset doesn't have all parameters correct, decrement the valid results by one:
+        numResults = numResults - 1;
+      }
+
+
+
 
       result.addDatasetPlantResponse(datasetResponse);
 
@@ -573,7 +743,12 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
 
 
     }
+
+
   }
+  globalExists = numResults > 0;
+
+
 
   Set<Integer> datasetIdsWithData =
       dataList.stream().map(data -> data.getDatasetId()).collect(Collectors.toSet());
@@ -603,7 +778,8 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
   public BeaconPlantResponse queryPlantBeacon(List<String> datasetStableIds, String variantType,
       String alternateBases, String referenceBases, String chromosome, Integer start,
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
-      String referenceGenome, String mcpdParamExample, String includeDatasetResponses) {
+      String referenceGenome, String puid, String accenumb, String ancest, String cropname,
+       String sampletype, String tissue, String age, String includeDatasetResponses) {
 
     BeaconPlantResponse result = new BeaconPlantResponse();
 
@@ -623,7 +799,13 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
         .endMax(endMax)
         .variantType(variantType)
         .assemblyId(referenceGenome)
-        .mcpdParamExample(mcpdParamExample)
+        .puid(puid)
+        .accenumb(accenumb)
+        .ancest(ancest)
+        .cropname(cropname)
+        .sampletype(sampletype)
+        .tissue(tissue)
+        .age(age)
         .includeDatasetResponses(FilterDatasetResponse.parse(includeDatasetResponses))
         .build();
     result.setPlantRequest(request);
@@ -632,12 +814,15 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
 
     List<Integer> datasetIds =
         checkPlantParams(result, datasetStableIds, type, alternateBases, referenceBases, chromosome,
-            start, startMin, startMax, end, endMin, endMax, referenceGenome,mcpdParamExample);
+            start, startMin, startMax, end, endMin, endMax, puid, accenumb, ancest,
+            cropname, sampletype, tissue, age, referenceGenome);
 
     boolean globalExists = false;
     if (result.getError() == null) {
       globalExists = queryPlantDatabase(datasetIds, type, referenceBases, alternateBases, chromosome,
-          start, startMin, startMax, end, endMin, endMax, referenceGenome, mcpdParamExample,result);
+          start, startMin, startMax, end, endMin, endMax, referenceGenome, puid, accenumb,
+          ancest, cropname, sampletype, tissue, age, result);
+
     }
     result.setExists(globalExists);
     return result;
@@ -647,7 +832,8 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
   public List<Integer> checkPlantParams(BeaconPlantResponse result, List<String> datasetStableIds,
       VariantType type, String alternateBases, String referenceBases, String chromosome,
       Integer start, Integer startMin, Integer startMax, Integer end, Integer endMin,
-      Integer endMax, String referenceGenome, String mcpdParamExample) {
+      Integer endMax, String puid, String accenumb, String ancest,
+      String cropname, String sampletype, String tissue, String age, String referenceGenome) {
 
     List<Integer> datasetIds = new ArrayList<>();
 
@@ -816,7 +1002,8 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
     //      return datasetIds;
     //
 
-    // For now, no tests on mcpdParamExample, as it's format is yet to be defined.
+    // For now, no tests on the MCPD and BioSample parmeters.
+    // Their exact format still needs to be defined and also what values would be considered to throw an error.
 
     return datasetIds;
   }
@@ -827,7 +1014,9 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
     return queryPlantBeacon(request.getDatasetIds(), request.getVariantType(),
         request.getAlternateBases(), request.getReferenceBases(), request.getReferenceName(),
         request.getStart(), request.getStartMin(), request.getStartMax(), request.getEnd(),
-        request.getEndMin(), request.getEndMax(), request.getAssemblyId(),request.getMcpdParamExample(),
+        request.getEndMin(), request.getEndMax(), request.getAssemblyId(),
+        request.getPuid(), request.getAccenumb(), request.getAncest(),
+        request.getCropname(), request.getSampletype(), request.getTissue(), request.getAge(),
         request.getIncludeDatasetResponses());
   }
 

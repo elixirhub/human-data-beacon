@@ -92,14 +92,24 @@ public interface ElixirBeaconService {
    * @param alternateBases
    * @param datasetStableIds
    * @param referenceGenome
-   * @param mcpdParamExample
+   *
+   * @param puid
+   * @param accenumb
+   * @param ancest
+   * @param cropname
+   * @param sampletype
+   * @param tissue
+   * @param age
+   *
    * @param includeDatasetResponses
    * @return
    */
   public BeaconPlantResponse queryPlantBeacon(List<String> datasetStableIds, String variantType,
       String alternateBases, String referenceBases, String chromosome, Integer start,
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
-      String referenceGenome,String mcpdParamExample, String includeDatasetResponses);
+      String referenceGenome, String puid, String accenumb, String ancest,
+      String cropname, String sampletype, String tissue, String age,
+      String includeDatasetResponses);
 
   /**
    * Verifies that mandatory parameters are present and that all parameters are valid.
@@ -112,13 +122,23 @@ public interface ElixirBeaconService {
    * @param chromosome
    * @param start
    * @param referenceGenome
-   * @param mcpdParamExample
+   *
+   * @param puid
+   * @param accenumb
+   * @param ancest
+   * @param cropname
+   * @param sampletype
+   * @param tissue
+   * @param age
+   *
    * @return
    */
   public List<Integer> checkPlantParams(BeaconPlantResponse result, List<String> datasetStableIds,
       VariantType type, String alternateBases, String referenceBases, String chromosome,
       Integer start, Integer startMin, Integer startMax, Integer end, Integer endMin,
-      Integer endMax, String mcpdParamExample, String referenceGenome);
+      Integer endMax, String puid, String accenumb, String ancest,
+      String cropname, String sampletype, String tissue, String age,
+      String referenceGenome);
 
   public BeaconPlantResponse queryPlantBeacon(BeaconRequest request);
 
