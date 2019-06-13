@@ -510,7 +510,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
   log.debug(
       "Calling query with params: variantType={}, start={}, startMin={}, startMax={}, end={}, "
           + "endMin={}, endMax={}, chrom={}, reference={}, alternate={}, assemblyId={}, "
-          + "datasetIds={} + puid={} + accenumb={} + ancest={} + cropname={} + sampletype={} + tissue={} + age={}"
+          + "datasetIds={}, puid={}, accenumb={}, ancest={}, cropname={}, sampletype={}, tissue={}, age={}"
           , variantType, start, startMin, startMax, end, endMin, endMax,
           chromosome, referenceBases, alternateBases, referenceGenome, datasetIds,
           puid, accenumb, ancest, cropname, sampletype, tissue, age);
@@ -580,7 +580,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
 
 
         // check that the parameter was given. if it wasn't return TRUE for match.
-      if(puid == null){
+      if(puid == null || puid.equals("")){
         puidMatch = true;
         // first; check that the DB contains the puid field and is not null.
         // if it doesn't, go to next statement, if it does, evaluate second condition.
@@ -602,7 +602,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       // same logic as above
 
       String dataset_accenumb = (String) mcpd.get("accenumb");
-      if(accenumb == null ){
+      if(accenumb == null || accenumb.equals("")){
         accenumbMatch = true;
       } else if ( (dataset_accenumb != null) && dataset_accenumb.equals(accenumb)) {
         accenumbMatch = true;
@@ -622,7 +622,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       // same logic as above, but check for user's value inside the other, total match not needed.
 
       String dataset_ancest = (String) mcpd.get("ancest");
-      if(ancest == null){
+      if(ancest == null || ancest.equals("")){
         ancestMatch = true;
       } else if ((dataset_ancest != null) && (dataset_ancest.toLowerCase().contains(ancest.toLowerCase())) ) {
         ancestMatch = true;
@@ -641,7 +641,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       // same logic as above
 
       String dataset_cropname = (String) mcpd.get("cropname");
-      if(cropname == null){
+      if(cropname == null || cropname.equals("")){
         cropnameMatch = true;
       } else if ((dataset_cropname != null) && dataset_cropname.toLowerCase().contains(cropname.toLowerCase())) {
         cropnameMatch = true;
@@ -663,7 +663,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
 
       String dataset_sampletype = (String) bio.get("sampletype");
 
-      if(sampletype == null){
+      if(sampletype == null || sampletype.equals("")){
         sampletypeMatch = true;
       } else if ((dataset_sampletype != null) && dataset_sampletype.equals(sampletype)) {
         sampletypeMatch = true;
@@ -682,7 +682,7 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       // same logic as puid
 
       String dataset_tissue = (String) bio.get("tissue");
-      if(tissue == null){
+      if(tissue == null || tissue.equals("")){
         tissueMatch = true;
       } else if ((dataset_tissue != null) && dataset_tissue.equals(tissue)) {
         tissueMatch = true;
@@ -707,10 +707,12 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       // TODO: Verify why this isn't working AFTER the Elixir All Hands meeting presentation.
 
       String dataset_age = (String) bio.get("age");
-      if(age == null){
+      log.debug(age,dataset_age);
+      if(age == null || age.equals("")){
         ageMatch = true;
-      } else {
         log.debug(age,dataset_age);
+      } else {
+        //log.debug(age,dataset_age);
         //String[] splitAge = age.split(" ");
         //String comparator = splitAge[0];
         //String value = splitAge[1];
