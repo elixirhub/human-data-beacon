@@ -1,3 +1,5 @@
+This implementation is compliant with **version 1.0.1 of the [specification](https://github.com/ga4gh-beacon/specification/releases/tag/v1.0.1)**.
+
 # Table of contents    
 
 * [Requirements](#requirements)  
@@ -18,8 +20,8 @@
 * [Further information](#further-information)  
   * [Project structure](#project-structure)  
   * [Extend/Change functionality](#extendchange-functionality)  
-  
- # Requirements  
+ 
+# Requirements  
 
 * Java 8 JDK  
 * Apache Maven 3  
