@@ -15,7 +15,7 @@ public class BeaconOntologyController {
   private BeaconOntologyService beaconOntologyService;
   
 
-  @GetMapping(value = "/ontology_terms")
+  @GetMapping(value = "/filtering_terms")
   public BeaconOntology listOntologies() {
 
     return beaconOntologyService.listOntologyTerms();
