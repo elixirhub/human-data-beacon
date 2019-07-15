@@ -2,7 +2,7 @@
 
 -- DROP FUNCTION query_data_summary_response(text, integer, integer, integer, integer, integer, integer, character varying, text, text, text, text);
 
-CREATE OR REPLACE FUNCTION query_data_summary_response(
+CREATE OR REPLACE FUNCTION public.query_data_summary_response(
 	_variant_type text,
 	_start integer,
 	_start_min integer,
@@ -14,8 +14,7 @@ CREATE OR REPLACE FUNCTION query_data_summary_response(
 	_reference_bases text,
 	_alternate_bases text,
 	_reference_genome text,
-	_dataset_ids text,
-	_filters text)
+	_dataset_ids text)
 	RETURNS TABLE(id text, dataset_id integer, variant_cnt integer, call_cnt integer, sample_cnt integer, frequency numeric, num_variants integer)
 	LANGUAGE 'plpgsql'
 
@@ -35,7 +34,6 @@ BEGIN
 	IF _alternate_bases IS NOT NULL AND _alternate_bases = 'null' THEN _alternate_bases = null; END IF;
 	IF _reference_genome IS NOT NULL AND _reference_genome = 'null' THEN _reference_genome = null; END IF;
 	IF _dataset_ids IS NOT NULL AND _dataset_ids = 'null' THEN _dataset_ids = null; END IF;
-	IF _filters IS NOT NULL AND _filters = 'null' THEN _filters = null; END IF;
 
 	-- start: Precise start coordinate position, allele locus (0-based, inclusive).
 	-- end: Precise end coordinate (0-based, exclusive).
@@ -86,9 +84,9 @@ BEGIN
 	END IF;
 
 	_variant_type = upper(_variant_type);
-	_reference_bases=upper(_reference_bases);
-	_alternate_bases=upper(_alternate_bases);
-	_reference_genome=lower(_reference_genome);
+	_reference_bases = upper(_reference_bases);
+	_alternate_bases = upper(_alternate_bases);
+	_reference_genome = lower(_reference_genome);
 
 	IF _variant_type IS NOT NULL THEN
 		IF _variant_type NOT IN ('DEL','DUP','INS','INV','CNV','DUP:TANDEM','DEL:ME','INS:ME')
@@ -140,13 +138,13 @@ BEGIN
 				THEN SUM(bdat.frequency)
 				ELSE max(bdat.frequency) END AS frequency,
 			COUNT(DISTINCT bdat.id)::integer AS num_variants
-		FROM beacon_data_table bdat
-		INNER JOIN beacon_dataset_table bdataset ON bdataset.id=bdat.dataset_id
-		INNER JOIN beacon_data_sample_table bdat_s on bdat_s.data_id=bdat.id
-		INNER JOIN beacon_sample_table s ON s.id=bdat_s.sample_id
+		FROM public.beacon_data_table bdat
+		INNER JOIN public.beacon_dataset_table bdataset ON bdataset.id=bdat.dataset_id
+		INNER JOIN public.beacon_data_sample_table bdat_s on bdat_s.data_id=bdat.id
+		INNER JOIN public.beacon_sample_table s ON s.id=bdat_s.sample_id
 		LEFT JOIN LATERAL (
 			SELECT COALESCE(COUNT(DISTINCT bsam.sample_id), 0)::integer AS sample_cnt
-			FROM beacon_data_sample_table bsam
+			FROM public.beacon_data_sample_table bsam
 			WHERE bsam.data_id=bdat.id
 		) matching_samples ON TRUE
 		WHERE';
@@ -201,10 +199,6 @@ BEGIN
 	-- Convert reference_genome column to lower case
 	_query = _query || ' lower(bdataset.reference_genome)=$6 AND';
 
-	IF _filters IS NOT NULL THEN
-		_query = _query || ' ' || _filters || ' AND';
-	END IF;
-
 	-- Datasets
 	_query = _query || ' bdat.dataset_id = ANY (string_to_array($7, '','')::int[])
 			 GROUP BY bdat.dataset_id
@@ -221,5 +215,5 @@ BEGIN
 END
 $BODY$;
 
-ALTER FUNCTION query_data_summary_response(text, integer, integer, integer, integer, integer, integer, character varying, text, text, text, text, text)
+ALTER FUNCTION public.query_data_summary_response(text, integer, integer, integer, integer, integer, integer, character varying, text, text, text, text)
 	OWNER TO microaccounts_dev;

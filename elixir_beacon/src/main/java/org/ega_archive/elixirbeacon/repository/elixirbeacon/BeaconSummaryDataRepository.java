@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface BeaconSummaryDataRepository extends
     CustomQuerydslJpaRepository<BeaconDataSummary, Integer> {
 
-  @Query(value = "SELECT * FROM public.query_data_summary_response("
+  @Query(value = "SELECT * FROM query_data_summary_response("
       + "CAST(:_variant_type AS text), "
       + "CAST(CAST(:_start AS text) AS integer), "
       + "CAST(CAST(:_start_min AS text) AS integer), "
@@ -24,8 +24,7 @@ public interface BeaconSummaryDataRepository extends
       + "CAST(:_reference_bases AS text), "
       + "CAST(:_alternate_bases AS text), "
       + "CAST(:_reference_genome AS text), "
-      + "CAST(:_dataset_ids AS text),"
-      + "CAST(:_filters AS text))", nativeQuery = true)
+      + "CAST(:_dataset_ids AS text))", nativeQuery = true)
   @Transactional(transactionManager = "elixirbeaconTransactionManager", readOnly = true)
   List<BeaconDataSummary> searchForVariantsQuery(
       @Param("_variant_type") String variantType,
@@ -39,7 +38,6 @@ public interface BeaconSummaryDataRepository extends
       @Param("_reference_bases") String refBases,
       @Param("_alternate_bases") String altBases,
       @Param("_reference_genome") String refGenome,
-      @Param("_dataset_ids") String datasetIds,
-      @Param("_filters") String translatedFilters);
+      @Param("_dataset_ids") String datasetIds);
 
 }

@@ -93,6 +93,8 @@ public class BeaconAlleleRequest {
    */
   private Integer endMax;
 
+  private String mateName;
+
   /**
    * The "variant_type" is used to denote e.g. structural variants. Examples:
    * <ul>
@@ -120,7 +122,5 @@ public class BeaconAlleleRequest {
    * included in the response ({@code BeaconAlleleResponse}) to this request or not.
    */
   private FilterDatasetResponse includeDatasetResponses;
-
-  private List<String> filters;
 
 }

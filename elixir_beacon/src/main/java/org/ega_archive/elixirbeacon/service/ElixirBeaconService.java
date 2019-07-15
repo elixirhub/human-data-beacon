@@ -2,11 +2,8 @@ package org.ega_archive.elixirbeacon.service;
 
 import java.util.List;
 import javassist.NotFoundException;
-
-import org.ega_archive.elixirbeacon.dto.AccessLevelResponse;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconOntology;
 import org.ega_archive.elixirbeacon.dto.BeaconRequest;
 import org.ega_archive.elixirbeacon.enums.VariantType;
 import org.ega_archive.elixircore.helper.CommonQuery;
@@ -48,7 +45,7 @@ public interface ElixirBeaconService {
   BeaconAlleleResponse queryBeacon(List<String> datasetStableIds, String variantType,
       String alternateBases, String referenceBases, String chromosome, Integer start,
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
-      String referenceGenome, String includeDatasetResponses, List<String> filters);
+      String referenceGenome, String includeDatasetResponses);
 
   /**
    * Verifies that mandatory parameters are present and that all parameters are valid.
@@ -66,7 +63,7 @@ public interface ElixirBeaconService {
   List<Integer> checkParams(BeaconAlleleResponse result, List<String> datasetStableIds,
       VariantType type, String alternateBases, String referenceBases, String chromosome,
       Integer start, Integer startMin, Integer startMax, Integer end, Integer endMin,
-      Integer endMax, String referenceGenome, List<String> filters, List<String> translatedFilters);
+      Integer endMax, String referenceGenome);
 
   BeaconAlleleResponse queryBeacon(BeaconRequest request);
 

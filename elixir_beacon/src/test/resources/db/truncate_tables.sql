@@ -8,5 +8,3 @@ TRUNCATE TABLE public.beacon_dataset_sample_table CASCADE;
 TRUNCATE TABLE public.beacon_data_table CASCADE;
 TRUNCATE TABLE public.beacon_sample_table CASCADE;
 TRUNCATE TABLE public.beacon_dataset_table CASCADE;
-TRUNCATE TABLE public.ontology_term_table CASCADE;
-TRUNCATE TABLE dataset_access_level_table CASCADE;

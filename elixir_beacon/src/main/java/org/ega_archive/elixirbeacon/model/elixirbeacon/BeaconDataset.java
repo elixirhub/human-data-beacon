@@ -12,7 +12,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name="beacon_dataset", schema = "public")
+@Table(name="beacon_dataset")
 @NamedQuery(name="BeaconDataset.findAll", query="SELECT b FROM BeaconDataset b")
 public class BeaconDataset implements Serializable {
 	private static final long serialVersionUID = 1L;

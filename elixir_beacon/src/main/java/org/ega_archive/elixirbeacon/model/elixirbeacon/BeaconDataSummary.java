@@ -12,8 +12,8 @@ import lombok.Data;
 
 @Data
 @Entity
-@Table(name = "beacon_data_summary", schema = "public", catalog = "elixir_beacon_dev")
-@NamedStoredProcedureQuery(name = "querySummaryData", procedureName = "public.query_data_summary_response",
+@Table(name = "beacon_data_summary", catalog = "elixir_beacon_dev")
+@NamedStoredProcedureQuery(name = "querySummaryData", procedureName = "query_data_summary_response",
     resultClasses = {BeaconDataSummary.class}, parameters = {
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "_variant_type", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "_start", type = Integer.class),

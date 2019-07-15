@@ -2,11 +2,9 @@ package org.ega_archive.elixirbeacon.controller;
 
 import java.util.List;
 import java.util.Map;
-
-import org.ega_archive.elixirbeacon.dto.AccessLevelResponse;
+import javassist.NotFoundException;
 import org.ega_archive.elixirbeacon.dto.Beacon;
 import org.ega_archive.elixirbeacon.dto.BeaconAlleleResponse;
-import org.ega_archive.elixirbeacon.dto.BeaconOntology;
 import org.ega_archive.elixirbeacon.dto.BeaconRequest;
 import org.ega_archive.elixirbeacon.service.ElixirBeaconService;
 import org.ega_archive.elixircore.constant.ParamName;
@@ -19,8 +17,6 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-
-import javassist.NotFoundException;
 
 @RestController
 @RequestMapping("/beacon")
@@ -51,12 +47,11 @@ public class ElixirBeaconController {
       @RequestParam(value = ParamName.BEACON_END_MAX, required = false) Integer endMax,
       @RequestParam(value = ParamName.VARIANT_TYPE, required = false) String variantType,
       @RequestParam(value = ParamName.BEACON_REFERENCE_GENOME, required = false) String referenceGenome,
-      @RequestParam(value = ParamName.BEACON_INCLUDE_DATASET_RESPONSES, required = false) String includeDatasetResponses,
-      @RequestParam(value = ParamName.BEACON_FILTERS, required = false) List<String> filters) {
+      @RequestParam(value = ParamName.BEACON_INCLUDE_DATASET_RESPONSES, required = false) String includeDatasetResponses) {
 
     return elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases, referenceBases,
         chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses, filters);
+        includeDatasetResponses);
   }
   
   @PostMapping(value = "/query")
