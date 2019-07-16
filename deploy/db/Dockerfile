@@ -19,3 +19,7 @@ RUN chmod 755 /beacon/entrypoint.sh
 
 WORKDIR /beacon
 ENTRYPOINT ["/beacon/entrypoint.sh"]
+<<<<<<< HEAD
+=======
+
+>>>>>>> v1.1.0_dev

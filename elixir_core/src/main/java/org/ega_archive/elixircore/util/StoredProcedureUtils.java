@@ -41,8 +41,16 @@ public class StoredProcedureUtils {
     }
   }
   
-  public static String joinArray(List<Integer> list) {
+  public static String joinArrayOfInteger(List<Integer> list) {
     String joined = list.stream().map(id -> String.valueOf(id)).collect(Collectors.joining(","));
+    return joined;
+  }
+
+  public static String joinArrayOfString(List<String> list, String delimiter) {
+    if (StringUtils.isBlank(delimiter)) {
+      delimiter = ",";
+    }
+    String joined = list.stream().map(id -> String.valueOf(id)).collect(Collectors.joining(delimiter));
     return joined;
   }
   

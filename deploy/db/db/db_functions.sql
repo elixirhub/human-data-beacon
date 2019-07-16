@@ -1,6 +1,6 @@
--- FUNCTION: public.query_data_summary_response(text, integer, integer, integer, integer, integer, integer, character varying, text, text, text, text)
+-- FUNCTION: query_data_summary_response(text, integer, integer, integer, integer, integer, integer, character varying, text, text, text, text)
 
--- DROP FUNCTION public.query_data_summary_response(text, integer, integer, integer, integer, integer, integer, character varying, text, text, text, text);
+-- DROP FUNCTION query_data_summary_response(text, integer, integer, integer, integer, integer, integer, character varying, text, text, text, text);
 
 CREATE OR REPLACE FUNCTION public.query_data_summary_response(
 	_variant_type text,
@@ -15,9 +15,17 @@ CREATE OR REPLACE FUNCTION public.query_data_summary_response(
 	_alternate_bases text,
 	_reference_genome text,
 	_dataset_ids text)
+<<<<<<< HEAD:deploy/db/db/db_functions.sql
     RETURNS TABLE(id text, dataset_id integer, variant_cnt bigint, call_cnt bigint, sample_cnt bigint, frequency numeric, num_variants integer)
     LANGUAGE 'plpgsql'
+=======
+	RETURNS TABLE(id text, dataset_id integer, variant_cnt integer, call_cnt integer, sample_cnt integer, frequency numeric, num_variants integer)
+	LANGUAGE 'plpgsql'
+>>>>>>> v1.1.0_dev:deploy/db/db/db_functions.sql
 
+	COST 100
+	VOLATILE
+	ROWS 1000
 AS $BODY$
 
 DECLARE
@@ -66,13 +74,13 @@ BEGIN
 		-- _start, _start_min, _start_max, _end_min, _end_max are null
 		IF _start_min IS NULL AND _start_max IS NULL AND _end_min IS NULL AND _end_max IS NULL
 		THEN RAISE EXCEPTION 'Either _start or all of _start_min, _start_max, _end_min and _end_max are required';
-		-- _start is null and some of _start_min, _start_max, _end_min or _end_max are null too
+			-- _start is null and some of _start_min, _start_max, _end_min or _end_max are null too
 		ELSIF _start_min IS NULL OR _start_max IS NULL OR _end_min IS NULL OR _end_max IS NULL
 		THEN RAISE EXCEPTION 'All of _start_min, _start_max, _end_min and _end_max are required';
 		END IF;
-	-- _start is not null and either _start_min, _start_max, _end_min or _end_max has been provided too
+		-- _start is not null and either _start_min, _start_max, _end_min or _end_max has been provided too
 	ELSIF _start_min IS NOT NULL OR _start_max IS NOT NULL OR _end_min IS NOT NULL OR _end_max IS NOT NULL
-	  THEN RAISE EXCEPTION '_start cannot be provided at the same time as _start_min, _start_max, _end_min and _end_max';
+	THEN RAISE EXCEPTION '_start cannot be provided at the same time as _start_min, _start_max, _end_min and _end_max';
 	ELSIF _end IS NULL AND _reference_bases='N' THEN RAISE EXCEPTION '_reference_bases cannot be N if _end is missing';
 	END IF;
 
@@ -81,20 +89,20 @@ BEGIN
 	END IF;
 
 	_variant_type = upper(_variant_type);
-	_reference_bases=upper(_reference_bases);
-	_alternate_bases=upper(_alternate_bases);
-	_reference_genome=lower(_reference_genome);
+	_reference_bases = upper(_reference_bases);
+	_alternate_bases = upper(_alternate_bases);
+	_reference_genome = lower(_reference_genome);
 
 	IF _variant_type IS NOT NULL THEN
-	  IF _variant_type NOT IN ('DEL','DUP','INS','INV','CNV','DUP:TANDEM','DEL:ME','INS:ME')
-	    THEN RAISE EXCEPTION 'Structural variant type not implemented yet';
-	  --ELSIF _alternate_bases IS NOT NULL AND _alternate_bases!='N'
-	    --THEN RAISE EXCEPTION 'If _variant_type provided, _alternate_bases must be N or null';
-	  END IF;
+		IF _variant_type NOT IN ('DEL','DUP','INS','INV','CNV','DUP:TANDEM','DEL:ME','INS:ME')
+		THEN RAISE EXCEPTION 'Structural variant type not implemented yet';
+			--ELSIF _alternate_bases IS NOT NULL AND _alternate_bases!='N'
+			--THEN RAISE EXCEPTION 'If _variant_type provided, _alternate_bases must be N or null';
+		END IF;
 	END IF;
 
 	IF _variant_type IS NULL AND _alternate_bases IS NULL
-	  THEN RAISE EXCEPTION 'Either _variant_type or _alternate_bases is mandatory';
+	THEN RAISE EXCEPTION 'Either _variant_type or _alternate_bases is mandatory';
 	END IF;
 	IF _alternate_bases='N' THEN _alternate_bases='*'; END IF; -- Look for any variant
 
@@ -117,7 +125,7 @@ BEGIN
 		variants.call_cnt,
 		variants.sample_cnt,
 		CASE WHEN variants.num_variants > 1
-			THEN (variants.variant_cnt::decimal/variants.call_cnt)::decimal(10,10)
+			THEN (variants.variant_cnt::decimal/variants.call_cnt)::decimal(10,2)
 			ELSE variants.frequency END AS frequency,
 		variants.num_variants
 	FROM (
@@ -137,6 +145,11 @@ BEGIN
 			COUNT(DISTINCT bdat.id)::integer AS num_variants
 		FROM public.beacon_data_table bdat
 		INNER JOIN public.beacon_dataset_table bdataset ON bdataset.id=bdat.dataset_id
+<<<<<<< HEAD:deploy/db/db/db_functions.sql
+=======
+		INNER JOIN public.beacon_data_sample_table bdat_s on bdat_s.data_id=bdat.id
+		INNER JOIN public.beacon_sample_table s ON s.id=bdat_s.sample_id
+>>>>>>> v1.1.0_dev:deploy/db/db/db_functions.sql
 		LEFT JOIN LATERAL (
 			SELECT COALESCE(COUNT(DISTINCT bsam.sample_id), 0)::integer AS sample_cnt
 			FROM public.beacon_data_sample_table bsam
@@ -155,21 +168,21 @@ BEGIN
 						AND bdat.end >= $11	AND bdat.end < $12 AND
 	     ';
 	ELSIF _alternate_bases != '*' OR (_alternate_bases = '*' AND _end IS NULL)
-	    OR (_alternate_bases IS NULL AND _variant_type IS NOT NULL) THEN
-	  -- Looking for an exact match
+		OR (_alternate_bases IS NULL AND _variant_type IS NOT NULL) THEN
+		-- Looking for an exact match
 		_query = _query || ' bdat.start = $2 AND';
 	END IF;
 
 	IF _end IS NOT NULL THEN
-	  -- Remember that end is exclusive
-	  IF _alternate_bases = '*' THEN
-	     -- Looking for any variant within this range
-	    _query = _query || ' (bdat.start >= $2 AND bdat.start < $8 ' ||
-	     'OR bdat.end >= $2 AND bdat.end < $8) AND
-	     ';
-	  ELSE
-	    -- Looking for an exact match
-		  _query = _query || ' bdat.end = ($8-1) AND
+		-- Remember that end is exclusive
+		IF _alternate_bases = '*' THEN
+			-- Looking for any variant within this range
+			_query = _query || ' (bdat.start >= $2 AND bdat.start < $8 ' ||
+							 'OR bdat.end >= $2 AND bdat.end < $8) AND
+               ';
+		ELSE
+			-- Looking for an exact match
+			_query = _query || ' bdat.end = ($8-1) AND
 	     ';
 		END IF;
 	END IF;
@@ -184,10 +197,10 @@ BEGIN
 
 	-- Alternate bases
 	IF _alternate_bases IS NOT NULL THEN
-	  IF _variant_type='INS' THEN
-		  _query = _query || ' bdat.alternate like bdat.reference || $5 || ''%'' AND';
+		IF _variant_type='INS' THEN
+			_query = _query || ' bdat.alternate like bdat.reference || $5 || ''%'' AND';
 		ELSIF _alternate_bases NOT IN ('N','*') THEN
-		  _query = _query || ' bdat.alternate=$5 AND';
+			_query = _query || ' bdat.alternate=$5 AND';
 		END IF;
 	END IF;
 
@@ -201,15 +214,14 @@ BEGIN
 		ORDER BY variants.dataset_id
 	)q';
 
-
-	RAISE NOTICE '_query: %', _query;
+	--RAISE NOTICE '_query: %', _query;
 
 	RETURN QUERY EXECUTE _query
-	USING _variant_type, _start, _chromosome, _reference_bases, _alternate_bases, _reference_genome, _dataset_ids, _end, _start_min, _start_max, _end_min, _end_max;
+		USING _variant_type, _start, _chromosome, _reference_bases, _alternate_bases, _reference_genome, _dataset_ids, _end, _start_min, _start_max, _end_min, _end_max;
 	-- #1=_variant_type, #2=_start, #3=_chromosome, #4=_reference_bases, #5=_alternate_bases, #6=_reference_genome, #7=_dataset_ids,
 	-- #8=_end, #9=_start_min, #10=_start_max, #11=_end_min, #12=_end_max
 END
 $BODY$;
 
-GRANT EXECUTE ON FUNCTION public.query_data_summary_response(text, integer, integer, integer, integer, integer, integer, character varying, text, text, text, text)
-	TO microaccounts_dev;
+ALTER FUNCTION public.query_data_summary_response(text, integer, integer, integer, integer, integer, integer, character varying, text, text, text, text)
+	OWNER TO microaccounts_dev;

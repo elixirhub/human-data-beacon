@@ -57,5 +57,11 @@ public class ParamName {
   public static final String VARIANT_TYPE = "varianttype";
   public static final String BEACON_REFERENCE_GENOME = "assemblyid";
   public static final String BEACON_INCLUDE_DATASET_RESPONSES = "includedatasetresponses";
+  public static final String BEACON_FILTERS = "filters";
+  public static final String BEACON_FIELDS = "fields";
+  public static final String BEACON_LEVEL = "level";
+  public static final String BEACON_INCLUDE_FIELD_DETAILS = "includefielddetails";
+  public static final String BEACON_INCLUDE_DATASET_DETAILS = "includedatasetdetails";
+  public static final String BEACON_MATE_NAME = "matename";
 
 }

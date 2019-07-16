@@ -3,6 +3,7 @@ package org.ega_archive.elixirbeacon.dto;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -56,7 +57,7 @@ public class Dataset {
   private String externalUrl;
 
   // Additional structured metadata, key-value pairs.
-  private List<KeyValuePair> info;
+  private Map<String, String> info;
   
 //  public void addDataUseCondition(DataUseCondition condition) {
 //    if(dataUseConditions == null) {

@@ -5,10 +5,9 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
+import javassist.NotFoundException;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixirbeacon.dto.Dataset;
-import org.ega_archive.elixirbeacon.dto.KeyValuePair;
 import org.ega_archive.elixirbeacon.dto.datause.DataUseCondition;
 import org.ega_archive.elixirbeacon.dto.datause.consent_code.ConsentCode;
 import org.ega_archive.elixirbeacon.dto.datause.consent_code.ConsentCodeCondition;
@@ -17,8 +16,6 @@ import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDataset;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDatasetConsentCode;
 import org.ega_archive.elixircore.enums.DatasetAccessType;
 import org.ega_archive.elixircore.exception.PreConditionFailed;
-
-import javassist.NotFoundException;
 
 public class Operations {
 
@@ -33,10 +30,10 @@ public class Operations {
     beaconDataset.setSampleCount(dataset.getSampleCnt());
     beaconDataset.setAssemblyId(dataset.getReferenceGenome());
 
-    List<KeyValuePair> info = new ArrayList<>();
-    info.add(new KeyValuePair(BeaconConstants.ACCESS_TYPE, DatasetAccessType.parse(dataset.getAccessType())
-        .getType()));
-    info.add(new KeyValuePair(BeaconConstants.AUTHORIZED, Boolean.toString(authorized)));
+    Map<String, String> info = new HashMap<>();
+    info.put(BeaconConstants.ACCESS_TYPE, DatasetAccessType.parse(dataset.getAccessType())
+        .getType());
+    info.put(BeaconConstants.AUTHORIZED, Boolean.toString(authorized));
     beaconDataset.setInfo(info);
 
     DataUseCondition dataUseCondition = DataUseCondition.builder()

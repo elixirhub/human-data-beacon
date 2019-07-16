@@ -12,7 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 public interface BeaconSummaryDataRepository extends
     CustomQuerydslJpaRepository<BeaconDataSummary, Integer> {
 
-  @Query(value = "SELECT * FROM public.query_data_summary_response("
+  @Query(value = "SELECT * FROM query_data_summary_response("
       + "CAST(:_variant_type AS text), "
       + "CAST(CAST(:_start AS text) AS integer), "
       + "CAST(CAST(:_start_min AS text) AS integer), "

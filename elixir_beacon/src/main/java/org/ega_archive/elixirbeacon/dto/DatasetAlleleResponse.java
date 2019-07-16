@@ -3,6 +3,7 @@ package org.ega_archive.elixirbeacon.dto;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.List;
+import java.util.Map;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -46,6 +47,8 @@ public class DatasetAlleleResponse {
   private String externalUrl;
 
   // Additional structured metadata, key-value pairs
-  private List<KeyValuePair> info;
+  private Map<String, String> info;
+
+  private List<Handover> datasetHandover;
 
 }

@@ -32,6 +32,8 @@ public class BeaconRequest {
   private Integer endMin;
   
   private Integer endMax;
+
+  private String mateName;
   
   private String assemblyId;
   
