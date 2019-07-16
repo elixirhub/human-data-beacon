@@ -3,6 +3,7 @@ package org.ega_archive.elixirbeacon.dto;
 import java.util.ArrayList;
 import java.util.List;
 
+import java.util.Map;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 
 import lombok.AllArgsConstructor;
@@ -45,9 +46,11 @@ public class BeaconAlleleResponse {
 
   private List<Handover> beaconHandover;
 
+  private Map<String, String> info;
+
   public void addDatasetAlleleResponse(DatasetAlleleResponse datasetAlleleResponse) {
     if (this.datasetAlleleResponses == null) {
-      this.datasetAlleleResponses = new ArrayList<DatasetAlleleResponse>();
+      this.datasetAlleleResponses = new ArrayList<>();
     }
     this.datasetAlleleResponses.add(datasetAlleleResponse);
   }
