@@ -57,15 +57,27 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
   @Autowired
   private BeaconDatasetConsentCodeRepository beaconDatasetConsentCodeRepository;
 
+  @Autowired
+  private AuthService authService;
+
   @Override
   public Beacon listDatasets(CommonQuery commonQuery, String referenceGenome)
       throws NotFoundException {
 
+    List<String> authorizedDatasets = new ArrayList<>();
+
+    boolean isAuthenticated = false;
+    String authorizationHeader = authService.getAuthorizationHeader();
+    if (StringUtils.isNotBlank(authorizationHeader)) {
+      isAuthenticated = true;
+      authorizedDatasets = authService.findAuthorizedDatasets(authorizationHeader);
+    }
+
     commonQuery.setSort(new Sort(new Order(Direction.ASC, "id")));
 
-    List<Dataset> convertedDatasets = new ArrayList<Dataset>();
-
+    List<Dataset> convertedDatasets = new ArrayList<>();
     Page<BeaconDataset> allDatasets = null;
+
     if (StringUtils.isNotBlank(referenceGenome)) {
       referenceGenome = StringUtils.lowerCase(referenceGenome);
       allDatasets =
@@ -78,7 +90,9 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
     for (BeaconDataset dataset : allDatasets) {
       DatasetAccessType accessType = DatasetAccessType.parse(dataset.getAccessType());
       boolean authorized = false;
-      if (accessType == DatasetAccessType.PUBLIC) {
+      if (accessType == DatasetAccessType.PUBLIC
+          || (isAuthenticated && accessType == DatasetAccessType.REGISTERED)
+          || authorizedDatasets.contains(dataset.getStableId())) {
         authorized = true;
       }
       List<BeaconDatasetConsentCode> ccDataUseConditions =
@@ -278,49 +292,50 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
       return datasetIds;
     }
 
-    if (datasetStableIds != null) {
-      // Remove empty/null strings
-      datasetStableIds =
-          datasetStableIds.stream().filter(s -> (StringUtils.isNotBlank(s)))
-              .collect(Collectors.toList());
-      
-      for (String datasetStableId : datasetStableIds) {
-        // 1) Dataset exists
-        BeaconDataset dataset = beaconDatasetRepository.findByStableId(datasetStableId);
-        if (dataset == null) {
-          Error error = Error.builder()
-              .errorCode(ErrorCode.NOT_FOUND)
-              .message("Dataset not found")
-              .build();
-          result.setError(error);
-          return datasetIds;
-        } else {
-          datasetIds.add(dataset.getId());
-        }
-
-        DatasetAccessType datasetAccessType = DatasetAccessType.parse(dataset.getAccessType());
-        if (datasetAccessType != DatasetAccessType.PUBLIC) {
-          Error error = Error.builder()
-              .errorCode(ErrorCode.UNAUTHORIZED)
-              .message("Unauthenticated users cannot access this dataset")
-              .build();
-          result.setError(error);
-          return datasetIds;
-        }
-
-        // Check that the provided reference genome matches the one specified in the DB for this
-        // dataset
-        if (!StringUtils.equalsIgnoreCase(dataset.getReferenceGenome(), referenceGenome)) {
-          Error error = Error.builder()
-              .errorCode(ErrorCode.GENERIC_ERROR)
-              .message("The assemblyId of this dataset (" + dataset.getReferenceGenome()
-                  + ") and the provided value (" + referenceGenome + ") do not match")
-              .build();
-          result.setError(error);
-          return datasetIds;
-        }
-      }
-    }
+    datasetIds = authService.checkDatasets(datasetStableIds, referenceGenome);
+//    if (datasetStableIds != null) {
+//      // Remove empty/null strings
+//      datasetStableIds =
+//          datasetStableIds.stream().filter(s -> (StringUtils.isNotBlank(s)))
+//              .collect(Collectors.toList());
+//
+//      for (String datasetStableId : datasetStableIds) {
+//        // 1) Dataset exists
+//        BeaconDataset dataset = beaconDatasetRepository.findByStableId(datasetStableId);
+//        if (dataset == null) {
+//          Error error = Error.builder()
+//              .errorCode(ErrorCode.NOT_FOUND)
+//              .message("Dataset not found")
+//              .build();
+//          result.setError(error);
+//          return datasetIds;
+//        } else {
+//          datasetIds.add(dataset.getId());
+//        }
+//
+//        DatasetAccessType datasetAccessType = DatasetAccessType.parse(dataset.getAccessType());
+//        if (datasetAccessType != DatasetAccessType.PUBLIC) {
+//          Error error = Error.builder()
+//              .errorCode(ErrorCode.UNAUTHORIZED)
+//              .message("Unauthenticated users cannot access this dataset")
+//              .build();
+//          result.setError(error);
+//          return datasetIds;
+//        }
+//
+//        // Check that the provided reference genome matches the one specified in the DB for this
+//        // dataset
+//        if (!StringUtils.equalsIgnoreCase(dataset.getReferenceGenome(), referenceGenome)) {
+//          Error error = Error.builder()
+//              .errorCode(ErrorCode.GENERIC_ERROR)
+//              .message("The assemblyId of this dataset (" + dataset.getReferenceGenome()
+//                  + ") and the provided value (" + referenceGenome + ") do not match")
+//              .build();
+//          result.setError(error);
+//          return datasetIds;
+//        }
+//      }
+//    }
     // Allele has a valid value
     if (StringUtils.isNotBlank(alternateBases)) {
       boolean matches = Pattern.matches("[ACTG]+|N", alternateBases);
@@ -428,7 +443,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
   private List<Integer> findAuthorizedDatasets(String referenceGenome) {
     referenceGenome = StringUtils.lowerCase(referenceGenome);
     List<Integer> publicDatasets = beaconDatasetRepository
-        .findReferenceGenomeAndAccessType(referenceGenome, DatasetAccessType.PUBLIC.getType());
+        .findIdsByReferenceGenomeAndAccessType(referenceGenome, DatasetAccessType.PUBLIC.getType());
     return publicDatasets;
   }
 
