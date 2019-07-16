@@ -1,17 +1,13 @@
 package org.ega_archive.elixirbeacon.dto;
 
-import com.fasterxml.jackson.databind.SerializationFeature;
-import com.fasterxml.jackson.databind.annotation.JsonSerialize;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
-
-import org.ega_archive.elixircore.constant.CoreConstants;
-
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.ega_archive.elixircore.constant.CoreConstants;
 
 @Data
 @Builder
@@ -51,5 +47,7 @@ public class DatasetAlleleResponse {
 
   // Additional structured metadata, key-value pairs
   private Map<String, String> info;
+
+  private List<Handover> datasetHandover;
 
 }

@@ -32,13 +32,13 @@ public class BeaconRequest {
   private Integer endMin;
   
   private Integer endMax;
+
+  private String mateName;
   
   private String assemblyId;
   
   private List<String> datasetIds;
   
   private String includeDatasetResponses;
-
-  private List<String> filters;
 
 }

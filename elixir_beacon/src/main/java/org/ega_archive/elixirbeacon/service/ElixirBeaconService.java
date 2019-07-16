@@ -28,16 +28,17 @@ public interface ElixirBeaconService {
   /**
    * Executes the query against the beacon and basically answers yes or no.
    * 
+   * @param datasetStableIds
+   * @param alternateBases
+   * @param referenceBases
+   * @param chromosome
    * @param start
    * @param startMin
    * @param startMax
    * @param end
    * @param endMin
    * @param endMax
-   * @param chromosome
-   * @param referenceBases
-   * @param alternateBases
-   * @param datasetStableIds
+   * @param mateName
    * @param referenceGenome
    * @param includeDatasetResponses
    * @return
@@ -45,7 +46,7 @@ public interface ElixirBeaconService {
   BeaconAlleleResponse queryBeacon(List<String> datasetStableIds, String variantType,
       String alternateBases, String referenceBases, String chromosome, Integer start,
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
-      String referenceGenome, String includeDatasetResponses);
+      String mateName, String referenceGenome, String includeDatasetResponses);
 
   /**
    * Verifies that mandatory parameters are present and that all parameters are valid.
@@ -57,13 +58,14 @@ public interface ElixirBeaconService {
    * @param referenceBases
    * @param chromosome
    * @param start
+   * @param mateName
    * @param referenceGenome
    * @return
    */
   List<Integer> checkParams(BeaconAlleleResponse result, List<String> datasetStableIds,
       VariantType type, String alternateBases, String referenceBases, String chromosome,
       Integer start, Integer startMin, Integer startMax, Integer end, Integer endMin,
-      Integer endMax, String referenceGenome);
+      Integer endMax, String mateName, String referenceGenome);
 
   BeaconAlleleResponse queryBeacon(BeaconRequest request);
 

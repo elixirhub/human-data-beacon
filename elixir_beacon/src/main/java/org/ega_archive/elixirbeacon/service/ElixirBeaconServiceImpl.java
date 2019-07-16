@@ -11,6 +11,7 @@ import java.util.stream.Collectors;
 import javassist.NotFoundException;
 import lombok.extern.slf4j.Slf4j;
 import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.lang3.NotImplementedException;
 import org.apache.commons.lang3.StringUtils;
 import org.ega_archive.elixirbeacon.constant.BeaconConstants;
 import org.ega_archive.elixirbeacon.convert.Operations;
@@ -21,12 +22,15 @@ import org.ega_archive.elixirbeacon.dto.BeaconRequest;
 import org.ega_archive.elixirbeacon.dto.Dataset;
 import org.ega_archive.elixirbeacon.dto.DatasetAlleleResponse;
 import org.ega_archive.elixirbeacon.dto.Error;
+import org.ega_archive.elixirbeacon.dto.Handover;
+import org.ega_archive.elixirbeacon.dto.HandoverType;
 import org.ega_archive.elixirbeacon.enums.ErrorCode;
 import org.ega_archive.elixirbeacon.enums.FilterDatasetResponse;
 import org.ega_archive.elixirbeacon.enums.VariantType;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDataSummary;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDataset;
 import org.ega_archive.elixirbeacon.model.elixirbeacon.BeaconDatasetConsentCode;
+import org.ega_archive.elixirbeacon.properties.HandoverConfig;
 import org.ega_archive.elixirbeacon.properties.SampleRequests;
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconDatasetConsentCodeRepository;
 import org.ega_archive.elixirbeacon.repository.elixirbeacon.BeaconDatasetRepository;
@@ -47,6 +51,9 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
 
   @Autowired
   private SampleRequests sampleRequests;
+
+  @Autowired
+  private HandoverConfig handoverConfig;
 
   @Autowired
   private BeaconDatasetRepository beaconDatasetRepository;
@@ -161,7 +168,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
   public BeaconAlleleResponse queryBeacon(List<String> datasetStableIds, String variantType,
       String alternateBases, String referenceBases, String chromosome, Integer start,
       Integer startMin, Integer startMax, Integer end, Integer endMin, Integer endMax,
-      String referenceGenome, String includeDatasetResponses) {
+      String mateName, String referenceGenome, String includeDatasetResponses) {
 
     BeaconAlleleResponse result = new BeaconAlleleResponse();
     
@@ -179,6 +186,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
         .end(end)
         .endMin(endMin)
         .endMax(endMax)
+        .mateName(mateName)
         .variantType(variantType)
         .assemblyId(referenceGenome)
         .includeDatasetResponses(FilterDatasetResponse.parse(includeDatasetResponses))
@@ -189,7 +197,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
 
     List<Integer> datasetIds =
         checkParams(result, datasetStableIds, type, alternateBases, referenceBases, chromosome,
-            start, startMin, startMax, end, endMin, endMax, referenceGenome);
+            start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     boolean globalExists = false;
     if (result.getError() == null) {
@@ -204,7 +212,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
   public List<Integer> checkParams(BeaconAlleleResponse result, List<String> datasetStableIds,
       VariantType type, String alternateBases, String referenceBases, String chromosome,
       Integer start, Integer startMin, Integer startMax, Integer end, Integer endMin,
-      Integer endMax, String referenceGenome) {
+      Integer endMax, String mateName, String referenceGenome) {
 
     List<Integer> datasetIds = new ArrayList<>();
 
@@ -293,69 +301,31 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
     }
 
     datasetIds = authService.checkDatasets(datasetStableIds, referenceGenome);
-//    if (datasetStableIds != null) {
-//      // Remove empty/null strings
-//      datasetStableIds =
-//          datasetStableIds.stream().filter(s -> (StringUtils.isNotBlank(s)))
-//              .collect(Collectors.toList());
-//
-//      for (String datasetStableId : datasetStableIds) {
-//        // 1) Dataset exists
-//        BeaconDataset dataset = beaconDatasetRepository.findByStableId(datasetStableId);
-//        if (dataset == null) {
-//          Error error = Error.builder()
-//              .errorCode(ErrorCode.NOT_FOUND)
-//              .message("Dataset not found")
-//              .build();
-//          result.setError(error);
-//          return datasetIds;
-//        } else {
-//          datasetIds.add(dataset.getId());
-//        }
-//
-//        DatasetAccessType datasetAccessType = DatasetAccessType.parse(dataset.getAccessType());
-//        if (datasetAccessType != DatasetAccessType.PUBLIC) {
-//          Error error = Error.builder()
-//              .errorCode(ErrorCode.UNAUTHORIZED)
-//              .message("Unauthenticated users cannot access this dataset")
-//              .build();
-//          result.setError(error);
-//          return datasetIds;
-//        }
-//
-//        // Check that the provided reference genome matches the one specified in the DB for this
-//        // dataset
-//        if (!StringUtils.equalsIgnoreCase(dataset.getReferenceGenome(), referenceGenome)) {
-//          Error error = Error.builder()
-//              .errorCode(ErrorCode.GENERIC_ERROR)
-//              .message("The assemblyId of this dataset (" + dataset.getReferenceGenome()
-//                  + ") and the provided value (" + referenceGenome + ") do not match")
-//              .build();
-//          result.setError(error);
-//          return datasetIds;
-//        }
-//      }
-//    }
+
     // Allele has a valid value
     if (StringUtils.isNotBlank(alternateBases)) {
-      boolean matches = Pattern.matches("[ACTG]+|N", alternateBases);
+      boolean matches = Pattern.matches("^([ACGTN]+)$", alternateBases);
       if (!matches) {
         Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Invalid 'alternateBases' parameter, it must match the pattern [ACTG]+|N")
+            .message("Invalid 'alternateBases' parameter, it must match the pattern ^([ACGTN]+)$")
             .build();
         result.setError(error);
         return datasetIds;
       }
     }
     if (StringUtils.isNotBlank(referenceBases)) {
-      boolean matches = Pattern.matches("[ACTG]+|N", referenceBases);
+      boolean matches = Pattern.matches("^([ACGTN]+)$", referenceBases);
       if (!matches) {
         Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Invalid 'referenceBases' parameter, it must match the pattern [ACTG]+|N").build();
+            .message("Invalid 'referenceBases' parameter, it must match the pattern ^([ACGTN]+)$").build();
         result.setError(error);
         return datasetIds;
       }
     }
+    if (StringUtils.isNotBlank(mateName)) {
+      throw new NotImplementedException("Queries using 'mateName' are not implemented");
+    }
+
 //    if (type != null && type != VariantType.SNP && type != VariantType.INSERTION
 //        && type != VariantType.DELELETION && type != VariantType.DUPLICATION) {
 //      Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
@@ -380,11 +350,6 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
   private boolean queryDatabase(List<Integer> datasetIds, VariantType type, String referenceBases,
       String alternateBases, String chromosome, Integer start, Integer startMin, Integer startMax,
       Integer end, Integer endMin, Integer endMax, String referenceGenome, BeaconAlleleResponse result) {
-
-    if (datasetIds == null || datasetIds.isEmpty()) {
-      // Limit the query to only the authorized datasets
-      datasetIds = findAuthorizedDatasets(referenceGenome);
-    }
 
     long numResults = 0L;
     boolean globalExists = false;
@@ -413,6 +378,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
         datasetResponse.setVariantCount(new Long(data.getVariantCnt()));
         datasetResponse.setCallCount(new Long(data.getCallCnt()));
         datasetResponse.setSampleCount(new Long(data.getSampleCnt()));
+        datasetResponse.setDatasetHandover(addDatasetHandovers(dataset.getStableId()));
         result.addDatasetAlleleResponse(datasetResponse);
       }
     }
@@ -434,17 +400,29 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
         BeaconDataset dataset = beaconDatasetRepository.findOne(datasetId);
         datasetResponse.setDatasetId(dataset.getStableId());
         datasetResponse.setExists(false);
+        datasetResponse.setDatasetHandover(addDatasetHandovers(dataset.getStableId()));
         result.addDatasetAlleleResponse(datasetResponse);
       }
     }
     return globalExists;
   }
 
-  private List<Integer> findAuthorizedDatasets(String referenceGenome) {
-    referenceGenome = StringUtils.lowerCase(referenceGenome);
-    List<Integer> publicDatasets = beaconDatasetRepository
-        .findIdsByReferenceGenomeAndAccessType(referenceGenome, DatasetAccessType.PUBLIC.getType());
-    return publicDatasets;
+  private List<Handover> addDatasetHandovers(String stableId) {
+    List<Handover> datasetHandovers = new ArrayList<>();
+
+    handoverConfig.getDatasetHandover().stream()
+        .filter(p -> StringUtils.equalsIgnoreCase(p.getStableId(), stableId))
+        .forEach(prop -> {
+          Handover handover = new Handover();
+          HandoverType handoverType = new HandoverType();
+          handoverType.setId(prop.getId());
+          handoverType.setLabel(prop.getLabel());
+          handover.setHandoverType(handoverType);
+          handover.setUrl(prop.getUrl());
+          handover.setNote(prop.getNote());
+          datasetHandovers.add(handover);
+        });
+    return datasetHandovers;
   }
 
   @Override
@@ -453,7 +431,7 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
     return queryBeacon(request.getDatasetIds(), request.getVariantType(),
         request.getAlternateBases(), request.getReferenceBases(), request.getReferenceName(),
         request.getStart(), request.getStartMin(), request.getStartMax(), request.getEnd(),
-        request.getEndMin(), request.getEndMax(), request.getAssemblyId(),
+        request.getEndMin(), request.getEndMax(), request.getMateName(), request.getAssemblyId(),
         request.getIncludeDatasetResponses());
   }
 

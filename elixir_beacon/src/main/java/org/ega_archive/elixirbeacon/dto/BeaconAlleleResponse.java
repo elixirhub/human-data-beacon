@@ -43,6 +43,8 @@ public class BeaconAlleleResponse {
   // `BeaconAlleleRequest` is not `NONE`, and null otherwise.
   private List<DatasetAlleleResponse> datasetAlleleResponses;
 
+  private List<Handover> beaconHandover;
+
   public void addDatasetAlleleResponse(DatasetAlleleResponse datasetAlleleResponse) {
     if (this.datasetAlleleResponses == null) {
       this.datasetAlleleResponses = new ArrayList<DatasetAlleleResponse>();

@@ -38,3 +38,12 @@ querySamples:
   alternateBases3:
   variantType3: DEL
   datasetIds3: 1000genomes
+
+handovers:
+  datasetHandover:
+    - stableId: 1000genomes
+      id: CUSTOM
+      label: Download data
+      url: http://www.internationalgenome.org/data
+      note: Download page of the 1000 genomes project
+#  beaconHandover:

@@ -8,7 +8,6 @@ import static org.hamcrest.Matchers.notNullValue;
 import static org.hamcrest.Matchers.nullValue;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import javax.annotation.Resource;
@@ -171,9 +170,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = null;
     String referenceBases = "C";
     String alternateBases = null;
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -196,9 +196,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "C";
     String alternateBases = null;
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -221,9 +222,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = null;
     String alternateBases = null;
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -246,9 +248,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "C";
     String alternateBases = null;
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -271,9 +274,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "C";
     String alternateBases = "A";
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -284,7 +288,7 @@ public class ElixirBeaconServiceTest {
     alternateBases = "N";
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), nullValue());
     
@@ -292,7 +296,7 @@ public class ElixirBeaconServiceTest {
     alternateBases = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), nullValue());
   }
@@ -312,9 +316,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "N";
     String alternateBases = null;
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -336,9 +341,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "C";
     String alternateBases = null;
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -361,9 +367,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "C";
     String alternateBases = null;
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -386,8 +393,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "N";
     String alternateBases = null;
+    String mateName = null;
+
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -410,8 +419,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "C";
     String alternateBases = null;
+    String mateName = null;
+
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -434,8 +445,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "A";
     String alternateBases = "AC";
+    String mateName = null;
+
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.NOT_FOUND));
@@ -457,9 +470,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "A";
     String alternateBases = "AC";
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.UNAUTHORIZED));
@@ -482,9 +496,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "A";
     String alternateBases = "AC";
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -506,9 +521,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "A";
     String alternateBases = "AR";
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -519,7 +535,7 @@ public class ElixirBeaconServiceTest {
     alternateBases = "A";
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), nullValue());
 
@@ -527,7 +543,7 @@ public class ElixirBeaconServiceTest {
     alternateBases = ".";
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -538,7 +554,7 @@ public class ElixirBeaconServiceTest {
     alternateBases = "N";
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), nullValue());
   }
@@ -558,9 +574,10 @@ public class ElixirBeaconServiceTest {
     String chromosome = "12";
     String referenceBases = "R";
     String alternateBases = "C";
+    String mateName = null;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -571,7 +588,7 @@ public class ElixirBeaconServiceTest {
     referenceBases = "AT";
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), nullValue());
 
@@ -579,7 +596,7 @@ public class ElixirBeaconServiceTest {
     referenceBases = ".";
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), notNullValue());
     assertThat(result.getError().getErrorCode(), equalTo(ErrorCode.GENERIC_ERROR));
@@ -591,7 +608,7 @@ public class ElixirBeaconServiceTest {
     end = 123;
 
     elixirBeaconService.checkParams(result, datasetStableIds, type, alternateBases, referenceBases,
-        chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome);
+        chromosome, start, startMin, startMax, end, endMin, endMax, mateName, referenceGenome);
 
     assertThat(result.getError(), nullValue());
   }
@@ -612,11 +629,12 @@ public class ElixirBeaconServiceTest {
     String referenceBases = "C";
     String alternateBases = "G";
     String includeDatasetResponses = FilterDatasetResponse.NONE.toString();
+    String mateName = null;
 
     // Query with positive answer WITHOUT detailed response by dataset
     BeaconAlleleResponse response = elixirBeaconService.queryBeacon(datasetStableIds, variantType,
         alternateBases, referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax,
-        referenceGenome, includeDatasetResponses);
+        mateName, referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses(), nullValue());
@@ -625,8 +643,8 @@ public class ElixirBeaconServiceTest {
     includeDatasetResponses = FilterDatasetResponse.ALL.toString();
     // Query with positive answer AND detailed response by dataset
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses().get(0).getDatasetId(),
@@ -640,8 +658,8 @@ public class ElixirBeaconServiceTest {
     includeDatasetResponses = FilterDatasetResponse.HIT.toString();
     // Query with positive answer AND detailed response by dataset
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses().get(0).getDatasetId(),
@@ -651,8 +669,8 @@ public class ElixirBeaconServiceTest {
     includeDatasetResponses = FilterDatasetResponse.MISS.toString();
     // Query with positive answer AND detailed response by dataset
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses(), nullValue());
@@ -660,8 +678,8 @@ public class ElixirBeaconServiceTest {
     alternateBases = "T";
     // Query with negative answer AND detailed response by dataset
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(false));
     assertThat(response.getDatasetAlleleResponses().get(0).getDatasetId(),
@@ -672,8 +690,8 @@ public class ElixirBeaconServiceTest {
     includeDatasetResponses = FilterDatasetResponse.NONE.toString();
     // Query with negative answer WITHOUT detailed response by dataset
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(false));
     assertThat(response.getDatasetAlleleResponses(), nullValue());
@@ -681,8 +699,8 @@ public class ElixirBeaconServiceTest {
     includeDatasetResponses = FilterDatasetResponse.HIT.toString();
     // Query with negative answer AND detailed response by dataset if HIT
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(false));
     assertThat(response.getDatasetAlleleResponses(), nullValue());
@@ -690,8 +708,8 @@ public class ElixirBeaconServiceTest {
     includeDatasetResponses = FilterDatasetResponse.MISS.toString();
     // Query with negative answer AND detailed response by dataset if MISS
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(false));
     assertThat(response.getDatasetAlleleResponses().get(0).getDatasetId(),
@@ -715,11 +733,12 @@ public class ElixirBeaconServiceTest {
     String referenceBases = "A";
     String alternateBases = null;
     String includeDatasetResponses = FilterDatasetResponse.NONE.toString();
+    String mateName = null;
 
     // Query with positive answer WITHOUT detailed response by dataset
     BeaconAlleleResponse response = elixirBeaconService.queryBeacon(datasetStableIds, variantType,
         alternateBases, referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax,
-        referenceGenome, includeDatasetResponses);
+        mateName, referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses(), nullValue());
@@ -735,7 +754,7 @@ public class ElixirBeaconServiceTest {
     chromosome = "3";
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType,
         alternateBases, referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax,
-        referenceGenome, includeDatasetResponses);
+        mateName, referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses(), nullValue());
@@ -757,11 +776,12 @@ public class ElixirBeaconServiceTest {
     String referenceBases = "A";
     String alternateBases = null;
     String includeDatasetResponses = FilterDatasetResponse.NONE.toString();
+    String mateName = null;
 
     // Query with positive answer WITHOUT detailed response by dataset
     BeaconAlleleResponse response = elixirBeaconService.queryBeacon(datasetStableIds, variantType,
         alternateBases, referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax,
-        referenceGenome, includeDatasetResponses);
+        mateName, referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses(), nullValue());
@@ -782,10 +802,11 @@ public class ElixirBeaconServiceTest {
     String referenceBases = "C";
     String alternateBases = "N";
     String includeDatasetResponses = FilterDatasetResponse.ALL.toString();
+    String mateName = null;
 
     BeaconAlleleResponse response = elixirBeaconService.queryBeacon(datasetStableIds, variantType,
         alternateBases, referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax,
-        referenceGenome, includeDatasetResponses);
+        mateName, referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses().size(), equalTo(3));
@@ -799,16 +820,16 @@ public class ElixirBeaconServiceTest {
     // Don't include detailed response per dataset
     includeDatasetResponses = FilterDatasetResponse.NONE.toString();
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses(), nullValue());
 
     // Just return "true" datasets
     includeDatasetResponses = FilterDatasetResponse.HIT.toString();
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses().size(), equalTo(2));
     assertThat(response.getDatasetAlleleResponses().get(0).getDatasetId(),
@@ -821,8 +842,8 @@ public class ElixirBeaconServiceTest {
     // Just return "false" datasets
     includeDatasetResponses = FilterDatasetResponse.MISS.toString();
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses().size(), equalTo(1));
     assertThat(response.getDatasetAlleleResponses().get(0).getDatasetId(),
@@ -845,10 +866,11 @@ public class ElixirBeaconServiceTest {
     String referenceBases = "c";
     String alternateBases = "G";
     String includeDatasetResponses = FilterDatasetResponse.NONE.toString();
+    String mateName = null;
 
     BeaconAlleleResponse response = elixirBeaconService.queryBeacon(datasetStableIds, variantType,
         alternateBases, referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax,
-        referenceGenome, includeDatasetResponses);
+        mateName, referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses(), nullValue());
@@ -856,8 +878,8 @@ public class ElixirBeaconServiceTest {
     // Get only HITS
     includeDatasetResponses = FilterDatasetResponse.HIT.toString();
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true));
     assertThat(response.getDatasetAlleleResponses().size(), equalTo(1));
@@ -869,8 +891,8 @@ public class ElixirBeaconServiceTest {
     // Get only MISSES
     includeDatasetResponses = FilterDatasetResponse.MISS.toString();
     response = elixirBeaconService.queryBeacon(datasetStableIds, variantType, alternateBases,
-        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, referenceGenome,
-        includeDatasetResponses);
+        referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax, mateName,
+        referenceGenome, includeDatasetResponses);
 
     assertThat(response.isExists(), equalTo(true)); // Global is true
     assertThat(response.getDatasetAlleleResponses(), notNullValue());
@@ -898,11 +920,12 @@ public class ElixirBeaconServiceTest {
     String alternateBases = "G";
     List<String> filters = null;
     String includeDatasetResponses = FilterDatasetResponse.NONE.toString();
+    String mateName = null;
 
     // Query with positive answer WITHOUT detailed response by dataset
     BeaconAlleleResponse response = elixirBeaconService.queryBeacon(datasetStableIds, variantType,
         alternateBases, referenceBases, chromosome, start, startMin, startMax, end, endMin, endMax,
-        referenceGenome, includeDatasetResponses);
+        mateName, referenceGenome, includeDatasetResponses);
     
     assertThat(response.getError(), notNullValue());
     assertThat(response.getError().getErrorCode(), equalTo(ErrorCode.UNAUTHORIZED));

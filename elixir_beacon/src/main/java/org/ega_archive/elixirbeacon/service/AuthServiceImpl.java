@@ -162,6 +162,7 @@ public class AuthServiceImpl implements AuthService {
           .findIdsByReferenceGenomeAndAccessType(referenceGenome,
               DatasetAccessType.PUBLIC.getType()));
     }
+
     return datasetIds;
   }
 
