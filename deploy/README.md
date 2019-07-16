@@ -134,19 +134,19 @@ If you want to tune the configuration or load custom data, please, skip this sec
     ```  
     git clone https://github.com/ga4gh-beacon/beacon-elixir.git  
     cd beacon-elixir
-    git checkout v1.0.1
+    git checkout v1.1.0
     ```  
 7. Prepare dependencies  
     ```  
     cd elixir_core  
-    mvn clean compile jar:jar  
-    mvn install:install-file -Dfile=target/elixir-core-1.0.1-SNAPSHOT.jar -DgroupId=org.ega_archive -DartifactId=elixir-core -Dversion=1.0.1-SNAPSHOT -Dpackaging=jar -DgeneratePom=true
+    mvn clean compile jar:jar -Djar.finalName=elixir-core
+    mvn install:install-file -Dfile=target/elixir-core.jar
     ```  
 8. Compile and deploy the application  
     ```  
     cd ../elixir_beacon  
     mvn clean compile package -Dmaven.test.skip=true
-    java -jar target/elixir-beacon-1.0.1-SNAPSHOT.jar --spring.profiles.active=dev  
+    java -jar target/elixir-beacon-1.1.0-SNAPSHOT.jar --spring.profiles.active=dev  
     ```  
 9. Go to   
     * [localhost:9075/elixirbeacon/v1/beacon/](http://localhost:9075/elixirbeacon/v1/beacon/)  

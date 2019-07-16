@@ -212,14 +212,14 @@ git checkout v1.1.0
 First of all, it is necessary to compile the code of the **elixir_core** project because it is a dependency of the main project, elixir_beacon.  
 ```  
 cd elixir_core  
-mvn clean compile jar:jar  
+mvn clean compile jar:jar -Djar.finalName=elixir-core
 ```  
-This will generate the JAR file `elixir-core-1.0.1-SNAPSHOT.jar` inside the `/target` folder.  
+This will generate the JAR file `elixir-core.jar` inside the `/target` folder.  
 Then run:  
 ```  
-mvn install:install-file -Dfile=target/elixir-core-1.0.1-SNAPSHOT.jar -DgroupId=org.ega_archive -DartifactId=elixir-core -Dversion=1.0.1-SNAPSHOT -Dpackaging=jar -DgeneratePom=true  
+mvn install:install-file -Dfile=target/elixir-core.jar
 ```  
-Now this dependency will be found when compiling the main project, elixir_beacon. 
+Now this dependency will be found when compiling the main project, **elixir_beacon**. 
 
 ## Elixir Beacon, the main project  
 ### Configuration files  
@@ -232,7 +232,7 @@ The key files are:
 By default, the application is deployed at port **9075** and the context is **/elixirbeacon/v1.1.0/**. You can change this by modifying the following lines of the `application-{profile}.properties` file:  
 ```INI  
 server.port=9075  
-server.servlet-path=/v1  
+server.servlet-path=/v1.1.0
 server.context-path=/elixirbeacon  
 ```  
 As explained at the beginning, the application uses two PostgreSQL databases named `elixir_beacon_dev` and `elixir_beacon_testing`.  
@@ -269,12 +269,12 @@ mvn test -Dspring.profiles.active="dev"
 ```  
 NOTE: For running the tests you should use a different database than the main one (e.g. `elixir_beacon_testing`, see [Create databases](#create-databases)) because some testing data will be loaded and overwrite anything in this database.  
   
-If compilation and test execution are successful, a JAR file will be generated in the folder `/target` with the name `elixir-beacon-1.0.1-SNAPSHOT.jar`.  
+If compilation and test execution are successful, a JAR file will be generated in the folder `/target` with the name `elixir-beacon-1.1.0-SNAPSHOT.jar`.  
 
 ## Deploy the JAR  
 To deploy the JAR run run the following command within the **elixir_beacon/target** folder:  
   ```  
-java -jar target/elixir-beacon-1.0.1-SNAPSHOT.jar --spring.profiles.active=dev  
+java -jar target/elixir-beacon-1.1.0-SNAPSHOT.jar --spring.profiles.active=dev  
  ```  
 It will generate a log file in `logs/application.log` located in the same folder where the JAR has been deployed (e.g. `elixir_beacon/logs` but you can move the JAR file wherever you want and deploy it there).  
 
