@@ -27,8 +27,7 @@ import lombok.Data;
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "_reference_bases", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "_alternate_bases", type = String.class),
     @StoredProcedureParameter(mode = ParameterMode.IN, name = "_reference_genome", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "_dataset_ids", type = String.class),
-    @StoredProcedureParameter(mode = ParameterMode.IN, name = "_filters", type = String.class)})
+    @StoredProcedureParameter(mode = ParameterMode.IN, name = "_dataset_ids", type = String.class)})
 public class BeaconDataSummary {
 
   private static final long serialVersionUID = 1L;

@@ -17,7 +17,7 @@ import lombok.Data;
  */
 @Data
 @Entity
-@Table(name="beacon_dataset_consent_code", schema="public")
+@Table(name="beacon_dataset_consent_code")
 @NamedQuery(name="BeaconDatasetConsentCode.findAll", query="SELECT b FROM BeaconDatasetConsentCode b")
 public class BeaconDatasetConsentCode implements Serializable {
 	private static final long serialVersionUID = 1L;
