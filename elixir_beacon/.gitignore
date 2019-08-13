@@ -67,4 +67,6 @@ build.commit
 #JPA project
 persistence.xml
 
-/logs
+logs
+# filter out dev element, to avoid leaking login information
+src/main/resources/application-dev.properties
