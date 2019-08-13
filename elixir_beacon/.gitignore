@@ -69,4 +69,4 @@ persistence.xml
 
 logs
 # filter out dev element, to avoid leaking login information
-src/main/resources/application-dev.properties
+application-dev.properties
