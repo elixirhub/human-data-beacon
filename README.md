@@ -90,6 +90,9 @@
     ```  
 
 ## Load the data  
+
+Note: This part is slightly changed for the new multi-species Plant Beacon.
+
 1. Download the [script](elixir_beacon/src/main/resources/META-INF/vcf_parser.sh) to parse VCF files and give it executable rights:  
     ```  
     chmod +x vcf_parser.sh  
@@ -104,10 +107,12 @@
    * Lisf of samples where each variant can be found: `dataset_id_filename.variants.matching.samples.csv`
 3. Load the dataset information into `beacon_dataset_table`:  
     ```sql  
-    INSERT INTO beacon_dataset_table(id, stable_id, description, access_type, reference_genome, variant_cnt, call_cnt, sample_cnt)  
-      VALUES (1, '1000genomes', 'Subset of variants of chromosomes 22 and Y from the 1000 genomes project', 'PUBLIC', 'GRCh37', 1, 1, 1);  
+    INSERT INTO beacon_dataset_table(id, stable_id, species_id, description, access_type, reference_genome, variant_cnt, call_cnt, sample_cnt, info)  
+      VALUES (1, '1000genomes', 'human', 'Subset of variants of chromosomes 22 and Y from the 1000 genomes project', 'PUBLIC', 'GRCh37', 1, 1, 1, '{"metadata_Group_Example": {"parameter" : "string", "parameter2" : number} }' );  
     ```  
-    Initialize the row setting `variant_cnt`, `call_cnt` and `sample_cnt` to 1. After loading the data, do some count and set the real values (see step 5).  
+    Initialize the row setting `variant_cnt`, `call_cnt` and `sample_cnt` to 1. After loading the data, do some count and set the real values (see step 5).
+    The metadata groups correspond to collections of metadata information, like the multi-crop passport descriptor, or or other specific collections of information.
+    The individual parameters inside these groups can be strings (identifiers, lineage...), numbers (age, collection date...) or even smaller sub-groups (list of collection agencies, ...).
     Remember to replace the values in the previous command with the correct ones.   
   
 4. Load the variants into `beacon_data_table`:  
