@@ -111,8 +111,10 @@ Note: This part is slightly changed for the new multi-species Plant Beacon.
       VALUES (1, '1000genomes', 'human', 'Subset of variants of chromosomes 22 and Y from the 1000 genomes project', 'PUBLIC', 'GRCh37', 1, 1, 1, '{"metadata_Group_Example": {"parameter" : "string", "parameter2" : number} }' );  
     ```  
     Initialize the row setting `variant_cnt`, `call_cnt` and `sample_cnt` to 1. After loading the data, do some count and set the real values (see step 5).
+    
     The metadata groups correspond to collections of metadata information, like the multi-crop passport descriptor, or or other specific collections of information.
     The individual parameters inside these groups can be strings (identifiers, lineage...), numbers (age, collection date...) or even smaller sub-groups (list of collection agencies, ...).
+    
     Remember to replace the values in the previous command with the correct ones.   
   
 4. Load the variants into `beacon_data_table`:  
