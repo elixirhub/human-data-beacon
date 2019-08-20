@@ -15,13 +15,8 @@ CREATE OR REPLACE FUNCTION public.query_data_summary_response(
 	_alternate_bases text,
 	_reference_genome text,
 	_dataset_ids text)
-<<<<<<< HEAD:deploy/db/db/db_functions.sql
     RETURNS TABLE(id text, dataset_id integer, variant_cnt bigint, call_cnt bigint, sample_cnt bigint, frequency numeric, num_variants integer)
     LANGUAGE 'plpgsql'
-=======
-	RETURNS TABLE(id text, dataset_id integer, variant_cnt integer, call_cnt integer, sample_cnt integer, frequency numeric, num_variants integer)
-	LANGUAGE 'plpgsql'
->>>>>>> v1.1.0_dev:deploy/db/db/db_functions.sql
 
 	COST 100
 	VOLATILE
@@ -145,11 +140,8 @@ BEGIN
 			COUNT(DISTINCT bdat.id)::integer AS num_variants
 		FROM public.beacon_data_table bdat
 		INNER JOIN public.beacon_dataset_table bdataset ON bdataset.id=bdat.dataset_id
-<<<<<<< HEAD:deploy/db/db/db_functions.sql
-=======
 		INNER JOIN public.beacon_data_sample_table bdat_s on bdat_s.data_id=bdat.id
 		INNER JOIN public.beacon_sample_table s ON s.id=bdat_s.sample_id
->>>>>>> v1.1.0_dev:deploy/db/db/db_functions.sql
 		LEFT JOIN LATERAL (
 			SELECT COALESCE(COUNT(DISTINCT bsam.sample_id), 0)::integer AS sample_cnt
 			FROM public.beacon_data_sample_table bsam
