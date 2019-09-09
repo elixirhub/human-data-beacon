@@ -262,9 +262,12 @@ If you use a different database than Postgres, you must add the corresponding li
 To compile the code run the following command within the project folder:  
 ```  
 cd elixir_beacon  
-mvn clean compile package -Dspring.profiles.active="dev"  
+mvn clean compile package -Dspring.profiles.active="dev" -Dmaven.test.skip=true 
 ```  
 That will also execute the tests. To skip them add `-Dmaven.test.skip=true` to the command.  
+
+NOTE: *The tests have yet to be updated to work with the plant beacon, given the modifications to the 'info' field and the removal of the KeyValuePair custom class.*
+
 NOTE: Tests use a different properties file located in `/src/test/resources`.  
   
 To only run the tests use:  
