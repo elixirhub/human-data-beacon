@@ -1,3 +1,5 @@
+This implementation is compliant with version 1.0.1 of the specification.
+
 # Table of contents    
 
 * [Requirements](#requirements)  
