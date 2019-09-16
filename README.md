@@ -74,7 +74,7 @@ This implementation is compliant with a modified [specification](https://github.
     That script will create the tables and views and also load some essential data for data use conditions.  
     
         Here you can find a diagram of this schema:
-   ![Database schema diagram](elixir_beacon/src/main/resources/META-INF/elixir_beacon_db_schema_diagram.png)    
+   ![Database schema diagram](Beacon_data_schema.png)    
     If you use a super user to create the schema, then you will need to grant access to the ordinary user that will be used by the application (e.g. microaccounts_dev):  
     ```  
     psql -h localhost -p 5432 -d elixir_beacon_dev -U postgres  
