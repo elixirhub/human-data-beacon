@@ -1,4 +1,4 @@
-This implementation is compliant with a modified [specification]() based on version **1.0.1** of the official [specification](https://github.com/ga4gh-beacon/specification/blob/v1.0.1/beacon.yaml).
+This implementation is compliant with a modified [specification](https://github.com/ga4gh-beacon/beacon-elixir/blob/beacon_plant_prototype/beacon-plant-specification-v1.0.1.yaml) based on version **1.0.1** of the official [specification](https://github.com/ga4gh-beacon/specification/blob/v1.0.1/beacon.yaml).
 
 # Table of contents    
 
