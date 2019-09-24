@@ -502,9 +502,7 @@ Example of how to use the POST method in the "/query" path:
 |cropname|MCPD (v2.1) (CROPNAME) 10. Common name of the crop.|string|`malting barley`|
 |sampletype|NCBI BioSample Plant (v1.0) Sample type, such as cell culture, mixed culture, tissue sample, etc.|string|`tissue sample`|
 |tissue|NCBI BioSample Plant (v1.0)Type of tissue the sample was taken from.|string|`leaf`|
-|age|NCBI BioSample Plant (v1.0)
-age at the time of sampling;
-relevant scale depends on species and study.|string|`10 years`|
+|age|NCBI BioSample Plant (v1.0) age at the time of sampling; relevant scale depends on species and study.|string|`10 years`|
 |includeDatasetResponses|Indicator of whether responses for individual datasets (`datasetPlantResponses`) should be included in the response (`BeaconPlantResponse`) to this request or not. If null (not specified), the default value of NONE is assumed.<br/> <br/>Accepted values : ['ALL', 'HIT', 'MISS', 'NONE']|string|`'ALL'`|
 
 
