@@ -28,7 +28,7 @@ public class Dataset {
   // Description of the dataset
   private String description;
 
-  // Assembly identifier (GRC notation, e.g. `GRCh37`).
+  // Assembly identifier .
   private String assemblyId;
 
   // The time the dataset was created (ISO 8601 format)

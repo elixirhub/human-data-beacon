@@ -105,7 +105,7 @@ public class BeaconPlantRequest {
   private String variantType;
 
   /**
-   * Assembly identifier (GRC notation, e.g. `GRCh37`).
+   * Assembly identifier .
    */
   private String assemblyId;
 
