@@ -517,7 +517,7 @@ Example of how to use the POST method in the "/query" path:
 |*beaconId**|Identifier of the beacon, as defined in `Beacon`.|string|-|
 |apiVersion|Version of the API. If specified, the value must match `apiVersion` in Beacon|string|-|
 |exists|Indicator of whether the given allele was observed in any of the datasets queried. This should be non-null, unless there was an error, in which case `error` has to be non-null.|boolean|`TRUE`|
-|alleleRequest|The request that is sent to the Beacon.|object|BeaconAlleleRequest Object (see above _Query endpoint request_)|
+|plantRequest|The request that is sent to the Beacon.|object|BeaconPlantRequest Object (see above _Plant endpoint request_)|
 |datasetPlantResponses|The response that the user receives from the Beacon|object|BeaconDatasetPlantResponse Object (see below)|
 |error|The error message and the appropriate HTTP status code|object|See section _Errors_ |
 
