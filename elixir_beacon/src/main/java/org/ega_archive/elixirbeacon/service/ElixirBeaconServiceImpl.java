@@ -217,16 +217,16 @@ public class ElixirBeaconServiceImpl implements ElixirBeaconService {
       result.setError(error);
       return datasetIds;
     }
-    if (StringUtils.isNotBlank(referenceGenome)){
-      boolean matches = Pattern.matches("^grch[1-9]{2}$", StringUtils.lowerCase(referenceGenome));
-      if (!matches) {
-        Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Invalid 'assemblyId' parameter, GRC notation required (e.g. GRCh37)")
-            .build();
-        result.setError(error);
-        return datasetIds;
-      }
-    }
+    //if (StringUtils.isNotBlank(referenceGenome)){
+      //boolean matches = Pattern.matches("^grch[1-9]{2}$", StringUtils.lowerCase(referenceGenome));
+      //if (!matches) {
+      //  Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
+      //      .message("Invalid 'assemblyId' parameter, GRC notation required (e.g. GRCh37)")
+      //      .build();
+      //  result.setError(error);
+      //  return datasetIds;
+      //}
+    //}
     if (StringUtils.isNotBlank(chromosome)){
       boolean matches = Pattern.matches("^([1-9][0-9]|[1-9]|X|Y|MT|PLTD)$", chromosome);
       if (!matches) {
@@ -847,16 +847,16 @@ private boolean queryPlantDatabase(List<Integer> datasetIds, VariantType type, S
       result.setError(error);
       return datasetIds;
     }
-    if (StringUtils.isNotBlank(referenceGenome)){
-      boolean matches = Pattern.matches("^grch[1-9]{2}$", StringUtils.lowerCase(referenceGenome));
-      if (!matches) {
-        Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
-            .message("Invalid 'assemblyId' parameter, GRC notation required (e.g. GRCh37)")
-            .build();
-        result.setError(error);
-        return datasetIds;
-      }
-    }
+    //if (StringUtils.isNotBlank(referenceGenome)){
+    //  boolean matches = Pattern.matches("^grch[1-9]{2}$", StringUtils.lowerCase(referenceGenome));
+    //  if (!matches) {
+    //    Error error = Error.builder().errorCode(ErrorCode.GENERIC_ERROR)
+    //        .message("Invalid 'assemblyId' parameter, GRC notation required (e.g. GRCh37)")
+    //        .build();
+    //    result.setError(error);
+    //    return datasetIds;
+    //  }
+    //}
     if (StringUtils.isNotBlank(chromosome)){
       boolean matches = Pattern.matches("^([1-9][0-9]|[1-9]|X|Y|MT|PLTD)$", chromosome);
       if (!matches) {
