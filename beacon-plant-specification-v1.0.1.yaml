@@ -252,7 +252,7 @@ paths:
       parameters:
         - name: referenceName
           description: 'Reference name (chromosome). Accepting values 1-22, X, Y, MT, PLTD.'
-          in: plant
+          in: query
           required: true
           schema:
             $ref: '#/components/schemas/Chromosome'
@@ -265,7 +265,7 @@ paths:
               - the use of "start" without an "end" parameter requires the use of "referenceBases"
             * start and end:
               - special use case for exactly determined structural changes
-          in: plant
+          in: query
           required: false
           schema:
             type: integer
@@ -277,7 +277,7 @@ paths:
             * startMin + startMax + endMin + endMax
               - for querying imprecise positions (e.g. identifying all structural variants starting anywhere between startMin <-> startMax, and ending anywhere between endMin <-> endMax)
               - single or double sided precise matches can be achieved by setting startMin = startMax XOR endMin = endMax
-          in: plant
+          in: query
           schema:
             type: integer
             format: int64
@@ -285,7 +285,7 @@ paths:
         - name: startMax
           description: |
             Maximum start coordinate. See startMin.
-          in: plant
+          in: query
           schema:
             type: integer
             format: int64
@@ -293,7 +293,7 @@ paths:
         - name: end
           description: |
             Precise end coordinate (0-based, exclusive). See start.
-          in: plant
+          in: query
           schema:
             type: integer
             format: int64
@@ -301,7 +301,7 @@ paths:
         - name: endMin
           description: |
             Minimum end coordinate. See startMin.
-          in: plant
+          in: query
           schema:
             type: integer
             format: int64
@@ -309,7 +309,7 @@ paths:
         - name: endMax
           description: |
             Maximum end coordinate. See startMin.
-          in: plant
+          in: query
           schema:
             type: integer
             format: int64
@@ -323,7 +323,7 @@ paths:
             imprecise structural variants with separate variant_type as well as
             start_min & end_min ... parameters), the use of a single "N" value
             is required.
-          in: plant
+          in: query
           required: true
           schema:
             type: string
@@ -337,7 +337,7 @@ paths:
             INS:ME) will be represented in `variantType`.
 
             Optional: either `alternateBases` or `variantType` is required.
-          in: plant
+          in: query
           required: false
           schema:
             type: string
@@ -352,7 +352,7 @@ paths:
             * DEL: deletion of sequence following `start`
 
             Optional: either `alternateBases` or `variantType` is required.
-          in: plant
+          in: query
           required: false
           schema:
             type: string
@@ -365,7 +365,7 @@ paths:
               summary: deletion of sequence following `start`
         - name: assemblyId
           description: 'Assembly identifier (GRC notation, e.g. GRCh37).'
-          in: plant
+          in: query
           required: true
           schema:
             type: string
@@ -373,7 +373,7 @@ paths:
           description: >-
             Identifiers of datasets, as defined in "BeaconDataset". If this
             field is null/not specified, all datasets should be queried.
-          in: plant
+          in: query
           required: false
           explode: true
           schema:
@@ -398,7 +398,7 @@ paths:
             similar in most respects to the PUID whenever they exchange
             information on accessions with third parties
             (e.g. NOR017:NGB17773:ALLIUM).'
-          in: plant
+          in: query
           required: false
           schema:
             type: string
@@ -407,7 +407,7 @@ paths:
             MCPD (v2.1) (ACCENUMB) 2. This is the unique identifier
             for accessions within a genebank, and is assigned when a sample
             is entered into the genebank collection (e.g. "PI 113869").
-          in: plant
+          in: query
           required: false
           schema:
             type: string
@@ -420,7 +420,7 @@ paths:
             or a description "mutation found in Hanna",
             "selection from Irene" or
             "cross involving amongst others Hanna and Irene".
-          in: plant
+          in: query
           required: false
           schema:
             type: string
@@ -428,7 +428,7 @@ paths:
           description: >
             MCPD (v2.1) (CROPNAME) 10. Common name of the crop.
             Example: "malting barley", "macadamia", "mas".
-          in: plant
+          in: query
           required: false
           schema:
             type: string
@@ -438,7 +438,7 @@ paths:
             NCBI BioSample Plant (v1.0)
             Sample type, such as cell culture, mixed culture, tissue sample,
             whole organism, single cell, metagenomic assembly...
-          in: plant
+          in: query
           required: false
           schema:
             type: string
@@ -446,7 +446,7 @@ paths:
           description: >
             NCBI BioSample Plant (v1.0)
             Type of tissue the sample was taken from.
-          in: plant
+          in: query
           required: false
           schema:
             type: string
@@ -456,7 +456,7 @@ paths:
             age at the time of sampling;
             relevant scale depends on species and study, e.g. could be
             seconds for amoebae or centuries for trees
-          in: plant
+          in: query
           required: false
           schema:
             type: string
@@ -470,7 +470,7 @@ paths:
             (BeaconAlleleResponse) to this request or not.
 
             If null (not specified), the default value of NONE is assumed.
-          in: plant
+          in: query
           required: false
           schema:
             type: string
