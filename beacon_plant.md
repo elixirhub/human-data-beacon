@@ -497,7 +497,7 @@ Example of how to use the POST method in the "/query" path:
 |variantType~|The `variantType` is used to denote e.g. structural variants.<br/> <br/>*Either `alternateBases` OR `variantType` is REQUIRED*|string|`'INS'`, `'DUP'`, `'DEL'`, `'INV'`|
 |datasetIds|Identifiers of datasets, as defined in `BeaconDataset`. In case `assemblyId` doesn't match requested dataset(s) error will be raised (`400 Bad request`). If this field is not specified, all datasets should be queried.|array|`['dataset1', 'dataset2']`|
 |puid|MCPD (v2.1) (PUID) 0. Any persistent, unique identifier assigned to the accession (http://www.planttreaty.org/doi).|string|`1200A`|
-|accenumb|MCPD (v2.1) (ACCENUMB) 2. This is the unique identifier for accessions within genebank|string|`PI 113869`|
+|accenumb|MCPD (v2.1) (ACCENUMB) 2. This is the unique identifier for accessions within Genebank|string|`PI 113869`|
 |ancest|MCPD (v2.1) (ANCEST) 20. Information about either pedigree or other description of ancestral information|string|`Hanna/7*Atlas//Turk/8*Atlas`|
 |cropname|MCPD (v2.1) (CROPNAME) 10. Common name of the crop.|string|`malting barley`|
 |sampletype|NCBI BioSample Plant (v1.0) Sample type, such as cell culture, mixed culture, tissue sample, etc.|string|`tissue sample`|
