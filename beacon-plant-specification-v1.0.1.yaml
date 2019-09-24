@@ -248,7 +248,7 @@ paths:
   /plant:
     get:
       description: Get response to a beacon query for allele information.
-      operationId: getBeaconAlleleResponse
+      operationId: getBeaconPlantResponse
       parameters:
         - name: referenceName
           description: 'Reference name (chromosome). Accepting values 1-22, X, Y, MT, PLTD.'
@@ -511,7 +511,7 @@ paths:
                 $ref: '#/components/schemas/BeaconAlleleResponse'
     post:
       description: Gets response to a beacon query for allele information.
-      operationId: postBeaconAlleleResponse
+      operationId: postBeaconPlantResponse
       responses:
         '200':
           description: successful operation
