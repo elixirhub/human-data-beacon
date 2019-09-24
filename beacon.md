@@ -543,15 +543,115 @@ relevant scale depends on species and study.|string|`10 years`|
 
 Example of how to use the GET method in the `/plant` endpoint:
 
-    curl -v 'https://localhost:5000/query?referenceName=1&start=0&end=0&startMin=28000000&startMax=29000000&endMin=28000000&endMax=29000000&referenceBases=A&alternateBases=T&assemblyId=13911&datasetIds=EGAD00000000028&includeDatasetResponses=ALL'
+    curl -v 'https://localhost:5000/plant?referenceName=1&start=0&end=0&startMin=28000000&startMax=29000000&endMin=28000000&endMax=29000000&referenceBases=A&alternateBases=T&assemblyId=13911&datasetIds=EGAD00000000028&includeDatasetResponses=ALL'
+
 ######
 
-
+    > GET /plant?referenceName=1&start=0&end=0&startMin=28000000&startMax=29000000&endMin=28000000&endMax=29000000&referenceBases=A&alternateBases=T&assemblyId=13911&datasetIds=EGAD00000000028&includeDatasetResponses=ALL HTTP/1.1
+    > Host: localhost:5000
+    > User-Agent: curl/7.54.0
+    > Accept: */*
+    >
+    * HTTP 1.0, assume close after body
+    < HTTP/1.0 200 OK
+    < Content-Type: application/json
+    < Content-Length: 1078
+    < Server: Werkzeug/0.14.1 Python/3.6.5
+    < Date: Mon, 11 Jun 2018 07:29:26 GMT
+    <
+    {
+        "beaconId": "ega-beacon",
+        "apiVersion": "0.4",
+        "exists": true,
+        "error": null,
+        "alleleRequest": {
+            "referenceName": "1",
+            "start": 0,
+            "startMin": 28000000,
+            "startMax": 29000000,
+            "end": 0,
+            "endMin": 28000000,
+            "endMax": 29000000,
+            "referenceBases": "A",
+            "alternateBases": "T",
+            "assemblyId": "13911",
+            "datasetIds": [
+                "EGAD00000000028"
+            ],
+            "includeDatasetResponses": "ALL"
+        },
+        "datasetAlleleResponses": [
+            {
+                "datasetId": "EGAD00000000028",
+                "exists": true,
+                "frequency": 0.5,
+                "variantCount": 1,
+                "callCount": 1,
+                "sampleCount": 1,
+                "note": "",
+                "externalUrl": null,
+                "info": {},
+                "error": null
+            }
+        ]
+    }
+    * Closing connection 0    
 
 ######
 Example of how to use the POST method in the "/plant" path:
 
-    curl -v -d "referenceName=1&start=14929&referenceBases=A&alternateBases=G&assemblyId=13911&datasetIds=EGAD00000000028&includeDatsetResponses=ALL" https://localhost:5000/query
+    curl -v -d "referenceName=1&start=14929&referenceBases=A&alternateBases=G&assemblyId=13911&datasetIds=EGAD00000000028&includeDatasetResponses=ALL" https://localhost:5000/plant
+######
 
-
-`curl -v 'https://localhost:5000/query?&start=0&end=0&startMin=28000000&startMax=29000000&endMin=28000000&endMax=29000000&referenceBases=A&alternateBases=T&assemblyId=GRCh37&datasetIds=EGAD00000000028&includeDatasetResponses=ALL'`
+    > POST /query HTTP/1.1
+    > Host: localhost:5000
+    > User-Agent: curl/7.54.0
+    > Accept: */*
+    > Content-Length: 133
+    > Content-Type: application/x-www-form-urlencoded
+    >
+    * upload completely sent off: 133 out of 133 bytes
+    * HTTP 1.0, assume close after body
+    < HTTP/1.0 200 OK
+    < Content-Type: application/json
+    < Content-Length: 1056
+    < Server: Werkzeug/0.14.1 Python/3.6.5
+    < Date: Mon, 11 Jun 2018 07:15:48 GMT
+    <
+    {
+        "beaconId": "ega-beacon",
+        "apiVersion": "0.4",
+        "exists": true,
+        "error": null,
+        "alleleRequest": {
+            "referenceName": "1",
+            "start": 14929,
+            "startMin": 0,
+            "startMax": 0,
+            "end": 0,
+            "endMin": 0,
+            "endMax": 0,
+            "referenceBases": "A",
+            "alternateBases": "G",
+            "assemblyId": "13911",
+            "datasetIds": [
+                "EGAD00000000028"
+            ],
+            "includeDatasetResponses": "ALL"
+        },
+        "datasetAlleleResponses": [
+            {
+                "datasetId": "EGAD00000000028",
+                "exists": true,
+                "frequency": 0.5,
+                "variantCount": 1,
+                "callCount": 1,
+                "sampleCount": 1,
+                "note": "",
+                "externalUrl": null,
+                "info": {},
+                "error": null
+            }
+        ]
+    }
+    * Closing connection 0
