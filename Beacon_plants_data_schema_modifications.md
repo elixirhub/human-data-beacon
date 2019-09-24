@@ -1,6 +1,6 @@
 # **Data schema for the Beacon Plants implementation**
 
-![](beacon_data_schema.png)
+![](https://github.com/ga4gh-beacon/beacon-elixir/blob/beacon_plant_prototype/Beacon_data_schema.png)
 
 To minimize changes to the pre-existing data schema implemented in the ELIXIR Beacon project, we only made two changes, both of them in the Beacon_dataset_table SQL table:
 
