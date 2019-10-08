@@ -1,5 +1,5 @@
 
-# Beacon API Specification v1.0.0
+# Beacon API Specification v1.0.1 (modified to add Plant beacon endpoint)
 
 Beacon is a web service for genetic data sharing. Beacon permits simple queries regarding the presence or absence of a specified variant in a given dataset. This is the key idea behind Beacon, by allowing these queries Beacon makes the data discoverable. If the user finds their variant(s) of interest, Beacon will point them to the appropriate place to gain access to the data (e.g. the European Genome-Phenome Archive, EGA).
 
