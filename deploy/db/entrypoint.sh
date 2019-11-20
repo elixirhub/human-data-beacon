@@ -12,7 +12,3 @@ set -e # exit immediately on any error
 
 # Run postgres
 exec /usr/local/bin/docker-entrypoint.sh postgres
-<<<<<<< HEAD
-=======
-
->>>>>>> v1.1.0_dev
